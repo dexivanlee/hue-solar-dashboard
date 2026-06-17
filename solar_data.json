@@ -1,0 +1,903 @@
+{
+  "days": {
+    "2026-05-20": {
+      "date": "2026-05-20",
+      "source": "auto",
+      "pv": 445.6,
+      "load": 643.8,
+      "gensetKwh": 318.1,
+      "gensetHours": 4.92,
+      "peakPv": 73.98,
+      "peakLoad": 53.55,
+      "minSoc": 38.2,
+      "maxSoc": 99.3,
+      "sunsetSoc": 78.8,
+      "rooms": 6,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Genset supplied 42% of system energy. Afternoon solar curtailed once battery hit 99% at 11:55.",
+      "commentary": "Production on May 20 needs reading carefully. DeyeCloud's headline daily production of 764 kWh blends two very different sources: 446 kWh of actual solar and 318 kWh from the diesel generator. The generator supplied 42% of everything the system delivered that day - a high share for a 96 kWp array, and the single most important number on this page.\n\nThe battery itself had a healthy day. SOC bottomed at 38% around 04:45, comfortably above the 20% floor and even above the 28-35% manual-start band, and reached 99% by late morning. Depth of discharge was 61 points and the bank never entered the sub-30% warning zone.\n\nThe generator ran 4.92 hours across three windows, costing roughly PHP 13,800 in diesel and delivering energy at about PHP 43 per kWh - nine times the cost of solar. The 04:50 and 20:30 runs caught genuine low points; the 10:20 to 11:05 run did not - it charged the bank from 80% to 95% mid-morning when solar was already climbing. Because the morning runs pushed the battery to 99% by 11:55, the array sat curtailed all afternoon, spilling an estimated 80-90 kWh of free solar. Tomorrow: hold the morning genset to just clearing the pre-dawn low and let solar do the daytime charging.",
+      "events": [
+        {
+          "startTime": "04:50",
+          "startSoc": 40,
+          "stopTime": "06:25",
+          "stopSoc": 72,
+          "reason": "Pre-dawn battery low point - justified"
+        },
+        {
+          "startTime": "10:20",
+          "startSoc": 80,
+          "stopTime": "11:10",
+          "stopSoc": 95,
+          "reason": "Mid-morning top-up - questionable, solar was already charging"
+        },
+        {
+          "startTime": "20:30",
+          "startSoc": 47,
+          "stopTime": "23:00",
+          "stopSoc": 92,
+          "reason": "Evening battery low point - justified"
+        }
+      ]
+    },
+    "2026-05-21": {
+      "date": "2026-05-21",
+      "source": "auto",
+      "pv": 513.8,
+      "load": 691,
+      "gensetKwh": 231.2,
+      "gensetHours": 3.83,
+      "peakPv": 80.18,
+      "peakLoad": 75.43,
+      "minSoc": 41.7,
+      "maxSoc": 100,
+      "sunsetSoc": 73.7,
+      "rooms": 7,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841. Solar 514 kWh, genset 231 kWh (31% of energy). Genset ran 2 windows, 3.83 hr total.",
+      "commentary": "May 21 was a strong solar day undercut by the same mistake as the day before. The array produced 514 kWh of actual solar - a healthy figure for the season - but the diesel generator still added 231 kWh on top, 31% of the day's energy. On a clear day at roughly 10 rooms occupied, that genset share should be close to zero.\n\nThe battery cycled cleanly. It bottomed at 42% just before the evening genset run and never came near the 20% floor; depth of discharge was a comfortable 58 points. No concern on how the bank was treated.\n\nThe problem is the 10:00 to 11:20 genset run. It started with the battery already at 66% and climbing on solar, then pushed it to a full 100% by 11:20 - about 1.3 hours and roughly 43 litres of diesel for energy the sun was delivering for free. Filling the bank that early also left no headroom for midday solar, so the array spent the afternoon curtailed. The evening run from 20:30 to 23:00, lifting SOC from 42% to 90%, was the genuinely necessary one. The fix for tomorrow: skip the mid-morning genset entirely and let solar carry the daytime charge.",
+      "events": [
+        {
+          "startTime": "10:00",
+          "startSoc": 66,
+          "stopTime": "11:20",
+          "stopSoc": 100,
+          "reason": "Mid-morning run - charged bank to 100% during solar hours, avoidable"
+        },
+        {
+          "startTime": "20:30",
+          "startSoc": 42,
+          "stopTime": "23:00",
+          "stopSoc": 90,
+          "reason": "Evening battery low point"
+        }
+      ]
+    },
+    "2026-05-22": {
+      "date": "2026-05-22",
+      "source": "auto",
+      "pv": 271.5,
+      "load": 540,
+      "gensetKwh": 333.5,
+      "gensetHours": 5.75,
+      "peakPv": 94.33,
+      "peakLoad": 57.36,
+      "minSoc": 32.2,
+      "maxSoc": 99.5,
+      "sunsetSoc": 49,
+      "rooms": 8,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841. Weak solar day (272 kWh); genset supplied 55% of energy.",
+      "commentary": "May 22 was a weak solar day. The array produced just 272 kWh, little more than half of May 21, so this was almost certainly an overcast or monsoon day. With solar short, the diesel generator carried 333 kWh - 55% of the day's energy. On a genuinely cloudy day heavy genset use is expected, so this is less alarming than it looks, but it is still the most expensive way to power the hotel.\n\nThe battery was cycled hard but safely. SOC bottomed at 32%, inside the 28-35% manual-start band and well clear of the 20% floor, with depth of discharge of 67 points. No battery-health concern, though a day this deep is not one you want repeated back to back.\n\nThe generator ran 5.75 hours across three windows. The evening run from 18:45 to 22:15, lifting SOC from 33% to 93%, was clearly necessary. The 10:00 to 12:05 run is more defensible than on a sunny day given the weak solar, though it still charged to 95%; stopping nearer 80% leaves room for whatever afternoon sun appears. With a poor solar forecast, plan the evening genset window early and keep the daytime run as short as the low points allow.",
+      "events": [
+        {
+          "startTime": "10:00",
+          "startSoc": 41,
+          "stopTime": "12:05",
+          "stopSoc": 95,
+          "reason": ""
+        },
+        {
+          "startTime": "12:30",
+          "startSoc": 98,
+          "stopTime": "12:40",
+          "stopSoc": 99,
+          "reason": ""
+        },
+        {
+          "startTime": "18:45",
+          "startSoc": 33,
+          "stopTime": "22:15",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-05-23": {
+      "date": "2026-05-23",
+      "source": "auto",
+      "pv": 409.9,
+      "load": 631,
+      "gensetKwh": 280.7,
+      "gensetHours": 4.67,
+      "peakPv": 80.38,
+      "peakLoad": 58.66,
+      "minSoc": 39.3,
+      "maxSoc": 99.7,
+      "sunsetSoc": 75,
+      "rooms": 9,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "May 23 brought reasonable solar production at 410 kWh - about 12% above the Siargao annual-average benchmark of 366 kWh and consistent with recent history. Even so, the diesel generator supplied 281 kWh, a 41% share of total energy. On a day with adequate solar that share should be under 15%, and the culprit is visible in the morning cluster of genset runs.\n\nThe battery cycled safely. SOC bottomed at 39%, above the 20% floor and clear of the 28-35% manual-start band, with depth of discharge of 60 points. The bank reached 99.7% float, and the 75% sunset SOC left a healthy buffer heading into the night. No battery health concerns.\n\nThe genset ran 4.67 hours, burning roughly 152 litres at an estimated PHP 13,130 - about PHP 47 per kWh delivered. The evening run at 20:00 (44% SOC start) was justified. The morning cluster is the avoidable cost: the first run started at 45% SOC during rising solar and pushed the bank to 95%, followed by two brief top-up stutters at 97% and 99%. Those three runs together spent about 2 hours doing work the sun would have done for free. The rule for tomorrow: hold the morning genset until SOC enters the 28-35% band, and stop it at 75-80% so solar can finish the charge.",
+      "events": [
+        {
+          "startTime": "09:30",
+          "startSoc": 45,
+          "stopTime": "11:10",
+          "stopSoc": 95,
+          "reason": ""
+        },
+        {
+          "startTime": "11:15",
+          "startSoc": 97,
+          "stopTime": "11:20",
+          "stopSoc": 97,
+          "reason": ""
+        },
+        {
+          "startTime": "11:25",
+          "startSoc": 99,
+          "stopTime": "11:35",
+          "stopSoc": 100,
+          "reason": ""
+        },
+        {
+          "startTime": "20:00",
+          "startSoc": 44,
+          "stopTime": "22:45",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-05-24": {
+      "date": "2026-05-24",
+      "source": "auto",
+      "pv": 527.4,
+      "load": 717,
+      "gensetKwh": 221.7,
+      "gensetHours": 3.5,
+      "peakPv": 102.45,
+      "peakLoad": 81.18,
+      "minSoc": 34.2,
+      "maxSoc": 93,
+      "sunsetSoc": 39,
+      "rooms": 10,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "May 24 was the strongest production day in the current dataset at 527 kWh, approximately 44% above the annual-average baseline. The genset contributed 222 kWh (30% of total energy), but with only a single run all day, the operational pattern was much cleaner than previous days. There is no evidence of avoidable mid-morning diesel use, which is a meaningful improvement.\n\nBattery cycling was conservative and healthy. SOC reached only 93%, which is not a concern - the array charged the bank to near-full without genset support pushing for float. Min SOC was 34.2%, sitting just inside the 28-35% manual-start band, confirming the evening run was correctly triggered. Depth of discharge was 59 points. The 39% sunset SOC signalled the need for the evening run, which delivered it cleanly.\n\nThe single genset run at 18:00 (35% start, 93% stop) ran 3.5 hours at an estimated PHP 9,839 - the lowest daily diesel cost in the log. This is what clean operation looks like: one evening window triggered at a genuine low point, solar doing all the daytime work. The remaining refinement is small: stopping the run at 85% instead of 93% saves roughly 30 minutes of diesel, as morning solar easily restores the difference. If tomorrow has similar solar, this pattern should repeat with no modifications needed.",
+      "events": [
+        {
+          "startTime": "18:00",
+          "startSoc": 35,
+          "stopTime": "21:30",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-05-25": {
+      "date": "2026-05-25",
+      "source": "auto",
+      "pv": 377.7,
+      "load": 628,
+      "gensetKwh": 296,
+      "gensetHours": 4.33,
+      "peakPv": 66.21,
+      "peakLoad": 58.86,
+      "minSoc": 31.5,
+      "maxSoc": 99.7,
+      "sunsetSoc": 78.3,
+      "rooms": 9,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "May 25 showed weaker solar at 378 kWh - about 3% above the annual-average estimate but well below the recent 7-day average, pointing to partial cloud cover. The genset carried 296 kWh, a 44% energy share. While the overcast conditions justify higher genset use than May 24, the morning run pattern pushed fuel costs back up toward the weekly average.\n\nThe battery cycled more deeply than recent days. SOC bottomed at 31.5%, inside the 28-35% manual-start band and above the 20% floor, so the 07:40 morning start was correctly triggered by a genuine overnight draw. Depth of discharge was 68 points. Max SOC reached 99.7%, and the 78% sunset SOC was healthy. The 10:25 five-minute micro-run at 99% SOC is a minor anomaly - likely an automatic restart on a transient load; worth noting in the site log.\n\nThe morning run from 07:40 to 09:55 charged from 33% to 94%. Stopping at 94% when solar was already climbing cost an extra 30-40 minutes versus a target of 75-80%, adding roughly 35 litres (PHP 3,000) in avoidable diesel. The evening run at 20:00 (48% start, 85% stop) was well-executed. Total estimated cost for the day: PHP 12,170. The one concrete change: on cloudy mornings, still stop the dawn run at 75-80% and let any available afternoon sun push it higher before nightfall.",
+      "events": [
+        {
+          "startTime": "07:40",
+          "startSoc": 33,
+          "stopTime": "09:55",
+          "stopSoc": 94,
+          "reason": ""
+        },
+        {
+          "startTime": "10:25",
+          "startSoc": 99,
+          "stopTime": "10:30",
+          "stopSoc": 99,
+          "reason": ""
+        },
+        {
+          "startTime": "20:00",
+          "startSoc": 48,
+          "stopTime": "22:00",
+          "stopSoc": 85,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-05-26": {
+      "date": "2026-05-26",
+      "source": "auto",
+      "pv": 485.2,
+      "load": 781,
+      "gensetKwh": 312.3,
+      "gensetHours": 4.42,
+      "peakPv": 78.92,
+      "peakLoad": 64.12,
+      "minSoc": 36.3,
+      "maxSoc": 91.8,
+      "sunsetSoc": 43,
+      "rooms": 13,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "May 26 delivered 485.2 kWh of solar, about 32% above the annual-average baseline for Siargao, with a respectable 78.92 kW peak. Despite this reasonable harvest, the diesel genset contributed 312.3 kWh out of 797.5 kWh total - a 39% share - indicating that overnight and evening demand significantly eroded stored solar energy before the following morning could replenish it.\n\nBattery cycling covered 55.5 percentage points (91.8% max down to 36.3% min), a moderately deep cycle. The 36.3% minimum SOC landed just above the 28-35% manual-start band, so the overnight run at 01:20 was correctly triggered. The 20% hard floor was never threatened. Sunset SOC of 43% was low, which explains the two back-to-back evening runs beginning at 18:00.\n\nThree genset runs totalling 4.42 hours consumed approximately 143.7 L of diesel at PHP 86.50/L, a daily fuel cost near PHP 12,430. The two consecutive evening runs - 18:00 to 19:10 (SOC 37 to 58) and 19:15 to 21:00 (SOC 60 to 92) - with only a 5-minute gap look like a premature stop followed by an immediate restart; consolidating these into a single 18:00 to 21:00 run would eliminate unnecessary engine starts and reduce maintenance wear.",
+      "events": [
+        {
+          "startTime": "01:20",
+          "startSoc": 62,
+          "stopTime": "02:50",
+          "stopSoc": 90,
+          "reason": ""
+        },
+        {
+          "startTime": "18:00",
+          "startSoc": 37,
+          "stopTime": "19:10",
+          "stopSoc": 58,
+          "reason": ""
+        },
+        {
+          "startTime": "19:15",
+          "startSoc": 60,
+          "stopTime": "21:00",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-05-27": {
+      "date": "2026-05-27",
+      "source": "auto",
+      "pv": 578.4,
+      "load": 856,
+      "gensetKwh": 452.5,
+      "gensetHours": 6.42,
+      "peakPv": 82.33,
+      "peakLoad": 87.03,
+      "minSoc": 21.7,
+      "maxSoc": 92.2,
+      "sunsetSoc": 23.7,
+      "rooms": 18,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "May 27 delivered 578.4 kWh of solar, the strongest day in the current dataset and about 58% above the Siargao annual-average baseline. Despite this excellent harvest, the genset contributed 452.5 kWh out of 1,030.9 kWh total - a 44% share - driven by the highest recorded hotel consumption of 856 kWh. That load figure warrants a check: either occupancy spiked or a large piece of equipment ran all day.\n\nThe battery reached a dangerous low of 21.7% SOC, just 1.7 percentage points above the 20% hard floor - the closest call in the log. Depth of discharge was 70.5 points. Sunset SOC of only 23.7% confirms the bank was nearly exhausted by late afternoon, which is why the 17:25 genset run was triggered at 22% SOC. This is uncomfortably close to a damaging low-SOC event and should not be repeated.\n\nSix-plus hours of genset across three runs burned approximately 208.7 L of diesel at PHP 86.50/L, a daily fuel cost near PHP 18,050 - the highest in the log. The root cause is the battery being allowed to drain to 22% before the afternoon run started. The concrete fix: treat 28% as the absolute floor for starting the genset, not 20%; if the bank is falling fast in the afternoon, start earlier rather than waiting for the low-SOC alarm.",
+      "events": [
+        {
+          "startTime": "03:40",
+          "startSoc": 37,
+          "stopTime": "05:15",
+          "stopSoc": 66,
+          "reason": ""
+        },
+        {
+          "startTime": "17:25",
+          "startSoc": 22,
+          "stopTime": "19:20",
+          "stopSoc": 59,
+          "reason": ""
+        },
+        {
+          "startTime": "21:00",
+          "startSoc": 37,
+          "stopTime": "23:55",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-01": {
+      "date": "2026-06-01",
+      "source": "auto",
+      "pv": 485.3,
+      "load": 801,
+      "gensetKwh": 360.1,
+      "gensetHours": 5.33,
+      "peakPv": 78.04,
+      "peakLoad": 90.2,
+      "minSoc": 28.3,
+      "maxSoc": 97.7,
+      "sunsetSoc": 49.3,
+      "rooms": 13,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 485.3 kWh on June 1 -- a reasonable output for early June in Siargao. The diesel genset contributed 360.1 kWh, representing about 42.6% of total generation across 5.33 hours of runtime.\n\nBattery cycled from a low of 28.3% to a high of 97.7%, a depth of discharge of 69.4 percentage points. The minimum SOC touched right at the lower edge of the 28-35% manual-start band.\n\nAt 5.33 hours of runtime, diesel consumption was roughly 173 L, costing approximately PHP 14,983. The morning run from 08:35 to 10:25 coincides with rising PV output -- consider delaying that start to save 0.5-1 hour of diesel.",
+      "events": [
+        {
+          "startTime": "08:35",
+          "startSoc": 32,
+          "stopTime": "10:25",
+          "stopSoc": 89,
+          "reason": ""
+        },
+        {
+          "startTime": "19:00",
+          "startSoc": 29,
+          "stopTime": "22:30",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-02": {
+      "date": "2026-06-02",
+      "source": "auto",
+      "pv": 410.5,
+      "load": 760,
+      "gensetKwh": 293.2,
+      "gensetHours": 4.42,
+      "peakPv": 84.02,
+      "peakLoad": 67.63,
+      "minSoc": 28.3,
+      "maxSoc": 93,
+      "sunsetSoc": 50.5,
+      "rooms": 14,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar produced 410.5 kWh on June 2 -- slightly below the prior day -- with the genset adding 293.2 kWh for a combined supply of 703.7 kWh. Diesel accounted for about 41.7% of total generation.\n\nBattery SOC ranged from 28.3% to 93.0%, a depth of discharge of 64.7 percentage points. The minimum again landed at 28.3%, at the lower edge of the 28-35% manual-start band.\n\nThe 4.42-hour runtime consumed roughly 143.6 L of diesel at an estimated cost of PHP 12,426. The early morning run (05:05-06:00) at 42% SOC with sunrise imminent could be suppressed to save roughly PHP 2,500.",
+      "events": [
+        {
+          "startTime": "05:05",
+          "startSoc": 42,
+          "stopTime": "06:00",
+          "stopSoc": 59,
+          "reason": ""
+        },
+        {
+          "startTime": "16:30",
+          "startSoc": 29,
+          "stopTime": "20:00",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-03": {
+      "date": "2026-06-03",
+      "source": "auto",
+      "pv": 405.7,
+      "load": 664,
+      "gensetKwh": 425.4,
+      "gensetHours": 7.17,
+      "peakPv": 81.92,
+      "peakLoad": 54.7,
+      "minSoc": 31.7,
+      "maxSoc": 93.5,
+      "sunsetSoc": 42.7,
+      "rooms": 8,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 405.7 kWh, below the 550 kWh typical for clear June days. The genset contributed 425.4 kWh -- just over 51% of total supply -- driven by an unusually heavy three-run schedule totaling 7.17 hours.\\n\\nBattery cycled from 93.5% down to 31.7%, a depth of discharge of 61.8 points. The low of 31.7% sat just above the 28-35% manual-start band; the three runs, including a brief 05:00 correction, suggest the overnight charge overshoot triggered an unnecessary predawn restart.\\n\\nAt 7.17 genset hours and 32.5 L/hr, diesel burn was roughly 233 L at approximately PHP 20,145 -- more than double a normal day. The concrete fix is to cap the evening charge target at 90% SOC so the predawn 01:00-04:45 run is eliminated and fuel cost drops by half.",
+      "events": [
+        {
+          "startTime": "01:00",
+          "startSoc": 39,
+          "stopTime": "04:45",
+          "stopSoc": 93,
+          "reason": ""
+        },
+        {
+          "startTime": "04:55",
+          "startSoc": 93,
+          "stopTime": "05:05",
+          "stopSoc": 93,
+          "reason": ""
+        },
+        {
+          "startTime": "18:30",
+          "startSoc": 33,
+          "stopTime": "21:45",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-04": {
+      "date": "2026-06-04",
+      "source": "auto",
+      "pv": 541.3,
+      "load": 722,
+      "gensetKwh": 207.3,
+      "gensetHours": 3,
+      "peakPv": 84.6,
+      "peakLoad": 73.98,
+      "minSoc": 32.3,
+      "maxSoc": 91,
+      "sunsetSoc": 48,
+      "rooms": 5,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar produced 541.3 kWh, a strong day reflecting good June irradiance and low cloud cover. The genset ran a single 3-hour evening session supplying 207.3 kWh -- about 28% of combined energy -- which is the normal pattern for this station.\\n\\nBattery ranged from 32.3% to 91%, a depth of discharge of 58.7 points. The 32.3% minimum cleared the 28-35% manual-start band without reaching the 20% alarm floor, and the 48% sunset SOC provided a healthy overnight buffer.\\n\\nThree genset hours burned roughly 97.5 L at an estimated PHP 8,434. The 48% sunset SOC suggests the battery could sustain load until 19:30-20:00 before needing the genset; pushing the evening start 60-90 minutes later would trim about 1 hour of diesel per day.",
+      "events": [
+        {
+          "startTime": "18:30",
+          "startSoc": 33,
+          "stopTime": "21:30",
+          "stopSoc": 91,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-05": {
+      "date": "2026-06-05",
+      "source": "auto",
+      "pv": 536.1,
+      "load": 685,
+      "gensetKwh": 215.8,
+      "gensetHours": 3.08,
+      "peakPv": 77.88,
+      "peakLoad": 64.8,
+      "minSoc": 30.7,
+      "maxSoc": 91,
+      "sunsetSoc": 46.3,
+      "rooms": 5,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar produced 536.1 kWh, consistent with June norms and close to the prior day, indicating steady irradiance. The genset ran 3.08 hours and supplied 215.8 kWh, covering about 29% of total energy in a single evening run.\\n\\nBattery cycled from 91% down to 30.7%, a depth of discharge of 60.3 points. The 30.7% minimum sat at the lower edge of the 28-35% manual-start band; the 20% alarm floor was not breached, though the margin was only 10.7 points.\\n\\nEstimated diesel consumption was about 100 L at roughly PHP 8,659. The evening start triggered at 18:55 with SOC near 31%; raising the SOC start threshold to 35% would widen the safety margin and reduce the risk of a low-SOC alarm on heavier-load evenings.",
+      "events": [
+        {
+          "startTime": "18:55",
+          "startSoc": 31,
+          "stopTime": "22:00",
+          "stopSoc": 91,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-06": {
+      "date": "2026-06-06",
+      "source": "auto",
+      "pv": 507.1,
+      "load": 685,
+      "gensetKwh": 204.7,
+      "gensetHours": 3,
+      "peakPv": 89.88,
+      "peakLoad": 86.44,
+      "minSoc": 33.3,
+      "maxSoc": 91.3,
+      "sunsetSoc": 44.7,
+      "rooms": 3,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 507.1 kWh, slightly softer than the prior two days but still a solid mid-June result with a 89.88 kW peak. The genset ran a single 3-hour evening session contributing 204.7 kWh -- about 29% of combined supply.\\n\\nBattery depth of discharge was 58.0 points, cycling from 91.3% down to 33.3%. The 33.3% minimum sat within the 28-35% manual-start band above the 20% floor, and the 44.7% sunset SOC was a reasonable overnight entry point.\\n\\nThree genset hours consumed roughly 97.5 L of diesel at an estimated PHP 8,434. The consistent 18:30 fixed start time may be triggering earlier than necessary on good solar days; replacing it with a SOC threshold at 35% would let the battery coast longer on clear days and cut runtime.",
+      "events": [
+        {
+          "startTime": "18:30",
+          "startSoc": 33,
+          "stopTime": "21:30",
+          "stopSoc": 91,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-07": {
+      "date": "2026-06-07",
+      "source": "auto",
+      "pv": 566.7,
+      "load": 725,
+      "gensetKwh": 219.8,
+      "gensetHours": 3.17,
+      "peakPv": 83.42,
+      "peakLoad": 85,
+      "minSoc": 28.7,
+      "maxSoc": 91.5,
+      "sunsetSoc": 42.7,
+      "rooms": 6,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar produced 566.7 kWh, the strongest day of this 5-day window, indicating excellent irradiance for early June. Despite the high solar yield, the genset still ran 3.17 hours supplying 219.8 kWh -- about 28% of combined energy -- to cover the evening demand gap.\\n\\nBattery hit a minimum of 28.7%, right at the bottom of the 28-35% manual-start band and only 8.7 points above the 20% critical alarm floor. Depth of discharge was 62.8 points, the deepest of the five days captured, with the genset starting at 18:30 when SOC was already at 30%.\\n\\nDiesel consumption was roughly 103 L at an estimated PHP 8,910. The 28.7% near-miss is a clear warning: raise the evening genset start threshold to 37% SOC to provide a 17-point buffer above the alarm floor and prevent a potential deep-discharge event on high-load nights.",
+      "events": [
+        {
+          "startTime": "18:30",
+          "startSoc": 30,
+          "stopTime": "21:40",
+          "stopSoc": 91,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-08": {
+      "date": "2026-06-08",
+      "source": "auto",
+      "pv": 578.7,
+      "load": 792,
+      "gensetKwh": 229.5,
+      "gensetHours": 3.58,
+      "peakPv": 77.77,
+      "peakLoad": 75.13,
+      "minSoc": 30.3,
+      "maxSoc": 93,
+      "sunsetSoc": 31.8,
+      "rooms": 12,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar produced 578.7 kWh, the strongest single-day output of the week, with a 77.77 kW peak indicating solid midday irradiance. The genset ran a single 3.58-hour evening session contributing 229.5 kWh -- about 28% of combined supply.\\n\\nBattery cycled from 93% down to 30.3%, a depth of discharge of 62.7 points. The genset triggered at 17:40 with SOC at only 30% -- the earliest evening start of the week -- and the 31.8% sunset SOC shows the battery was essentially at its low point right at dusk.\\n\\nAt 3.58 genset hours, diesel burn was roughly 116 L at approximately PHP 10,069. The 17:40 start with SOC at 30% confirms evening drain is outpacing the sunset window; raising the start threshold to 37% and reviewing afternoon load would prevent the battery touching 30% before dark.",
+      "events": [
+        {
+          "startTime": "17:40",
+          "startSoc": 30,
+          "stopTime": "21:15",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-09": {
+      "date": "2026-06-09",
+      "source": "auto",
+      "pv": 575.6,
+      "load": 807,
+      "gensetKwh": 315.5,
+      "gensetHours": 4.83,
+      "peakPv": 77.51,
+      "peakLoad": 60.66,
+      "minSoc": 37.7,
+      "maxSoc": 93,
+      "sunsetSoc": 65.3,
+      "rooms": 12,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 575.6 kWh, consistent with recent days and reflecting steady June irradiance. The genset ran two separate sessions totaling 4.83 hours and supplying 315.5 kWh -- about 35% of combined energy -- a higher-than-normal diesel share driven by the predawn run.\\n\\nBattery ranged from 37.7% to 93%, a depth of discharge of 55.3 points. The predawn run started at 03:10 with SOC at 39%, within the manual-start band but unusual at that hour; the morning boost resulted in a healthy 65.3% sunset SOC. The evening run triggered at 43% SOC -- better than recent days.\\n\\nCombined diesel consumption was roughly 157 L at an estimated PHP 13,580. The 03:10 predawn start at 39% SOC is worth investigating: if it was automatic, the overnight discharge rate from HVAC or refrigeration may be higher than expected; confirming whether this was manual or auto would clarify whether a schedule or load adjustment is needed.",
+      "events": [
+        {
+          "startTime": "03:10",
+          "startSoc": 39,
+          "stopTime": "05:00",
+          "stopSoc": 75,
+          "reason": ""
+        },
+        {
+          "startTime": "19:00",
+          "startSoc": 43,
+          "stopTime": "22:00",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-10": {
+      "date": "2026-06-10",
+      "source": "auto",
+      "pv": 556.1,
+      "load": 903,
+      "gensetKwh": 344.9,
+      "gensetHours": 5,
+      "peakPv": 94.45,
+      "peakLoad": 83.68,
+      "minSoc": 26.2,
+      "maxSoc": 89.8,
+      "sunsetSoc": 42.2,
+      "rooms": 14,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 556.1 kWh while the diesel genset contributed 344.9 kWh, placing the genset share at roughly 38 percent of the 901 kWh total supply. Peak PV reached 94.45 kW, a strong clear-sky output for mid-June Siargao as the wet season begins. The elevated diesel fraction suggests intermittent cloud cover and two deliberate evening runs pulled the genset in for a combined 5 hours.\n\nThe battery cycled from a high of 89.8 percent down to a minimum of 26.2 percent, a depth of discharge of 63.6 percentage points. The 26.2 percent trough sits below the 28 percent lower edge of the recommended manual-start band, meaning the morning genset run at 04:15 fired just after the battery slipped beneath that threshold. The 20 percent safety floor was not breached, so no risk to cell longevity this day.\n\nFive genset hours at roughly 43 L/hr burned an estimated 215 litres of diesel, costing approximately PHP 18,598 at PHP 86.50 per litre. The evening run extended to 20:00 and reached 90 percent SOC, which is higher than needed. Consider setting an automatic stop at 80 percent SOC during evening runs to save roughly 0.5 to 1 hour of diesel per cycle.",
+      "events": [
+        {
+          "startTime": "04:15",
+          "startSoc": 31,
+          "stopTime": "06:00",
+          "stopSoc": 65,
+          "reason": ""
+        },
+        {
+          "startTime": "16:50",
+          "startSoc": 28,
+          "stopTime": "20:00",
+          "stopSoc": 90,
+          "reason": ""
+        },
+        {
+          "startTime": "24:00",
+          "startSoc": 41,
+          "stopTime": "24:05",
+          "stopSoc": 41,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-11": {
+      "date": "2026-06-11",
+      "source": "auto",
+      "pv": 441.5,
+      "load": 758,
+      "gensetKwh": 495.9,
+      "gensetHours": 7.75,
+      "peakPv": 76.61,
+      "peakLoad": 83.38,
+      "minSoc": 29.2,
+      "maxSoc": 99,
+      "sunsetSoc": 36.7,
+      "rooms": 18,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 441.5 kWh against a measured load of 758 kWh, with the genset supplying 495.9 kWh -- roughly 53 pct of total supply. Peak PV hit 76.6 kW, a solid mid-June output for the site, though the heavy genset share signals either high occupancy or limited sun hours.\n\nThe battery swung from a low of 29.2 pct to a full charge of 99 pct, a depth of discharge of 69.8 percentage points. The 29.2 pct minimum sits just inside the 28-35 pct manual-start band, meaning the control strategy is using the battery close to its target floor without breaching the 20 pct hard limit.\n\nAt 43 L/hr over 7.75 hours the genset consumed roughly 333 L of diesel, costing approximately PHP 28,825 at PHP 86.50/L. The 08:30-11:10 run overlaps with peak solar production; shifting that charge session earlier to around 07:30 would let the genset ramp down before midday PV peaks and reduce fuel spend meaningfully.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 41,
+          "stopTime": "01:50",
+          "stopSoc": 77,
+          "reason": ""
+        },
+        {
+          "startTime": "08:30",
+          "startSoc": 32,
+          "stopTime": "11:10",
+          "stopSoc": 99,
+          "reason": ""
+        },
+        {
+          "startTime": "18:00",
+          "startSoc": 30,
+          "stopTime": "21:15",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-12": {
+      "date": "2026-06-12",
+      "source": "auto",
+      "pv": 528.4,
+      "load": 923,
+      "gensetKwh": 530.3,
+      "gensetHours": 7.67,
+      "peakPv": 91.51,
+      "peakLoad": 86.49,
+      "minSoc": 33.5,
+      "maxSoc": 93,
+      "sunsetSoc": 56.2,
+      "rooms": 20,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 528.4 kWh -- the strongest PV day so far in June -- with peak output reaching 91.5 kW, suggesting good sun conditions on the island. Even so, the genset contributed 530.3 kWh, roughly 50 pct of total supply, against a measured load of 923 kWh, pointing to high occupancy or elevated equipment demand.\n\nThe battery ranged from 33.5 pct to 93 pct, a depth of discharge of 59.5 percentage points. The 33.5 pct minimum sits right at the top of the 28-35 pct manual-start band, meaning the control strategy triggered the genset at the intended threshold and kept the battery above the 20 pct hard floor all day. Sunset SOC came in at a healthy 56.2 pct.\n\nAt 43 L/hr over 7.67 hours the genset consumed roughly 330 L of diesel, costing approximately PHP 28,545. With sunset SOC already at 56 pct there is room to push that higher: scheduling a pre-sunset charge run that ends by 17:30 and targets 70 pct SOC would reduce the need for late-evening genset starts and trim overnight fuel spend.",
+      "events": [
+        {
+          "startTime": "02:00",
+          "startSoc": 45,
+          "stopTime": "04:35",
+          "stopSoc": 93,
+          "reason": ""
+        },
+        {
+          "startTime": "16:35",
+          "startSoc": 35,
+          "stopTime": "19:20",
+          "stopSoc": 92,
+          "reason": ""
+        },
+        {
+          "startTime": "21:45",
+          "startSoc": 37,
+          "stopTime": "24:05",
+          "stopSoc": 83,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-13": {
+      "date": "2026-06-13",
+      "source": "auto",
+      "pv": 464.7,
+      "load": 822,
+      "gensetKwh": 488,
+      "gensetHours": 7.83,
+      "peakPv": 93.17,
+      "peakLoad": 76.42,
+      "minSoc": 31,
+      "maxSoc": 95.8,
+      "sunsetSoc": 76,
+      "rooms": 17,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar contributed 464.7 kWh with a peak of 93.2 kW, a strong output for mid-June. The genset added 488 kWh -- roughly 51 pct of total supply -- against a measured load of 822 kWh. Four separate genset runs across the day point to sustained high demand that battery and solar alone could not cover.\n\nThe battery ranged from 31 pct to 95.8 pct, a depth of discharge of 64.8 percentage points. The 31 pct minimum sits within the 28-35 pct manual-start band and comfortably above the 20 pct hard floor. Sunset SOC reached 76 pct -- the best of the week -- meaning the battery entered the night well-charged and night-time genset pressure should have been lower.\n\nAt 43 L/hr over 7.83 hours the genset burned roughly 337 L of diesel, costing approximately PHP 29,140. The 13:15-16:15 midday run is the most avoidable: solar was near its daily peak during that window, so the genset was competing with PV rather than complementing it. Raising the midday SOC start threshold from 32 pct to 25 pct during solar hours would let PV recover the battery naturally and eliminate roughly 2-3 hours of fuel burn per day.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 83,
+          "stopTime": "00:30",
+          "stopSoc": 91,
+          "reason": ""
+        },
+        {
+          "startTime": "04:40",
+          "startSoc": 46,
+          "stopTime": "06:00",
+          "stopSoc": 72,
+          "reason": ""
+        },
+        {
+          "startTime": "13:15",
+          "startSoc": 32,
+          "stopTime": "16:15",
+          "stopSoc": 95,
+          "reason": ""
+        },
+        {
+          "startTime": "18:20",
+          "startSoc": 37,
+          "stopTime": "21:20",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-14": {
+      "date": "2026-06-14",
+      "source": "auto",
+      "pv": 467.5,
+      "load": 873,
+      "gensetKwh": 368.3,
+      "gensetHours": 5.25,
+      "peakPv": 84.61,
+      "peakLoad": 75.33,
+      "minSoc": 33.2,
+      "maxSoc": 92.2,
+      "sunsetSoc": 70.2,
+      "rooms": 11,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 467.5 kWh with the genset adding 368.3 kWh -- about 44 pct of total supply -- against a load of 873 kWh. This is a better solar-to-genset ratio than the preceding days, suggesting good sun hours and lower morning demand pressure.\n\nBattery ranged from 33.2 pct to 92.2 pct, a depth of discharge of 59 percentage points. The 33.2 pct minimum sits at the top of the 28-35 pct manual-start band, indicating the system is triggering genset starts close to the intended threshold. Sunset SOC of 70.2 pct provided a solid overnight buffer.\n\nAt 43 L/hr over 5.25 hours the genset burned roughly 226 L of diesel, costing approximately PHP 19,540. The 23:30 run was brief and pushed SOC only to 48 pct -- a short top-up that could be deferred to early morning when it can run longer and more efficiently. Setting a minimum run duration of 45 minutes for overnight starts would avoid these short cycles.",
+      "events": [
+        {
+          "startTime": "03:05",
+          "startSoc": 50,
+          "stopTime": "05:00",
+          "stopSoc": 88,
+          "reason": ""
+        },
+        {
+          "startTime": "16:00",
+          "startSoc": 34,
+          "stopTime": "18:45",
+          "stopSoc": 92,
+          "reason": ""
+        },
+        {
+          "startTime": "23:30",
+          "startSoc": 38,
+          "stopTime": "24:05",
+          "stopSoc": 48,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-15": {
+      "date": "2026-06-15",
+      "source": "auto",
+      "pv": 455.6,
+      "load": 818,
+      "gensetKwh": 356.4,
+      "gensetHours": 5.25,
+      "peakPv": 78.07,
+      "peakLoad": 67.97,
+      "minSoc": 36,
+      "maxSoc": 92.7,
+      "sunsetSoc": 81.8,
+      "rooms": 10,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar contributed 455.6 kWh and the genset 356.4 kWh -- 44 pct of total supply -- against a load of 818 kWh. This is the second consecutive day with genset share below 45 pct, a meaningful improvement over the 50-53 pct range seen earlier in the week.\n\nBattery swung from 36 pct to 92.7 pct, a depth of discharge of 56.7 percentage points. The 36 pct minimum is just above the manual-start band, suggesting genset starts were triggered slightly later than the target threshold. Sunset SOC reached 81.8 pct -- the best of the week -- providing excellent overnight coverage.\n\nAt 43 L/hr over 5.25 hours the genset burned roughly 226 L, costing approximately PHP 19,540. With only 2 runs and the strongest sunset SOC of the week, June 15 is the most efficient day recorded so far. The main remaining opportunity is the 15:15 afternoon run -- shifting it 30-45 minutes later to let afternoon PV push SOC higher first could shave 30-60 minutes of fuel burn per day.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 48,
+          "stopTime": "02:15",
+          "stopSoc": 92,
+          "reason": ""
+        },
+        {
+          "startTime": "15:15",
+          "startSoc": 36,
+          "stopTime": "18:15",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
+    }
+  },
+  "faults": [
+    {
+      "id": "F1",
+      "title": "Genset running during active solar production",
+      "severity": "warning",
+      "description": "Genset started while SOC was already above the 28-35% manual-start band and solar was actively charging. Burns diesel for energy the sun delivers for free and causes afternoon solar curtailment by pushing battery to 100% before peak sun.",
+      "recommendation": "Do not start the genset when SOC is above 35% during daylight hours (06:00-17:00). Stop morning runs at 75-80% SOC and let solar complete the charge. Enforce this as a written operating rule with the on-site team.",
+      "datesObserved": [
+        "2026-05-20",
+        "2026-05-21",
+        "2026-05-23",
+        "2026-05-25"
+      ],
+      "resolved": false,
+      "resolvedDate": null
+    },
+    {
+      "id": "F2",
+      "title": "Micro-run and rapid restart events",
+      "severity": "warning",
+      "description": "Genset running for 5-10 minutes at near-full SOC (97-99%). These short runs produce almost no useful energy but each start-stop cycle adds wear equivalent to roughly 30 minutes of running. Likely caused by inverter auto-restart on transient load spikes or a misconfigured charge-complete threshold in the inverter/BMS.",
+      "recommendation": "Check inverter generator control settings and set a minimum genset run time of 30 minutes. Log exact timestamps of these events in the site maintenance book and investigate which loads are causing transient spikes at that hour. Discuss with supplier whether the inverter float/restart threshold needs adjusting.",
+      "datesObserved": [
+        "2026-05-22",
+        "2026-05-23",
+        "2026-05-25"
+      ],
+      "resolved": false,
+      "resolvedDate": null
+    },
+    {
+      "id": "F3",
+      "title": "Consecutive evening runs with 5-minute gap (possible auto-shutoff)",
+      "severity": "warning",
+      "description": "On May 26, genset ran 18:00-19:10 (SOC 37 to 58%), stopped for 5 minutes, then restarted at 19:15 and ran until 21:00. A 5-minute gap is abnormal. Possible causes: operator stopped prematurely, automatic overtemperature shutdown, or a cooldown timer triggered. Multiple unnecessary engine starts accelerate maintenance intervals.",
+      "recommendation": "Pull the genset fault log for May 26 evening and check for overtemperature or cooldown alarm at approximately 19:10. If operator-caused, brief team: once a charge window is started, commit to the full stop target (85% SOC). If auto-shutoff, check cooldown timer and thermal protection settings with supplier.",
+      "datesObserved": [
+        "2026-05-26"
+      ],
+      "resolved": false,
+      "resolvedDate": null
+    },
+    {
+      "id": "F4",
+      "title": "Battery depleted to near-critical SOC (21.7% on May 27)",
+      "severity": "critical",
+      "description": "Battery SOC reached 21.7% on May 27 - only 1.7 percentage points above the 20% hard-cutoff floor. At the observed afternoon depletion rate, a 15-minute delay would likely have triggered an automatic low-SOC shutdown, cutting power to the hotel. The afternoon genset start at 17:25 was too late.",
+      "recommendation": "Treat 28% as the absolute minimum SOC for starting the afternoon genset - not 20%. Brief the on-site operator: when SOC is falling rapidly after 15:00 and heading toward 30%, start immediately without waiting for an alarm. This is the highest-priority operational change in this fault log.",
+      "datesObserved": [
+        "2026-05-27"
+      ],
+      "resolved": false,
+      "resolvedDate": null
+    },
+    {
+      "id": "F5",
+      "title": "Abnormally high hotel consumption (856 kWh on May 27)",
+      "severity": "warning",
+      "description": "May 27 recorded 856 kWh - 10% above May 26 and approximately 38% above the 7-day average of 622 kWh. This is the highest consumption day in the log. The spike directly contributed to the near-critical battery event (F4). Cause is unknown: could be elevated occupancy, an HVAC unit stuck on, a water heater fault, or kitchen equipment left running continuously.",
+      "recommendation": "Cross-check hotel occupancy records for May 27. Review BMS and equipment logs for that date. Inspect HVAC units, water heaters, and kitchen equipment for any that may have run uninterrupted. Once the cause is identified, document it in the site log and add a check procedure.",
+      "datesObserved": [
+        "2026-05-27"
+      ],
+      "resolved": false,
+      "resolvedDate": null
+    },
+    {
+      "id": "F6",
+      "title": "Genset overcharging battery beyond optimal stop point",
+      "severity": "info",
+      "description": "Across 6 of 8 days, the genset ran until battery SOC reached 90-100% instead of the optimal 80-85% stop point. The final 15-20% of charge (absorption phase) accepts current very slowly - the genset spends 30-60 extra minutes delivering energy that morning solar would produce for free within 1-2 hours.",
+      "recommendation": "Program or instruct operators to stop the genset at 80-85% SOC during daylight hours (06:00-17:00). Night runs may target 90%. This change alone could reduce daily genset hours by 0.5-1.0 hr on most days, saving roughly PHP 1,400-2,800 per day in diesel.",
+      "datesObserved": [
+        "2026-05-20",
+        "2026-05-21",
+        "2026-05-22",
+        "2026-05-23",
+        "2026-05-24",
+        "2026-05-25"
+      ],
+      "resolved": false,
+      "resolvedDate": null
+    }
+  ]
+}
