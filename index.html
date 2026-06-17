@@ -1,0 +1,2758 @@
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Hue Solar Daily Briefing",
+  "schemaVersion": 1,
+  "description": "Daily solar/battery/genset operations dashboard for Hue Hotel Siargao. Yesterday's KPIs, genset cost, battery cycling, baseline comparison, today's outlook, and engineer-style narrative commentary. v1 uses manual data entry from DeyeCloud; auto-fetch via Claude in Chrome to be wired into a 23:59 scheduled task."
+}
+</script>
+<!--
+  Hue Hotel Siargao - Solar System Daily Briefing
+  ------------------------------------------------
+  A live Cowork artifact. Renders the analysis of yesterday's solar/battery/
+  genset performance and supports manual data entry until the 23:59 capture
+  task is wired to DeyeCloud via Claude in Chrome.
+
+  State persisted in localStorage under key `hueSolarDashboard.v1`.
+  Engineer commentary generated via window.cowork.askClaude().
+-->
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f5f8fb;
+    --card: #ffffff;
+    --card-border: #e3e8ef;
+    --text: #0f172a;
+    --text-muted: #5b6776;
+    --label: #6b7480;
+    --accent: #0a5cd3;
+    --accent-soft: #e7f0fc;
+    --good: #15803d;
+    --good-soft: #dcfce7;
+    --warn: #b45309;
+    --warn-soft: #fef3c7;
+    --bad: #b91c1c;
+    --bad-soft: #fee2e2;
+    --solar: #d97706;
+    --battery: #0a5cd3;
+    --genset: #6b21a8;
+    --consumption: #475569;
+    --grid: #e8edf3;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 18px 22px 60px;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  h1, h2, h3, h4 { margin: 0; font-weight: 600; }
+  h1 { font-size: 20px; letter-spacing: -0.01em; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--label); margin-bottom: 10px; }
+  h3 { font-size: 15px; margin-bottom: 6px; }
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .header .meta { color: var(--text-muted); font-size: 12.5px; margin-top: 4px; }
+  .header .data-status {
+    font-size: 11.5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .header .data-status.manual { background: var(--warn-soft); color: var(--warn); }
+  .header .data-status.empty  { background: var(--bad-soft); color: var(--bad); }
+
+  /* Quick-input row */
+  .quick-inputs {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    align-items: center;
+    box-shadow: var(--shadow);
+  }
+  .quick-inputs label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11.5px;
+    color: var(--label);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+  }
+  .quick-inputs input {
+    width: 110px;
+    padding: 6px 9px;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text);
+    background: #fff;
+  }
+  .quick-inputs input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+  .quick-inputs .spacer { flex: 1; }
+  .quick-inputs .hint { font-size: 11.5px; color: var(--text-muted); max-width: 320px; }
+
+  /* KPI tiles row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .kpi .kpi-label {
+    font-size: 11.5px;
+    color: var(--label);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .kpi .kpi-value {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .kpi .kpi-unit { font-size: 14px; font-weight: 400; color: var(--text-muted); margin-left: 2px; }
+  .kpi .kpi-sub  { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .kpi.solar       .kpi-value { color: var(--solar); }
+  .kpi.consumption .kpi-value { color: var(--consumption); }
+  .kpi.efficiency  .kpi-value { color: var(--accent); }
+  .kpi.genset      .kpi-value { color: var(--genset); }
+
+  .kpi .badge {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .kpi .badge.good { background: var(--good-soft); color: var(--good); }
+  .kpi .badge.warn { background: var(--warn-soft); color: var(--warn); }
+  .kpi .badge.bad  { background: var(--bad-soft); color: var(--bad); }
+
+  /* Two-column detail rows */
+  .detail-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 900px) { .detail-row { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+  .card h3 { color: var(--text); }
+  .card .desc { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+
+  /* Metric strip used inside detail cards */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 14px;
+    margin-top: 10px;
+  }
+  .metric-grid .m-label { font-size: 11.5px; color: var(--label); text-transform: uppercase; letter-spacing: 0.04em; }
+  .metric-grid .m-value { font-size: 17px; font-weight: 600; color: var(--text); margin-top: 2px; }
+  .metric-grid .m-value .u { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+  .metric-grid .m-note  { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Commentary card */
+  .commentary {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .commentary .commentary-body {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    min-height: 80px;
+  }
+  .commentary .commentary-body p { margin: 0 0 12px; }
+  .commentary .commentary-body p:last-child { margin-bottom: 0; }
+  .commentary .actions { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .commentary .commentary-placeholder { color: var(--text-muted); font-style: italic; }
+
+  /* Buttons */
+  .btn {
+    background: var(--accent);
+    color: white;
+    border: 0;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn:hover { background: #084db1; }
+  .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+  .btn.secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .btn.secondary:hover { background: var(--accent-soft); }
+  .btn.small { padding: 4px 10px; font-size: 12px; }
+
+  /* Collapsible sections */
+  details.section {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  details.section > summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+  }
+  details.section > summary::-webkit-details-marker { display: none; }
+  details.section > summary::after {
+    content: '+';
+    font-size: 18px;
+    color: var(--text-muted);
+    transition: transform 0.18s ease;
+  }
+  details.section[open] > summary::after { content: '\2212'; }
+  details.section .section-body { padding-top: 14px; }
+
+  /* Data entry form */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 14px;
+  }
+  @media (max-width: 700px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+  .form-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11.5px;
+    color: var(--label);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  .form-grid input, .form-grid textarea {
+    padding: 6px 9px;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text);
+    background: #fff;
+    font-family: inherit;
+  }
+  .form-grid textarea { min-height: 60px; resize: vertical; grid-column: 1 / -1; }
+  .form-grid input:focus, .form-grid textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+  .form-grid .form-actions { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 6px; }
+
+  /* Genset events mini-table */
+  .events-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+  .events-table th, .events-table td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--grid); }
+  .events-table th { font-size: 11px; color: var(--label); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
+  .events-table input { width: 100%; padding: 4px 6px; border: 1px solid var(--card-border); border-radius: 4px; font-size: 13px; }
+  .events-table .remove-row { background: transparent; color: var(--bad); border: 0; cursor: pointer; font-size: 16px; }
+
+  /* Chart container */
+  .chart-card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .chart-wrap { height: 240px; }
+
+  /* History list */
+  .history-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto auto;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--grid);
+    font-size: 13px;
+    align-items: center;
+  }
+  .history-row:last-child { border-bottom: 0; }
+  .history-row .h-date { font-weight: 500; }
+  .history-row .h-val  { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .history-row .h-load { color: var(--text-muted); }
+  .history-row .h-actions { display: flex; gap: 6px; }
+  .history-row .h-actions button { background: transparent; border: 1px solid var(--card-border); border-radius: 5px; padding: 3px 8px; cursor: pointer; font-size: 12px; color: var(--text-muted); }
+  .history-row .h-actions button:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* Footer */
+  .footer { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 18px; }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  .placeholder-block {
+    border: 1px dashed var(--card-border);
+    border-radius: 8px;
+    padding: 18px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    background: #fafcfe;
+  }
+
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 500; }
+  .pill.good { background: var(--good-soft); color: var(--good); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.bad  { background: var(--bad-soft); color: var(--bad); }
+  .pill.neutral { background: var(--accent-soft); color: var(--accent); }
+
+  /* Signals & recommended actions panel */
+  .signals-card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .signals-summary { font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin: 6px 0 4px; }
+  .signal { display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--grid); }
+  .signal:last-child { border-bottom: 0; }
+  .signal .dot { flex: 0 0 9px; width: 9px; height: 9px; border-radius: 50%; margin-top: 4px; }
+  .signal.bad  .dot { background: var(--bad); }
+  .signal.warn .dot { background: var(--warn); }
+  .signal.good .dot { background: var(--good); }
+  .signal .s-text { flex: 1; }
+  .signal .s-title { font-weight: 600; font-size: 13.5px; color: var(--text); }
+  .signal .s-detail { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; line-height: 1.5; }
+  .signal .s-action { font-size: 12.5px; color: var(--accent); margin-top: 4px; font-weight: 500; }
+
+  /* ── Financial Intelligence ── */
+  .section-heading {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--label); font-weight: 600; margin: 20px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-heading::after { content: ''; flex: 1; height: 1px; background: var(--grid); }
+
+  .kpi.saving   .kpi-value { color: var(--good); }
+  .kpi.saving.neg .kpi-value { color: var(--bad); }
+  .kpi.blended  .kpi-value { color: #0a5cd3; }
+  .kpi.du-rate  .kpi-value { color: var(--text-muted); }
+  .kpi.cost-room .kpi-value { color: var(--genset); }
+
+  .cost-vs-du-wrap { height: 220px; }
+
+  /* LCOE + ROI panel */
+  .lcoe-roi-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;
+  }
+  @media (max-width: 900px) { .lcoe-roi-grid { grid-template-columns: 1fr; } }
+
+  .lcoe-block { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+  .lcoe-block h3 { color: var(--text); margin-bottom: 6px; }
+  .lcoe-number { font-size: 36px; font-weight: 700; color: var(--good); letter-spacing: -0.03em; line-height: 1.1; }
+  .lcoe-number .u { font-size: 16px; font-weight: 400; color: var(--text-muted); margin-left: 2px; }
+  .lcoe-detail { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.6; }
+  .lcoe-vs { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .lcoe-vs .v { background: var(--accent-soft); border-radius: 8px; padding: 8px 12px; flex: 1; min-width: 100px; }
+  .lcoe-vs .v .lv-label { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+  .lcoe-vs .v .lv-val { font-size: 18px; font-weight: 700; color: var(--accent); }
+
+  .roi-block { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+  .roi-block h3 { color: var(--text); margin-bottom: 6px; }
+  .roi-balance { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .roi-balance.positive { color: var(--good); }
+  .roi-balance.negative { color: var(--bad); }
+  .roi-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin-top: 10px; }
+  .roi-stats .rs { }
+  .roi-stats .rs-label { font-size: 11px; color: var(--label); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
+  .roi-stats .rs-val { font-size: 16px; font-weight: 600; color: var(--text); margin-top: 2px; }
+  .roi-stats .rs-note { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+
+  .roi-chart-card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .roi-chart-wrap { height: 200px; }
+
+  /* Additional recommendation sections */
+  .rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 900px) { .rec-grid { grid-template-columns: 1fr; } }
+  .rec-card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+  .rec-card h3 { font-size: 14px; color: var(--text); margin-bottom: 4px; }
+  .rec-card .rc-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.5; }
+  .rec-big { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .rec-big .u { font-size: 13px; font-weight: 400; color: var(--text-muted); margin-left: 3px; }
+  .rec-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .progress-bar-outer { background: var(--grid); border-radius: 999px; height: 8px; margin: 8px 0 4px; overflow: hidden; }
+  .progress-bar-inner { height: 100%; border-radius: 999px; background: var(--good); transition: width 0.4s ease; }
+  .progress-bar-inner.warn { background: var(--warn); }
+  .progress-bar-inner.bad  { background: var(--bad); }
+
+  /* ── Weekly / Monthly Reports ── */
+  .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 900px) { .report-grid { grid-template-columns: 1fr; } }
+  .report-block { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px 20px; }
+  .report-kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+  .report-kpi { text-align: center; }
+  .report-kpi .rk-val { font-size: 21px; font-weight: 700; color: var(--accent); }
+  .report-kpi .rk-label { font-size: 10.5px; color: var(--label); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+  .report-kpi .rk-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .scorecard-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+  .scorecard-table th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--label); padding: 6px 8px; border-bottom: 1px solid var(--grid); }
+  .scorecard-table td { padding: 7px 8px; border-bottom: 1px solid var(--grid); color: var(--text); vertical-align: middle; }
+  .scorecard-table tr:last-child td { border-bottom: none; }
+  .status-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  .status-dot.green  { background: var(--good); }
+  .status-dot.yellow { background: #f59e0b; }
+  .status-dot.red    { background: var(--bad); }
+  .verdict-card { background: var(--card); border: 1px solid var(--card-border); border-left: 3px solid var(--accent); border-radius: 12px; padding: 16px 20px; margin-bottom: 14px; }
+  .verdict-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--label); margin: 0 0 10px; }
+  .verdict-card p { font-size: 13.5px; color: var(--text); line-height: 1.6; margin: 0 0 8px; }
+  .verdict-card p:last-child { margin: 0; }
+  .action-items-block { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px 20px; margin-bottom: 14px; }
+  .action-items-block h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--label); margin: 0 0 10px; }
+  .action-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--grid); font-size: 13px; color: var(--text); }
+  .action-item:last-child { border-bottom: none; }
+  .action-item .ai-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .wow-change { font-size: 11.5px; margin-top: 2px; }
+  .wow-change.up   { color: var(--good); }
+  .wow-change.down { color: var(--bad); }
+  .report-subheading { font-size: 12px; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.06em; margin: 16px 0 10px; border-bottom: 1px solid var(--grid); padding-bottom: 5px; }
+  .report-empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px; }
+
+  /* ── Drag-and-drop section reordering ── */
+  .drag-wrap { position: relative; }
+  .drag-handle {
+    position: absolute; top: 11px; right: 40px;
+    cursor: grab; font-size: 15px; color: var(--text-muted);
+    opacity: 0.35; transition: opacity 0.15s; z-index: 20;
+    user-select: none; line-height: 1; padding: 2px 5px;
+    background: var(--card); border-radius: 4px;
+    border: 1px solid var(--card-border);
+  }
+  .drag-wrap:hover > .drag-handle { opacity: 0.6; }
+  .drag-wrap.is-dragging { opacity: 0.4; outline: 2px dashed var(--accent); outline-offset: 2px; }
+  .drop-above { border-top: 3px solid var(--accent) !important; }
+  .drop-below { border-bottom: 3px solid var(--accent) !important; }
+  .section-lock-hint { font-size: 11.5px; color: var(--text-muted); text-align: right; margin-top: 4px; opacity: 0.55; }
+
+</style>
+
+<div class="header">
+  <div>
+    <h1>Hue Hotel Siargao &#8212; Solar Daily Briefing</h1>
+    <div class="meta">
+      <span id="brief-date">&#8212;</span> &#183; <span id="briefing-mode">Manual data entry mode</span>
+    </div>
+  </div>
+  <div class="data-status" id="data-status">No data for yesterday</div>
+</div>
+
+<div class="quick-inputs">
+  <label>
+    Rooms occupied (today)
+    <input type="number" id="rooms-today" min="0" max="33" step="1" value="10" />
+  </label>
+  <label>
+    Diesel price (&#8369;/L)
+    <input type="number" id="diesel-price" min="0" step="0.1" value="86.50" />
+  </label>
+  <label>
+    Viewing date
+    <input type="date" id="viewing-date" />
+  </label>
+  <label>
+    DU reference rate (&#8369;/kWh)
+    <input type="number" id="du-rate" min="0" step="0.5" value="14" style="width:90px;" />
+  </label>
+  <label>
+    System capex (&#8369;)
+    <input type="number" id="system-capex" min="0" step="100000" value="7000000" style="width:130px;" />
+  </label>
+  <div class="spacer"></div>
+  <div class="hint">Defaults pre-set: 10-room occupancy, &#8369;86.50/L diesel, &#8369;14/kWh DU reference, &#8369;7M solar capex. Diesel price, DU rate, and capex persist locally. Room occupancy is shared across all browsers.</div>
+</div>
+
+<!-- KPI tiles -->
+<div class="kpi-row">
+  <div class="kpi solar">
+    <div class="kpi-label">PV produced</div>
+    <div class="kpi-value"><span id="kpi-pv">&#8212;</span><span class="kpi-unit">kWh</span></div>
+    <div class="kpi-sub" id="kpi-pv-sub">Awaiting data</div>
+    <div class="badge" id="kpi-pv-badge" style="display:none"></div>
+  </div>
+  <div class="kpi consumption">
+    <div class="kpi-label">Hotel consumed</div>
+    <div class="kpi-value"><span id="kpi-load">&#8212;</span><span class="kpi-unit">kWh</span></div>
+    <div class="kpi-sub" id="kpi-load-sub">Awaiting data</div>
+  </div>
+  <div class="kpi efficiency">
+    <div class="kpi-label">kWh per occupied room</div>
+    <div class="kpi-value"><span id="kpi-perroom">&#8212;</span></div>
+    <div class="kpi-sub" id="kpi-perroom-sub">Awaiting data</div>
+  </div>
+  <div class="kpi genset">
+    <div class="kpi-label">Genset hours</div>
+    <div class="kpi-value"><span id="kpi-genset">&#8212;</span><span class="kpi-unit">hr</span></div>
+    <div class="kpi-sub" id="kpi-genset-sub">Awaiting data</div>
+    <div class="badge" id="kpi-genset-badge" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     WEEKLY REPORT
+════════════════════════════════════════════════════════════ -->
+<details class="section" id="weekly-report-section">
+  <summary id="weekly-report-summary">📋 Weekly Report — loading…</summary>
+  <div class="section-body" id="weekly-report-body">
+    <div class="report-empty">Weekly report generates on Mondays, covering the previous Mon–Sun week.</div>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MONTHLY REPORT
+════════════════════════════════════════════════════════════ -->
+<details class="section" id="monthly-report-section">
+  <summary id="monthly-report-summary">📅 Monthly Report — loading…</summary>
+  <div class="section-body" id="monthly-report-body">
+    <div class="report-empty">Monthly report generates on the 1st of each month, covering the previous calendar month.</div>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FINANCIAL INTELLIGENCE
+════════════════════════════════════════════════════════════ -->
+<div class="section-heading">Financial Intelligence</div>
+
+<!-- Financial KPI tiles -->
+<div class="kpi-row" id="fin-kpi-row">
+  <div class="kpi blended">
+    <div class="kpi-label">Blended cost / kWh</div>
+    <div class="kpi-value"><span id="fin-blended">&#8212;</span><span class="kpi-unit">&#8369;/kWh</span></div>
+    <div class="kpi-sub" id="fin-blended-sub">Solar LCOE + diesel cost &divide; total load</div>
+    <div class="badge" id="fin-blended-badge" style="display:none"></div>
+  </div>
+  <div class="kpi du-rate">
+    <div class="kpi-label">DU grid reference</div>
+    <div class="kpi-value"><span id="fin-du">&#8212;</span><span class="kpi-unit">&#8369;/kWh</span></div>
+    <div class="kpi-sub" id="fin-du-sub">What grid electricity would cost</div>
+  </div>
+  <div class="kpi saving" id="fin-saving-tile">
+    <div class="kpi-label">Daily saving vs diesel-only</div>
+    <div class="kpi-value">&#8369; <span id="fin-saving">&#8212;</span></div>
+    <div class="kpi-sub" id="fin-saving-sub">vs running everything on diesel</div>
+    <div class="badge" id="fin-saving-badge" style="display:none"></div>
+  </div>
+  <div class="kpi cost-room">
+    <div class="kpi-label">Cost per room night</div>
+    <div class="kpi-value">&#8369; <span id="fin-perroom-cost">&#8212;</span></div>
+    <div class="kpi-sub" id="fin-perroom-cost-sub">Total energy cost &divide; occupied rooms</div>
+  </div>
+</div>
+
+<!-- Daily blended cost vs DU chart + LCOE panel -->
+<div class="lcoe-roi-grid">
+  <div class="chart-card" style="margin-bottom:0;">
+    <h2>Daily blended cost vs. DU reference</h2>
+    <h3>What each day's electricity actually cost you</h3>
+    <div class="desc">Green = below DU grid rate (solar saving money). Red = above DU rate (heavy diesel day). DU reference line shown in blue.</div>
+    <div class="cost-vs-du-wrap"><canvas id="cost-vs-du-chart"></canvas></div>
+  </div>
+
+  <div class="lcoe-block">
+    <h2>LCOE &mdash; Solar cost of electricity</h2>
+    <h3>What your solar array charges per kWh over its lifetime</h3>
+    <div class="desc">Based on &#8369;<span id="lcoe-capex-label">7,000,000</span> capex &middot; 25-yr life &middot; 0.5%/yr degradation &middot; &#8369;70K/yr O&amp;M.</div>
+    <div class="lcoe-number" id="lcoe-value">&#8212; <span class="u">&#8369;/kWh</span></div>
+    <div class="lcoe-vs">
+      <div class="v">
+        <div class="lv-label">vs. Diesel</div>
+        <div class="lv-val" id="lcoe-vs-diesel">&#8212;</div>
+      </div>
+      <div class="v">
+        <div class="lv-label">vs. DU grid</div>
+        <div class="lv-val" id="lcoe-vs-du">&#8212;</div>
+      </div>
+    </div>
+    <div class="lcoe-detail">Solar's lifetime levelized cost is the &ldquo;true&rdquo; price of every kWh the panels produce, amortized over 25 years. Compared to diesel at &#8369;<span id="lcoe-diesel-price">&#8212;</span>/kWh delivered, solar is dramatically cheaper &mdash; the genset is the cost driver to minimize.</div>
+  </div>
+</div>
+
+<!-- Further recommendations row -->
+<div class="section-heading">Further Recommendations</div>
+<div class="rec-grid">
+  <!-- Avoidable waste -->
+  <div class="rec-card">
+    <h3>&#9888;&#65039; Avoidable Diesel Waste</h3>
+    <div class="rc-desc">Genset runs that started during solar hours with SOC &ge; 55% are flagged as avoidable. This shows the cumulative PHP cost of those runs.</div>
+    <div class="rec-big" id="rec-waste">&#8212;</div>
+    <div class="rec-sub" id="rec-waste-sub">Estimated cost of flagged avoidable runs</div>
+    <div id="rec-waste-detail" style="margin-top:10px;font-size:12.5px;color:var(--text-muted);"></div>
+  </div>
+  <!-- Monthly diesel projection -->
+  <div class="rec-card">
+    <h3>&#128202; Monthly Diesel Projection</h3>
+    <div class="rc-desc">Based on recent average genset hours, projects what this month's diesel spend will total. Compare against your budget to plan ahead.</div>
+    <div class="rec-big" id="rec-monthly">&#8212;</div>
+    <div class="rec-sub" id="rec-monthly-sub">Projected cost this month (30-day run rate)</div>
+    <div style="margin-top:8px;" id="rec-monthly-bar-wrap">
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner warn" id="rec-monthly-bar" style="width:0%"></div>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px;" id="rec-monthly-bar-label"></div>
+    </div>
+  </div>
+  <!-- Carbon savings -->
+  <div class="rec-card">
+    <h3>&#127807; Carbon Saved by Solar</h3>
+    <div class="rc-desc">Solar kWh displaced from the Philippine grid (0.64 kg CO&#8322;/kWh) or diesel genset (~0.87 kg CO&#8322;/kWh). Cumulative across all days logged.</div>
+    <div class="rec-big good" id="rec-carbon" style="color:var(--good)">&#8212;</div>
+    <div class="rec-sub" id="rec-carbon-sub">kg CO&#8322; avoided (vs. diesel-only operation)</div>
+    <div id="rec-carbon-detail" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;"></div>
+  </div>
+  <!-- Self-sufficiency -->
+  <div class="rec-card">
+    <h3>&#9728;&#65039; Solar Self-Sufficiency</h3>
+    <div class="rc-desc">What percentage of the hotel's total energy came from solar (PV). The higher, the better &mdash; target is 70%+ on a clear day.</div>
+    <div class="rec-big" id="rec-selfsuf" style="color:var(--accent)">&#8212;</div>
+    <div class="rec-sub" id="rec-selfsuf-sub">PV share of total energy (this day)</div>
+    <div style="margin-top:8px;">
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" id="rec-selfsuf-bar" style="width:0%"></div>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px;" id="rec-selfsuf-note"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     REORDERABLE SECTIONS — drag the ⠿ handle to rearrange
+     Layout is saved in your browser automatically.
+══════════════════════════════════════════════════════ -->
+<div id="drag-container">
+
+<div class="drag-wrap" data-section-id="yesterday-log" draggable="true">
+<!-- Manual operations log -->
+<details class="section" open>
+  <summary>Yesterday's manual operations log</summary>
+  <div class="section-body">
+    <div class="desc" style="margin-bottom: 10px; color: var(--text-muted); font-size: 12.5px;">
+      Until auto-start is wired, every genset event should be logged here. This is also how we close the historical data-hygiene gap going forward.
+    </div>
+    <table class="events-table" id="events-table">
+      <thead>
+        <tr>
+          <th>Start time</th>
+          <th>Start SOC %</th>
+          <th>Stop time</th>
+          <th>Stop SOC %</th>
+          <th>Reason</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="events-tbody"></tbody>
+    </table>
+    <button class="btn secondary small" id="add-event" style="margin-top: 8px;">+ Add genset event</button>
+  </div>
+</details>
+</div>
+
+<div class="drag-wrap" data-section-id="entry-section" draggable="true">
+<!-- Data entry form -->
+<details class="section" id="entry-section" open>
+  <summary>Enter yesterday's totals from DeyeCloud</summary>
+  <div class="section-body">
+    <div class="desc" style="margin-bottom: 10px; color: var(--text-muted); font-size: 12.5px;">
+      Open DeyeCloud &#8594; your station &#8594; Statistics &#8594; Day view for yesterday's date. Copy the values across. Once Claude in Chrome is connected and the 23:59 task is live, this section auto-fills.
+    </div>
+    <div class="form-grid">
+      <label>PV produced (kWh)<input type="number" id="f-pv" step="0.1" min="0" /></label>
+      <label>Hotel consumption (kWh)<input type="number" id="f-load" step="0.1" min="0" /></label>
+      <label>Peak PV power (kW)<input type="number" id="f-peakpv" step="0.1" min="0" /></label>
+      <label>Peak hotel load (kW)<input type="number" id="f-peakload" step="0.1" min="0" /></label>
+      <label>Min SOC observed (%)<input type="number" id="f-minsoc" step="1" min="0" max="100" /></label>
+      <label>Max SOC observed (%)<input type="number" id="f-maxsoc" step="1" min="0" max="100" /></label>
+      <label>SOC at sunset (%)<input type="number" id="f-sunset" step="1" min="0" max="100" /></label>
+      <label>Rooms occupied that night<input type="number" id="f-rooms" step="1" min="0" max="33" /></label>
+      <label>Genset hours (from log)<input type="number" id="f-gen-hours" step="0.1" min="0" /></label>
+      <label>Alarms / faults (DeyeCloud)<textarea id="f-alarms" placeholder="Any inverter or BMS alarms surfaced yesterday"></textarea></label>
+      <label>Operator notes<textarea id="f-notes" placeholder="Anything unusual, manual interventions, weather, equipment events"></textarea></label>
+      <div class="form-actions">
+        <button class="btn" id="save-day">Save day</button>
+        <button class="btn secondary" id="clear-form">Clear form</button>
+      </div>
+    </div>
+  </div>
+</details>
+</div>
+
+<div class="drag-wrap" data-section-id="commentary-section" draggable="true">
+<!-- Engineer's commentary -->
+<div class="commentary">
+  <h2>Engineer's daily commentary</h2>
+  <h3>The narrative your morning needs</h3>
+  <div class="desc">Generated from yesterday's KPIs, the rolling baseline, current occupancy, and the system spec sheet. Re-runnable; treats your numbers as authoritative.</div>
+  <div class="commentary-body" id="commentary-body">
+    <div class="commentary-placeholder">Enter yesterday's data below, then click <strong>Generate analysis</strong> for an engineer-style narrative covering anomalies, what drove the cost, and what to adjust tonight.</div>
+  </div>
+  <div class="actions">
+    <button class="btn" id="generate-commentary">Generate analysis</button>
+    <button class="btn secondary" id="copy-commentary" style="display:none">Copy</button>
+    <span id="commentary-status" style="color: var(--text-muted); font-size: 12px;"></span>
+  </div>
+</div>
+</div>
+
+<div class="drag-wrap" data-section-id="trend-section" draggable="true">
+<!-- 30-day trend chart -->
+<div class="chart-card">
+  <h2>Recent operating trend</h2>
+  <h3>Daily PV, consumption, and genset hours</h3>
+  <div class="desc">Builds itself as you enter each day's data. The longer this runs, the sharper the baselines become.</div>
+  <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+</div>
+</div>
+
+<div class="drag-wrap" data-section-id="genset-battery" draggable="true">
+<!-- Genset economics + Battery health -->
+<div class="detail-row">
+  <div class="card">
+    <h2>Genset economics</h2>
+    <h3>What yesterday's diesel cost you</h3>
+    <div class="desc">Uses observed 43 L/hr average burn &#215; current diesel price. Real fuel log will refine this once you log it daily below.</div>
+    <div class="metric-grid">
+      <div>
+        <div class="m-label">Run hours</div>
+        <div class="m-value"><span id="ge-hours">&#8212;</span> <span class="u">hr</span></div>
+      </div>
+      <div>
+        <div class="m-label">Estimated diesel burned</div>
+        <div class="m-value"><span id="ge-liters">&#8212;</span> <span class="u">L</span></div>
+        <div class="m-note">at 43 L/hr</div>
+      </div>
+      <div>
+        <div class="m-label">Estimated cost</div>
+        <div class="m-value">&#8369; <span id="ge-cost">&#8212;</span></div>
+        <div class="m-note" id="ge-cost-note">&#8212;</div>
+      </div>
+      <div>
+        <div class="m-label">&#8369; per kWh delivered by genset</div>
+        <div class="m-value">&#8369; <span id="ge-perkwh">&#8212;</span> <span class="u">/ kWh</span></div>
+        <div class="m-note" id="ge-perkwh-note">vs. PV LCOE &lt; &#8369;5/kWh</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Battery cycling &amp; health</h2>
+    <h3>How hard the bank worked yesterday</h3>
+    <div class="desc">Targets: never below 20% SOC, time below 30% minimized, equivalent cycles &#8804; 1.0 per day for long bank life.</div>
+    <div class="metric-grid">
+      <div>
+        <div class="m-label">Min SOC</div>
+        <div class="m-value"><span id="bh-minsoc">&#8212;</span> <span class="u">%</span></div>
+        <div class="m-note" id="bh-minsoc-note">&#8212;</div>
+      </div>
+      <div>
+        <div class="m-label">Max SOC</div>
+        <div class="m-value"><span id="bh-maxsoc">&#8212;</span> <span class="u">%</span></div>
+        <div class="m-note" id="bh-maxsoc-note">&#8212;</div>
+      </div>
+      <div>
+        <div class="m-label">SOC at sunset</div>
+        <div class="m-value"><span id="bh-sunset">&#8212;</span> <span class="u">%</span></div>
+        <div class="m-note">Higher = more night headroom</div>
+      </div>
+      <div>
+        <div class="m-label">Depth of discharge</div>
+        <div class="m-value"><span id="bh-dod">&#8212;</span> <span class="u">%</span></div>
+        <div class="m-note">Max SOC &#8722; Min SOC</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="drag-wrap" data-section-id="pv-outlook" draggable="true">
+<!-- Production baseline + Today's outlook -->
+<div class="detail-row">
+  <div class="card">
+    <h2>PV production vs. baseline</h2>
+    <h3>How yesterday compared</h3>
+    <div class="desc">Baseline learned from accumulating daily data. With limited history, the dashboard falls back to the Siargao annual-average estimate of ~366 kWh.</div>
+    <div class="metric-grid">
+      <div>
+        <div class="m-label">Yesterday</div>
+        <div class="m-value"><span id="pb-yesterday">&#8212;</span> <span class="u">kWh</span></div>
+      </div>
+      <div>
+        <div class="m-label">7-day rolling avg</div>
+        <div class="m-value"><span id="pb-7d">&#8212;</span> <span class="u">kWh</span></div>
+      </div>
+      <div>
+        <div class="m-label">30-day rolling avg</div>
+        <div class="m-value"><span id="pb-30d">&#8212;</span> <span class="u">kWh</span></div>
+      </div>
+      <div>
+        <div class="m-label">vs. baseline</div>
+        <div class="m-value"><span id="pb-delta">&#8212;</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Today's outlook</h2>
+    <h3>What to expect tonight</h3>
+    <div class="desc">Projects consumption from current occupancy and the system's empirical kWh-per-room curve, then estimates whether tonight's battery alone can carry the hotel to sunrise.</div>
+    <div class="metric-grid">
+      <div>
+        <div class="m-label">Projected consumption today</div>
+        <div class="m-value"><span id="ot-load">&#8212;</span> <span class="u">kWh</span></div>
+        <div class="m-note" id="ot-load-note">Based on rooms &#215; per-room avg</div>
+      </div>
+      <div>
+        <div class="m-label">Expected PV today</div>
+        <div class="m-value"><span id="ot-pv">&#8212;</span> <span class="u">kWh</span></div>
+        <div class="m-note" id="ot-pv-note">Rolling avg as proxy</div>
+      </div>
+      <div>
+        <div class="m-label">Night-only need</div>
+        <div class="m-value"><span id="ot-night">&#8212;</span> <span class="u">kWh</span></div>
+        <div class="m-note">vs. ~245&#8211;265 kWh usable bank</div>
+      </div>
+      <div>
+        <div class="m-label">Genset likely needed?</div>
+        <div class="m-value"><span id="ot-genset">&#8212;</span></div>
+        <div class="m-note" id="ot-genset-note">&#8212;</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="drag-wrap" data-section-id="signals-section" draggable="true">
+<!-- Signals & recommended actions -->
+<div class="signals-card">
+  <h2>Signals &amp; recommended actions</h2>
+  <h3>What to change, based on this day's data</h3>
+  <div class="desc">Automatic checks on genset timing, battery cycling, and solar curtailment. Refreshes for whichever day you load.</div>
+  <div class="signals-summary" id="signals-summary"></div>
+  <div id="signals-body"></div>
+</div>
+</div>
+
+<div class="drag-wrap" data-section-id="roi-section" draggable="true">
+<!-- ROI — Investment Recovery (collapsible) -->
+<details class="section">
+  <summary>ROI &mdash; Investment Recovery &amp; Running Balance</summary>
+  <div class="section-body">
+
+    <!-- ROI running balance + stats -->
+    <div class="lcoe-roi-grid">
+      <div class="roi-block">
+        <h2>ROI &mdash; Investment recovery</h2>
+        <h3>How much of the &#8369;7M has been recovered</h3>
+        <div class="roi-balance negative" id="roi-balance">&#8212;</div>
+        <div class="roi-stats">
+          <div class="rs">
+            <div class="rs-label">Avg daily saving</div>
+            <div class="rs-val" id="roi-avg-daily">&#8212;</div>
+            <div class="rs-note">vs diesel-only baseline</div>
+          </div>
+          <div class="rs">
+            <div class="rs-label">Projected payback</div>
+            <div class="rs-val" id="roi-payback">&#8212;</div>
+            <div class="rs-note" id="roi-payback-note">from system start</div>
+          </div>
+          <div class="rs">
+            <div class="rs-label">Days in operation</div>
+            <div class="rs-val" id="roi-days">&#8212;</div>
+            <div class="rs-note">with data captured</div>
+          </div>
+          <div class="rs">
+            <div class="rs-label">Cumulative savings</div>
+            <div class="rs-val" id="roi-cumulative">&#8212;</div>
+            <div class="rs-note">vs diesel-only</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="roi-block">
+        <h2>Recovery progress</h2>
+        <h3>&#8369;7M investment vs. cumulative savings</h3>
+        <div class="desc" id="roi-progress-desc">Percentage of capex recovered so far.</div>
+        <div style="margin: 12px 0 4px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-bottom:4px;">
+            <span>&#8369;0 recovered</span>
+            <span id="roi-pct-label">0%</span>
+            <span>&#8369;<span id="roi-capex-label">7,000,000</span></span>
+          </div>
+          <div class="progress-bar-outer">
+            <div class="progress-bar-inner" id="roi-progress-bar" style="width:0%"></div>
+          </div>
+        </div>
+        <div style="margin-top:14px;">
+          <div class="rs-label" style="font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:0.04em;font-weight:600;">Annual projection (extrapolated)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-top:8px;">
+            <div>
+              <div class="rs-label">Annual saving (projected)</div>
+              <div class="rs-val" id="roi-annual">&#8212;</div>
+            </div>
+            <div>
+              <div class="rs-label">Simple payback</div>
+              <div class="rs-val" id="roi-simple-payback">&#8212;</div>
+            </div>
+            <div>
+              <div class="rs-label">Remaining to recover</div>
+              <div class="rs-val" id="roi-remaining">&#8212;</div>
+            </div>
+            <div>
+              <div class="rs-label">25-yr net saving</div>
+              <div class="rs-val" id="roi-lifetime">&#8212;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROI running balance chart -->
+    <div class="roi-chart-card">
+      <h2>ROI running balance &mdash; investment recovery curve</h2>
+      <h3>Cumulative savings vs. the &#8369;7M investment over time</h3>
+      <div class="desc">Starts at &minus;&#8369;7M on Day 1. Climbs each day by the saving vs. diesel-only operation. Crosses zero = fully paid back.</div>
+      <div class="roi-chart-wrap"><canvas id="roi-chart"></canvas></div>
+    </div>
+
+  </div>
+</details>
+</div>
+
+<div class="drag-wrap" data-section-id="history-section" draggable="true">
+<!-- History -->
+<details class="section">
+  <summary>Day history</summary>
+  <div class="section-body">
+    <div id="history-list">
+      <div class="placeholder-block">No days saved yet. Enter yesterday's data above to start the historical record.</div>
+    </div>
+  </div>
+</details>
+</div>
+
+<div class="drag-wrap" data-section-id="about-section" draggable="true">
+<!-- About / Help -->
+<details class="section">
+  <summary>About this dashboard</summary>
+  <div class="section-body" style="font-size: 13px; color: var(--text); line-height: 1.55;">
+    <p>This is a <strong>Cowork live artifact</strong>. Three things are happening behind the scenes:</p>
+    <p><strong>1. The spec sheet (memory).</strong> Hardware values &#8212; inverter count, battery kWh, observed genset fuel burn &#8212; live in a markdown file the analysis reads on every run. Keeps recommendations grounded.</p>
+    <p><strong>2. This dashboard (live view).</strong> Persistent page. KPIs and commentary regenerate from whatever data exists. State stored locally; survives across sessions.</p>
+    <p><strong>3. The 11:59 p.m. scheduled task (automation, pending).</strong> Once we wire up Claude in Chrome to access DeyeCloud, the task runs nightly, captures the day's totals, and pre-fills this form for your 10 a.m. review. Until then, paste values from DeyeCloud manually.</p>
+    <p style="margin-top: 12px;"><strong>What you do each morning:</strong></p>
+    <p>Confirm today's rooms-occupied number at the top. Glance at the four big KPIs. Read the engineer's commentary. If anything is off (production below baseline, genset cost spike, low minimum SOC), the commentary explains why and what to change.</p>
+  </div>
+</details>
+</div>
+
+</div><!-- /#drag-container -->
+
+<p class="section-lock-hint">Drag the ⠿ handle on any section to rearrange. Layout saves automatically.</p>
+
+<div class="footer">
+  Last updated <span id="last-update">never</span> &#183; Room occupancy syncs to all browsers. Other settings persist locally on this device.
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<script>
+  // ============================================================
+  //  CONSTANTS - mirrors the spec sheet for in-browser math
+  // ============================================================
+  const SPEC = {
+    pvKwp: 96.28,
+    inverterAcKw: 150,
+    batteryNominalKwh: 368.64,
+    batteryUsableAcKwh: 255,        // midpoint of 245-265 estimate
+    socFloor: 20,
+    gensetLPerHourMidpoint: 43,   // observed 30-35 L/hr
+    perRoomFallbackKwhPerDay: 14,   // initial estimate: 8 kW * 12h / 10 rooms then halved daytime; revised by data
+    annualAvgKwhDay: 366,           // Siargao 9.8N at PR 0.78
+    rollingDays: 30,
+    // Financial intelligence
+    systemLifetimeYears: 25,        // standard solar system design life
+    annualOMCost: 70000,            // PHP/yr O&M estimate (≈1% of 7M)
+    degradationRatePerYear: 0.005,  // 0.5%/yr panel degradation
+    gensetKwhPerLiter: 1.9,         // observed: ~1.9 kWh delivered per litre diesel
+    co2KgPerKwh: 0.87,              // kg CO₂ per kWh from diesel genset (vs 0.64 grid)
+    dieselBudgetPerMonth: 200000,   // PHP — default monthly diesel budget alert threshold
+  };
+
+  // BAKED_DATA - days parsed from DeyeCloud exports. The 23:59 task
+  // regenerates this block each night via update_artifact. Manual
+  // localStorage entries merge on top of (and override) this.
+  const BAKED_DATA = {
+    "2026-05-25": {
+      date: "2026-05-25", source: "auto",
+      pv: 377.7, load: 628, gensetKwh: 296, gensetHours: 4.33,
+      peakPv: 66.21, peakLoad: 58.86,
+      minSoc: 31.5, maxSoc: 99.7, sunsetSoc: 78.3,
+      rooms: null,
+      alarms: "None surfaced by DeyeCloud.",
+      notes: "Auto-captured from DeyeCloud station 61801841.",
+      commentary: "May 25 showed weaker solar at 378 kWh - about 3% above the annual-average estimate but well below the recent 7-day average, pointing to partial cloud cover. The genset carried 296 kWh, a 44% energy share. While the overcast conditions justify higher genset use than May 24, the morning run pattern pushed fuel costs back up toward the weekly average.\n\nThe battery cycled more deeply than recent days. SOC bottomed at 31.5%, inside the 28-35% manual-start band and above the 20% floor, so the 07:40 morning start was correctly triggered by a genuine overnight draw. Depth of discharge was 68 points. Max SOC reached 99.7%, and the 78% sunset SOC was healthy. The 10:25 five-minute micro-run at 99% SOC is a minor anomaly - likely an automatic restart on a transient load; worth noting in the site log.\n\nThe morning run from 07:40 to 09:55 charged from 33% to 94%. Stopping at 94% when solar was already climbing cost an extra 30-40 minutes versus a target of 75-80%, adding roughly 35 litres (PHP 3,000) in avoidable diesel. The evening run at 20:00 (48% start, 85% stop) was well-executed. Total estimated cost for the day: PHP 12,170. The one concrete change: on cloudy mornings, still stop the dawn run at 75-80% and let any available afternoon sun push it higher before nightfall.",
+      events: [
+        { startTime: "07:40", startSoc: 33, stopTime: "09:55", stopSoc: 94, reason: "" },
+        { startTime: "10:25", startSoc: 99, stopTime: "10:30", stopSoc: 99, reason: "" },
+        { startTime: "20:00", startSoc: 48, stopTime: "22:00", stopSoc: 85, reason: "" }
+      ]
+    },
+    "2026-05-24": {
+      date: "2026-05-24", source: "auto",
+      pv: 527.4, load: 717, gensetKwh: 221.7, gensetHours: 3.5,
+      peakPv: 102.45, peakLoad: 81.18,
+      minSoc: 34.2, maxSoc: 93, sunsetSoc: 39,
+      rooms: null,
+      alarms: "None surfaced by DeyeCloud.",
+      notes: "Auto-captured from DeyeCloud station 61801841.",
+      commentary: "May 24 was the strongest production day in the current dataset at 527 kWh, approximately 44% above the annual-average baseline. The genset contributed 222 kWh (30% of total energy), but with only a single run all day, the operational pattern was much cleaner than previous days. There is no evidence of avoidable mid-morning diesel use, which is a meaningful improvement.\n\nBattery cycling was conservative and healthy. SOC reached only 93%, which is not a concern - the array charged the bank to near-full without genset support pushing for float. Min SOC was 34.2%, sitting just inside the 28-35% manual-start band, confirming the evening run was correctly triggered. Depth of discharge was 59 points. The 39% sunset SOC signalled the need for the evening run, which delivered it cleanly.\n\nThe single genset run at 18:00 (35% start, 93% stop) ran 3.5 hours at an estimated PHP 9,839 - the lowest daily diesel cost in the log. This is what clean operation looks like: one evening window triggered at a genuine low point, solar doing all the daytime work. The remaining refinement is small: stopping the run at 85% instead of 93% saves roughly 30 minutes of diesel, as morning solar easily restores the difference. If tomorrow has similar solar, this pattern should repeat with no modifications needed.",
+      events: [
+        { startTime: "18:00", startSoc: 35, stopTime: "21:30", stopSoc: 93, reason: "" }
+      ]
+    },
+    "2026-05-23": {
+      date: "2026-05-23", source: "auto",
+      pv: 409.9, load: 631, gensetKwh: 280.7, gensetHours: 4.67,
+      peakPv: 80.38, peakLoad: 58.66,
+      minSoc: 39.3, maxSoc: 99.7, sunsetSoc: 75,
+      rooms: null,
+      alarms: "None surfaced by DeyeCloud.",
+      notes: "Auto-captured from DeyeCloud station 61801841.",
+      commentary: "May 23 brought reasonable solar production at 410 kWh - about 12% above the Siargao annual-average benchmark of 366 kWh and consistent with recent history. Even so, the diesel generator supplied 281 kWh, a 41% share of total energy. On a day with adequate solar that share should be under 15%, and the culprit is visible in the morning cluster of genset runs.\n\nThe battery cycled safely. SOC bottomed at 39%, above the 20% floor and clear of the 28-35% manual-start band, with depth of discharge of 60 points. The bank reached 99.7% float, and the 75% sunset SOC left a healthy buffer heading into the night. No battery health concerns.\n\nThe genset ran 4.67 hours, burning roughly 152 litres at an estimated PHP 13,130 - about PHP 47 per kWh delivered. The evening run at 20:00 (44% SOC start) was justified. The morning cluster is the avoidable cost: the first run started at 45% SOC during rising solar and pushed the bank to 95%, followed by two brief top-up stutters at 97% and 99%. Those three runs together spent about 2 hours doing work the sun would have done for free. The rule for tomorrow: hold the morning genset until SOC enters the 28-35% band, and stop it at 75-80% so solar can finish the charge.",
+      events: [
+        { startTime: "09:30", startSoc: 45, stopTime: "11:10", stopSoc: 95, reason: "" },
+        { startTime: "11:15", startSoc: 97, stopTime: "11:20", stopSoc: 97, reason: "" },
+        { startTime: "11:25", startSoc: 99, stopTime: "11:35", stopSoc: 100, reason: "" },
+        { startTime: "20:00", startSoc: 44, stopTime: "22:45", stopSoc: 93, reason: "" }
+      ]
+    },
+    "2026-05-22": {
+      date: "2026-05-22", source: "auto",
+      pv: 271.5, load: 540, gensetKwh: 333.5, gensetHours: 5.75,
+      peakPv: 94.33, peakLoad: 57.36,
+      minSoc: 32.2, maxSoc: 99.5, sunsetSoc: 49,
+      rooms: 8,
+      alarms: "None surfaced by DeyeCloud.",
+      notes: "Auto-captured from DeyeCloud station 61801841. Weak solar day (272 kWh); genset supplied 55% of energy.",
+      commentary: "May 22 was a weak solar day. The array produced just 272 kWh, little more than half of May 21, so this was almost certainly an overcast or monsoon day. With solar short, the diesel generator carried 333 kWh - 55% of the day's energy. On a genuinely cloudy day heavy genset use is expected, so this is less alarming than it looks, but it is still the most expensive way to power the hotel.\n\nThe battery was cycled hard but safely. SOC bottomed at 32%, inside the 28-35% manual-start band and well clear of the 20% floor, with depth of discharge of 67 points. No battery-health concern, though a day this deep is not one you want repeated back to back.\n\nThe generator ran 5.75 hours across three windows. The evening run from 18:45 to 22:15, lifting SOC from 33% to 93%, was clearly necessary. The 10:00 to 12:05 run is more defensible than on a sunny day given the weak solar, though it still charged to 95%; stopping nearer 80% leaves room for whatever afternoon sun appears. With a poor solar forecast, plan the evening genset window early and keep the daytime run as short as the low points allow.",
+      events: [
+        { startTime: "10:00", startSoc: 41, stopTime: "12:05", stopSoc: 95, reason: "" },
+        { startTime: "12:30", startSoc: 98, stopTime: "12:40", stopSoc: 99, reason: "" },
+        { startTime: "18:45", startSoc: 33, stopTime: "22:15", stopSoc: 93, reason: "" }
+      ]
+    },
+    "2026-05-20": {
+      date: "2026-05-20", source: "auto",
+      pv: 445.6, load: 643.8, gensetKwh: 318.1, gensetHours: 4.92,
+      peakPv: 73.98, peakLoad: 53.55,
+      minSoc: 38.2, maxSoc: 99.3, sunsetSoc: 78.8,
+      rooms: 6,
+      alarms: "None surfaced by DeyeCloud.",
+      notes: "Genset supplied 42% of system energy. Afternoon solar curtailed once battery hit 99% at 11:55.",
+      commentary: "Production on May 20 needs reading carefully. DeyeCloud's headline daily production of 764 kWh blends two very different sources: 446 kWh of actual solar and 318 kWh from the diesel generator. The generator supplied 42% of everything the system delivered that day - a high share for a 96 kWp array, and the single most important number on this page.\n\nThe battery itself had a healthy day. SOC bottomed at 38% around 04:45, comfortably above the 20% floor and even above the 28-35% manual-start band, and reached 99% by late morning. Depth of discharge was 61 points and the bank never entered the sub-30% warning zone.\n\nThe generator ran 4.92 hours across three windows, costing roughly PHP 13,800 in diesel and delivering energy at about PHP 43 per kWh - nine times the cost of solar. The 04:50 and 20:30 runs caught genuine low points; the 10:20 to 11:05 run did not - it charged the bank from 80% to 95% mid-morning when solar was already climbing. Because the morning runs pushed the battery to 99% by 11:55, the array sat curtailed all afternoon, spilling an estimated 80-90 kWh of free solar. Tomorrow: hold the morning genset to just clearing the pre-dawn low and let solar do the daytime charging.",
+      events: [
+        { startTime: "04:50", startSoc: 40, stopTime: "06:25", stopSoc: 72, reason: "Pre-dawn battery low point - justified" },
+        { startTime: "10:20", startSoc: 80, stopTime: "11:10", stopSoc: 95, reason: "Mid-morning top-up - questionable, solar was already charging" },
+        { startTime: "20:30", startSoc: 47, stopTime: "23:00", stopSoc: 92, reason: "Evening battery low point - justified" }
+      ]
+    },
+    "2026-05-21": {
+      date: "2026-05-21", source: "auto",
+      pv: 513.8, load: 691, gensetKwh: 231.2, gensetHours: 3.83,
+      peakPv: 80.18, peakLoad: 75.43,
+      minSoc: 41.7, maxSoc: 100, sunsetSoc: 73.7,
+      rooms: 7,
+      alarms: "None surfaced by DeyeCloud.",
+      notes: "Auto-captured from DeyeCloud station 61801841. Solar 514 kWh, genset 231 kWh (31% of energy). Genset ran 2 windows, 3.83 hr total.",
+      commentary: "May 21 was a strong solar day undercut by the same mistake as the day before. The array produced 514 kWh of actual solar - a healthy figure for the season - but the diesel generator still added 231 kWh on top, 31% of the day's energy. On a clear day at roughly 10 rooms occupied, that genset share should be close to zero.\n\nThe battery cycled cleanly. It bottomed at 42% just before the evening genset run and never came near the 20% floor; depth of discharge was a comfortable 58 points. No concern on how the bank was treated.\n\nThe problem is the 10:00 to 11:20 genset run. It started with the battery already at 66% and climbing on solar, then pushed it to a full 100% by 11:20 - about 1.3 hours and roughly 43 litres of diesel for energy the sun was delivering for free. Filling the bank that early also left no headroom for midday solar, so the array spent the afternoon curtailed. The evening run from 20:30 to 23:00, lifting SOC from 42% to 90%, was the genuinely necessary one. The fix for tomorrow: skip the mid-morning genset entirely and let solar carry the daytime charge.",
+      events: [
+        { startTime: "10:00", startSoc: 66, stopTime: "11:20", stopSoc: 100, reason: "Mid-morning run - charged bank to 100% during solar hours, avoidable" },
+        { startTime: "20:30", startSoc: 42, stopTime: "23:00", stopSoc: 90, reason: "Evening battery low point" }
+      ]
+    }
+  };
+
+  // ============================================================
+  //  STATE
+  // ============================================================
+  const STORAGE_KEY = 'hueSolarDashboard.v1';
+  const NETLIFY_TOKEN   = 'nfp_dj6a8VUYP4dMUZuYn5sjEyhkZSuzwL1G3ec5';
+  const NETLIFY_SITE_ID = '3ecf1706-ac88-4270-8e2b-be9c172812e2';
+
+  async function publishRoomsToNetlify(iso, rooms) {
+    // Publish rooms for one day to solar_data.json so any browser sees it
+    try {
+      var [existingJson, htmlBytes] = await Promise.all([
+        fetch('/solar_data.json?cb=' + Date.now()).then(function(r){ return r.json(); }),
+        fetch('/index.html?cb='      + Date.now()).then(function(r){ return r.arrayBuffer(); })
+      ]);
+      if (!existingJson.days[iso]) return; // day not in JSON — skip (manual-only day)
+      existingJson.days[iso].rooms = rooms;
+      var jsonStr = JSON.stringify(existingJson, null, 2);
+      async function sha1(data) {
+        var buf = await crypto.subtle.digest('SHA-1', typeof data === 'string' ? new TextEncoder().encode(data) : data);
+        return Array.from(new Uint8Array(buf)).map(function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
+      }
+      var shaJson = await sha1(jsonStr);
+      var shaHtml = await sha1(new Uint8Array(htmlBytes));
+      var dep = await fetch('https://api.netlify.com/api/v1/sites/' + NETLIFY_SITE_ID + '/deploys', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + NETLIFY_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: { '/solar_data.json': shaJson, '/index.html': shaHtml } })
+      });
+      var depj = await dep.json();
+      if (depj.required && depj.required.indexOf(shaJson) >= 0) {
+        await fetch('https://api.netlify.com/api/v1/deploys/' + depj.id + '/files/solar_data.json', {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + NETLIFY_TOKEN, 'Content-Type': 'application/octet-stream' },
+          body: jsonStr
+        });
+      }
+    } catch(e) { console.warn('Rooms publish failed:', e); }
+  }
+  let state = loadState();
+
+  function loadState() {
+    let s = {
+      days: {},      // keyed by YYYY-MM-DD
+      settings: { roomsToday: 10, dieselPrice: 86.50, duRate: 14, systemCapex: 7000000 },
+    };
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) s = JSON.parse(raw);
+    } catch (e) { /* ignore */ }
+    // Merge baked-in days for any date not manually overridden
+    for (const iso in BAKED_DATA) {
+      if (!s.days[iso]) s.days[iso] = BAKED_DATA[iso];
+    }
+    return s;
+  }
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    document.getElementById('last-update').textContent = new Date().toLocaleString();
+  }
+
+  // ============================================================
+  //  DATE HELPERS
+  // ============================================================
+  function yyyymmdd(d) {
+    return d.toISOString().slice(0, 10);
+  }
+  function yesterdayISO() {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return yyyymmdd(d);
+  }
+  function todayISO() {
+    return yyyymmdd(new Date());
+  }
+  function prettyDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  // ============================================================
+  //  ANALYTICS
+  // ============================================================
+  function dayList() {
+    return Object.keys(state.days).sort();
+  }
+  function rollingAvg(field, endIso, windowDays) {
+    const days = dayList().filter(d => d <= endIso).slice(-windowDays);
+    const vals = days.map(d => state.days[d][field]).filter(v => typeof v === 'number' && isFinite(v));
+    if (!vals.length) return null;
+    return vals.reduce((a, b) => a + b, 0) / vals.length;
+  }
+  function perRoomBaseline() {
+    // Compute kWh-per-room from recent days where both consumption and rooms are present
+    const recent = dayList().slice(-SPEC.rollingDays);
+    const pairs = recent.map(d => state.days[d]).filter(x => x.load > 0 && x.rooms > 0);
+    if (!pairs.length) return SPEC.perRoomFallbackKwhPerDay;
+    const vals = pairs.map(p => p.load / p.rooms);
+    return vals.reduce((a, b) => a + b, 0) / vals.length;
+  }
+
+  function computeDerivedFor(iso) {
+    const d = state.days[iso];
+    if (!d) return null;
+    const price = d.dieselPrice ?? state.settings.dieselPrice;
+    const liters = (d.gensetHours || 0) * SPEC.gensetLPerHourMidpoint;
+    const cost = liters * price;
+    return {
+      perRoomKwh: (d.rooms || state.settings.roomsToday) ? d.load / (d.rooms || state.settings.roomsToday) : null,
+      gensetLiters: liters,
+      gensetCost: cost,
+      dieselPrice: price,
+      gensetCostPerKwh: null,  // requires genset-kWh which we don't capture yet
+      depthOfDischarge: (typeof d.maxSoc === 'number' && typeof d.minSoc === 'number') ? d.maxSoc - d.minSoc : null,
+    };
+  }
+
+  // ============================================================
+  //  FINANCIAL CALCULATIONS
+  // ============================================================
+
+  /**
+   * Levelized Cost of Electricity for the solar array.
+   * Formula: (Capex + Annual_OM × Life) / Total_kWh_over_Life
+   * Total kWh = annualAvgKwhDay × 365 × Σ(degradation^y) for y=0..life-1
+   */
+  function computeLCOE() {
+    const capex = state.settings.systemCapex || 7000000;
+    let totalKwh = 0;
+    for (let y = 0; y < SPEC.systemLifetimeYears; y++) {
+      totalKwh += SPEC.annualAvgKwhDay * 365 * Math.pow(1 - SPEC.degradationRatePerYear, y);
+    }
+    const totalCost = capex + SPEC.annualOMCost * SPEC.systemLifetimeYears;
+    return totalCost / totalKwh;
+  }
+
+  /**
+   * For a given day:
+   *   actualCost   = PV kWh × LCOE  +  diesel litres × diesel price
+   *   dieselOnlyCost = load kWh / genset_kWh_per_litre × diesel price
+   *   saving       = dieselOnlyCost − actualCost   (positive = money saved vs diesel-only)
+   */
+  function computeFinancialFor(iso) {
+    const d = state.days[iso];
+    if (!d || d.load == null) return null;
+    const lcoe        = computeLCOE();
+    const price       = d.dieselPrice ?? state.settings.dieselPrice;
+    const duRate      = state.settings.duRate ?? 14;
+    const liters      = (d.gensetHours || 0) * SPEC.gensetLPerHourMidpoint;
+    const gensetCost  = liters * price;
+    const solarCost   = (d.pv || 0) * lcoe;
+    const actualCost  = solarCost + gensetCost;
+    const blendedPerKwh = d.load > 0 ? actualCost / d.load : null;
+    const dieselOnlyCost= d.load / SPEC.gensetKwhPerLiter * price;
+    const saving      = dieselOnlyCost - actualCost;        // vs diesel-only
+    const duCost      = d.load * duRate;
+    const savingVsDU  = duCost - actualCost;                // vs DU grid
+    const rooms       = d.rooms || state.settings.roomsToday || 1;
+    const costPerRoom = actualCost / rooms;
+    const pvShare     = (d.pv != null && (d.pv + (d.gensetKwh || 0)) > 0)
+                        ? d.pv / (d.pv + (d.gensetKwh || 0)) * 100 : null;
+    const co2Saved    = (d.pv || 0) * SPEC.co2KgPerKwh;   // kg CO₂ vs diesel-only
+    return { lcoe, price, gensetCost, solarCost, actualCost, blendedPerKwh,
+             dieselOnlyCost, saving, duCost, savingVsDU, costPerRoom,
+             pvShare, co2Saved, liters };
+  }
+
+  /** Cumulative saving vs diesel-only across all days in order */
+  function cumulativeSavings() {
+    const result = [];
+    let running = 0;
+    for (const iso of dayList()) {
+      const fin = computeFinancialFor(iso);
+      if (fin) {
+        running += fin.saving;
+        result.push({ iso, saving: fin.saving, cumulative: running });
+      }
+    }
+    return result;
+  }
+
+  // ============================================================
+  //  RENDER
+  // ============================================================
+  let trendChart = null;
+  let costChart  = null;
+  let roiChart   = null;
+
+  function render() {
+    // Header
+    const viewIso = document.getElementById('viewing-date').value;
+    const day = state.days[viewIso] || null;
+    document.getElementById('brief-date').textContent = `Yesterday · ${prettyDate(viewIso)}`;
+    const status = document.getElementById('data-status');
+    if (!day) { status.className = 'data-status empty'; status.textContent = 'No data for this date'; }
+    else if (day.source === 'auto') { status.className = 'data-status'; status.textContent = 'Auto-fetched'; }
+    else { status.className = 'data-status manual'; status.textContent = 'Manual entry'; }
+
+    // KPI tiles
+    setKpi('kpi-pv', day, 'pv', 'kWh');
+    setKpi('kpi-load', day, 'load', 'kWh');
+    document.getElementById('kpi-pv-sub').textContent = day ? subFor('pv', day, viewIso) : 'Awaiting data';
+    document.getElementById('kpi-load-sub').textContent = day ? subFor('load', day, viewIso) : 'Awaiting data';
+
+    const derived = day ? computeDerivedFor(viewIso) : null;
+
+    // Sync quick-input fields to per-day stored values (rooms & diesel price)
+    document.getElementById('rooms-today').value   = (day?.rooms != null) ? day.rooms  : '';
+    document.getElementById('diesel-price').value  = (day?.dieselPrice != null) ? day.dieselPrice : state.settings.dieselPrice;
+    document.getElementById('du-rate').value        = state.settings.duRate ?? 14;
+    document.getElementById('system-capex').value   = state.settings.systemCapex ?? 7000000;
+
+    setVal('kpi-perroom', derived?.perRoomKwh, 1);
+    document.getElementById('kpi-perroom-sub').textContent = day && derived?.perRoomKwh
+      ? `${day.rooms || state.settings.roomsToday} rooms · baseline ${perRoomBaseline().toFixed(1)} kWh/room`
+      : 'Awaiting data';
+
+    setVal('kpi-genset', day?.gensetHours, 1);
+    document.getElementById('kpi-genset-sub').textContent = day && typeof day.gensetHours === 'number'
+      ? day.gensetHours === 0 ? 'Solar-only day' : `≈ ${(day.gensetHours * SPEC.gensetLPerHourMidpoint).toFixed(0)} L diesel`
+      : 'Awaiting data';
+
+    // Genset economics
+    if (derived) {
+      setVal('ge-hours', day.gensetHours, 1);
+      setVal('ge-liters', derived.gensetLiters, 0);
+      setVal('ge-cost', derived.gensetCost, 0);
+      document.getElementById('ge-cost-note').textContent = `at ₱${derived.dieselPrice.toFixed(2)}/L`;
+      // ₱/kWh delivered by genset: need genset-delivered kWh. As proxy, if consumed > pv, attribute deficit to genset.
+      const gensetKwh = (typeof day.gensetKwh === 'number') ? day.gensetKwh : null;
+      if (gensetKwh && gensetKwh > 0) {
+        document.getElementById('ge-perkwh').textContent = (derived.gensetCost / gensetKwh).toFixed(0);
+        document.getElementById('ge-perkwh-note').textContent = `${gensetKwh.toFixed(0)} kWh genset-delivered · vs PV < ₱5/kWh`;
+      } else if (day.gensetHours === 0) {
+        document.getElementById('ge-perkwh').textContent = '—';
+        document.getElementById('ge-perkwh-note').textContent = 'Solar-only day';
+      } else {
+        document.getElementById('ge-perkwh').textContent = '—';
+        document.getElementById('ge-perkwh-note').textContent = 'Genset kWh not recorded';
+      }
+    } else {
+      ['ge-hours','ge-liters','ge-cost','ge-perkwh'].forEach(id => document.getElementById(id).textContent = '—');
+    }
+
+    // Battery health
+    setVal('bh-minsoc', day?.minSoc, 0);
+    setVal('bh-maxsoc', day?.maxSoc, 0);
+    setVal('bh-sunset', day?.sunsetSoc, 0);
+    setVal('bh-dod', derived?.depthOfDischarge, 0);
+    const minNote = document.getElementById('bh-minsoc-note');
+    if (day?.minSoc != null) {
+      if (day.minSoc < 25) { minNote.innerHTML = '<span class="pill bad">Below safe floor</span>'; }
+      else if (day.minSoc < 30) { minNote.innerHTML = '<span class="pill warn">Near floor</span>'; }
+      else { minNote.innerHTML = '<span class="pill good">Within safe band</span>'; }
+    } else minNote.textContent = '—';
+    const maxNote = document.getElementById('bh-maxsoc-note');
+    if (day?.maxSoc != null) {
+      if (day.maxSoc >= 99) { maxNote.innerHTML = '<span class="pill good">Reached float</span>'; }
+      else if (day.maxSoc >= 90) { maxNote.innerHTML = '<span class="pill neutral">Close to full</span>'; }
+      else { maxNote.innerHTML = '<span class="pill warn">Did not top off</span>'; }
+    } else maxNote.textContent = '—';
+
+    // Production vs baseline
+    setVal('pb-yesterday', day?.pv, 0);
+    const r7 = rollingAvg('pv', viewIso, 7);
+    const r30 = rollingAvg('pv', viewIso, 30);
+    setVal('pb-7d', r7, 0);
+    setVal('pb-30d', r30, 0);
+    const baseline = r30 ?? r7 ?? SPEC.annualAvgKwhDay;
+    if (day?.pv != null) {
+      const delta = (day.pv - baseline) / baseline * 100;
+      const sign = delta >= 0 ? '+' : '';
+      const cls = delta >= -5 ? 'good' : delta >= -15 ? 'warn' : 'bad';
+      document.getElementById('pb-delta').innerHTML = `<span class="pill ${cls}">${sign}${delta.toFixed(0)}%</span>`;
+    } else {
+      document.getElementById('pb-delta').textContent = '—';
+    }
+
+    // Today's outlook
+    const rooms = parseInt(document.getElementById('rooms-today').value) || 0;
+    const perRoom = perRoomBaseline();
+    const projectedLoad = rooms * perRoom;
+    const expectedPv = r30 ?? r7 ?? SPEC.annualAvgKwhDay;
+    const nightFraction = 12 / 24; // off-grid night-only need
+    const nightLoad = projectedLoad * nightFraction;
+    setVal('ot-load', projectedLoad, 0);
+    setVal('ot-pv', expectedPv, 0);
+    setVal('ot-night', nightLoad, 0);
+    const gensetNeeded = nightLoad > 245;  // conservative usable bank
+    document.getElementById('ot-genset').innerHTML = gensetNeeded
+      ? '<span class="pill warn">Likely</span>'
+      : '<span class="pill good">Not on a clear day</span>';
+    document.getElementById('ot-genset-note').textContent = gensetNeeded
+      ? `${nightLoad.toFixed(0)} kWh > 245 kWh usable bank — plan a top-up`
+      : `${nightLoad.toFixed(0)} kWh fits inside 245–265 kWh bank`;
+
+    // Engineer commentary (per-day)
+    const cbody = document.getElementById('commentary-body');
+    if (day && day.commentary) {
+      cbody.innerHTML = day.commentary.split(/\n\s*\n/).map(p => `<p>${escapeHtml(p)}</p>`).join();
+      document.getElementById('copy-commentary').style.display = '';
+    } else {
+      cbody.innerHTML = '<div class="commentary-placeholder">No commentary saved for this day yet. Click <strong>Generate analysis</strong> to create one.</div>';
+      document.getElementById('copy-commentary').style.display = 'none';
+    }
+
+    // History
+    renderHistory();
+    // Trend chart
+    renderChart();
+    // Events table
+    renderEvents(day);
+    // Signals & recommended actions
+    renderSignals(day);
+    // Financial intelligence sections
+    renderFinancials(day, viewIso);
+    // Weekly & Monthly reports
+    renderReports();
+
+    document.getElementById('last-update').textContent = new Date().toLocaleString();
+  }
+
+  function setKpi(id, day, field, unit) {
+    const el = document.getElementById(id);
+    el.textContent = (day && typeof day[field] === 'number') ? Math.round(day[field]).toLocaleString() : '—';
+  }
+  function setVal(id, val, decimals = 0) {
+    const el = document.getElementById(id);
+    if (typeof val !== 'number' || !isFinite(val)) { el.textContent = '—'; return; }
+    el.textContent = val.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  }
+  function subFor(field, day, iso) {
+    if (field === 'pv') {
+      const r30 = rollingAvg('pv', iso, 30);
+      if (r30) return `30-day avg: ${r30.toFixed(0)} kWh`;
+      return `Annual estimate: ${SPEC.annualAvgKwhDay} kWh`;
+    }
+    if (field === 'load' && day.rooms) return `${day.rooms} rooms occupied`;
+    return '';
+  }
+
+  // ============================================================
+  //  HISTORY
+  // ============================================================
+  function renderHistory() {
+    const list = document.getElementById('history-list');
+    const dates = dayList().slice().reverse();
+    if (!dates.length) {
+      list.innerHTML = '<div class="placeholder-block">No days saved yet. Enter yesterday\'s data above to start the historical record.</div>';
+      return;
+    }
+    list.innerHTML = dates.map(iso => {
+      const d = state.days[iso];
+      const perRoom = d.rooms ? (d.load / d.rooms).toFixed(1) : '—';
+      const gen = d.gensetHours != null ? `${d.gensetHours.toFixed(1)} hr` : '—';
+      return `<div class="history-row">
+        <div class="h-date">${iso}${d.rooms ? ` · ${d.rooms} rms` : ''}</div>
+        <div class="h-val">PV ${d.pv?.toFixed(0) ?? '—'} kWh</div>
+        <div class="h-load">Load ${d.load?.toFixed(0) ?? '—'} kWh</div>
+        <div class="h-val">Gen ${gen}</div>
+        <div class="h-actions">
+          <button data-load="${iso}">Open</button>
+          <button data-del="${iso}">Delete</button>
+        </div>
+      </div>`;
+    }).join('');
+    list.querySelectorAll('[data-load]').forEach(b => b.addEventListener('click', e => {
+      document.getElementById('viewing-date').value = e.target.dataset.load;
+      loadFormFromDay(e.target.dataset.load);
+      render();
+    }));
+    list.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', e => {
+      if (confirm(`Delete data for ${e.target.dataset.del}?`)) {
+        delete state.days[e.target.dataset.del];
+        saveState();
+        render();
+      }
+    }));
+  }
+
+  // ============================================================
+  //  CHART
+  // ============================================================
+  function renderChart() {
+    const ctx = document.getElementById('trend-chart').getContext('2d');
+    const dates = dayList().slice(-30);
+    if (trendChart) trendChart.destroy();
+    if (!dates.length) {
+      // Render empty state
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.font = '13px -apple-system, sans-serif';
+      ctx.fillStyle = '#5b6776';
+      ctx.textAlign = 'center';
+      ctx.fillText('Enter at least one day of data to start the trend.', ctx.canvas.width / 2, ctx.canvas.height / 2);
+      return;
+    }
+    const pvData = dates.map(d => state.days[d].pv ?? null);
+    const loadData = dates.map(d => state.days[d].load ?? null);
+    const genData = dates.map(d => state.days[d].gensetHours ?? null);
+    const roomsData = dates.map(d => state.days[d].rooms ?? null);
+    trendChart = new Chart(ctx, {
+      data: {
+        labels: dates.map(d => d.slice(5)),
+        datasets: [
+          { type: 'bar', label: 'PV (kWh)',   data: pvData,   backgroundColor: '#facc15', borderColor: '#d97706', borderWidth: 1, yAxisID: 'y' },
+          { type: 'bar', label: 'Load (kWh)', data: loadData, backgroundColor: '#cbd5e1', borderColor: '#64748b', borderWidth: 1, yAxisID: 'y' },
+          { type: 'line', label: 'Genset (hr)', data: genData, borderColor: '#6b21a8', backgroundColor: '#6b21a8', tension: 0.2, yAxisID: 'y1', pointRadius: 3 },
+          { type: 'line', label: 'Rooms occupied', data: roomsData, borderColor: '#0ea5e9', backgroundColor: '#0ea5e9', tension: 0.2, yAxisID: 'y1', pointRadius: 3, borderDash: [4,3] },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 12 } } } },
+        scales: {
+          y:  { beginAtZero: true, title: { display: true, text: 'kWh' }, grid: { color: '#e8edf3' } },
+          y1: { beginAtZero: true, position: 'right', title: { display: true, text: 'Genset hr / Rooms' }, grid: { display: false } },
+          x:  { grid: { display: false } },
+        },
+      },
+    });
+  }
+
+  // ============================================================
+  //  FINANCIAL INTELLIGENCE RENDER
+  // ============================================================
+  function renderFinancials(day, viewIso) {
+    const lcoe     = computeLCOE();
+    const duRate   = state.settings.duRate ?? 14;
+    const capex    = state.settings.systemCapex ?? 7000000;
+    const fin      = day ? computeFinancialFor(viewIso) : null;
+    const gensetCostPerKwh = fin ? fin.gensetCost / (day.gensetKwh || 1) : null;
+
+    // ── LCOE label
+    document.getElementById('lcoe-capex-label').textContent = (capex/1000000).toFixed(1) + 'M';
+    document.getElementById('lcoe-value').innerHTML = lcoe.toFixed(2) + ' <span class="u">&#8369;/kWh</span>';
+    document.getElementById('lcoe-vs-diesel').textContent = fin
+      ? '~' + (fin.gensetCost / (day.gensetKwh || SPEC.gensetLPerHourMidpoint * SPEC.gensetKwhPerLiter)).toFixed(0) + ' ₱/kWh'
+      : '~' + (state.settings.dieselPrice / SPEC.gensetKwhPerLiter).toFixed(0) + ' ₱/kWh';
+    const duDiff = ((duRate - lcoe) / duRate * 100);
+    document.getElementById('lcoe-vs-du').textContent = duDiff > 0
+      ? Math.abs(duDiff).toFixed(0) + '% cheaper'
+      : Math.abs(duDiff).toFixed(0) + '% costlier';
+    document.getElementById('lcoe-diesel-price').textContent = (state.settings.dieselPrice).toFixed(2);
+
+    // ── Financial KPI tiles
+    const duEl = document.getElementById('fin-du');
+    duEl.textContent = duRate.toFixed(2);
+    document.getElementById('fin-du-sub').textContent = `What grid electricity would cost`;
+
+    if (fin) {
+      // Blended cost/kWh
+      setVal('fin-blended', fin.blendedPerKwh, 2);
+      const bBadge = document.getElementById('fin-blended-badge');
+      bBadge.style.display = '';
+      if (fin.blendedPerKwh <= duRate) {
+        bBadge.className = 'badge good'; bBadge.textContent = '✓ Below DU';
+      } else {
+        bBadge.className = 'badge bad';  bBadge.textContent = '▲ Above DU';
+      }
+      document.getElementById('fin-blended-sub').textContent =
+        `₱${fin.solarCost.toFixed(0)} solar + ₱${fin.gensetCost.toFixed(0)} diesel ÷ ${day.load.toFixed(0)} kWh`;
+
+      // Daily saving vs diesel-only
+      const sTile = document.getElementById('fin-saving-tile');
+      const sEl   = document.getElementById('fin-saving');
+      sEl.textContent = Math.abs(fin.saving).toLocaleString('en', {maximumFractionDigits:0});
+      if (fin.saving >= 0) {
+        sTile.className = 'kpi saving';
+        document.getElementById('fin-saving-sub').textContent = `Saved vs running everything on diesel (PHP ${fin.dieselOnlyCost.toFixed(0)} without solar)`;
+        const sBadge = document.getElementById('fin-saving-badge');
+        sBadge.style.display = ''; sBadge.className = 'badge good'; sBadge.textContent = 'Saving ✓';
+      } else {
+        sTile.className = 'kpi saving neg';
+        document.getElementById('fin-saving-sub').textContent = `Extra cost vs diesel-only — heavy diesel day`;
+        document.getElementById('fin-saving-badge').style.display = 'none';
+      }
+
+      // Cost per room night
+      setVal('fin-perroom-cost', fin.costPerRoom, 0);
+      const rooms = day.rooms || state.settings.roomsToday;
+      document.getElementById('fin-perroom-cost-sub').textContent =
+        `₱${fin.actualCost.toFixed(0)} total ÷ ${rooms} rooms`;
+    } else {
+      ['fin-blended','fin-saving','fin-perroom-cost'].forEach(id => document.getElementById(id).textContent = '—');
+      document.getElementById('fin-blended-badge').style.display = 'none';
+      document.getElementById('fin-saving-badge').style.display = 'none';
+    }
+
+    // ── Blended cost vs DU chart (all days)
+    renderCostChart(duRate);
+
+    // ── ROI running balance
+    renderROI(capex);
+
+    // ── Further recommendations
+    renderRecommendations(day, viewIso, fin);
+  }
+
+  function renderCostChart(duRate) {
+    const ctx = document.getElementById('cost-vs-du-chart').getContext('2d');
+    const dates = dayList().slice(-30);
+    if (costChart) { costChart.destroy(); costChart = null; }
+    if (!dates.length) return;
+
+    const blendedData = dates.map(iso => {
+      const fin = computeFinancialFor(iso);
+      return fin ? +(fin.blendedPerKwh.toFixed(2)) : null;
+    });
+    const colors = blendedData.map(v => v == null ? '#e2e8f0' : v <= duRate ? '#16a34a' : '#dc2626');
+    const alphas = blendedData.map(v => v == null ? '#e2e8f040' : v <= duRate ? '#16a34a30' : '#dc262630');
+
+    costChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: dates.map(d => d.slice(5)),
+        datasets: [
+          {
+            label: 'Blended cost (₱/kWh)',
+            data: blendedData,
+            backgroundColor: colors.map(c => c + '99'),
+            borderColor: colors,
+            borderWidth: 1.5,
+          },
+          {
+            type: 'line',
+            label: `DU reference (₱${duRate}/kWh)`,
+            data: dates.map(() => duRate),
+            borderColor: '#0a5cd3',
+            borderWidth: 2,
+            borderDash: [5, 4],
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+          tooltip: {
+            callbacks: {
+              label: ctx => ctx.dataset.label + ': ₱' + (ctx.parsed.y ?? '—').toFixed(2) + '/kWh'
+            }
+          }
+        },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: '₱ / kWh' }, grid: { color: '#e8edf3' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  function renderROI(capex) {
+    const cumData   = cumulativeSavings();
+    const allDates  = dayList();
+    const n         = cumData.length;
+
+    // Stats
+    const totalSaving  = n ? cumData[n-1].cumulative : 0;
+    const avgDaily     = n ? totalSaving / n : 0;
+    const roiBalance   = -capex + totalSaving;
+    const remainingToRecover = Math.max(0, capex - totalSaving);
+    const pct          = Math.min(100, totalSaving / capex * 100);
+
+    // Projected payback from day 1: capex / avgDaily
+    const paybackDays  = avgDaily > 0 ? Math.ceil(capex / avgDaily) : null;
+    const paybackMonths= paybackDays ? (paybackDays / 30.4).toFixed(1) : null;
+    const annualSaving = avgDaily * 365;
+    const lifetimeSaving = annualSaving * SPEC.systemLifetimeYears - capex;
+
+    // Balance label
+    const balEl = document.getElementById('roi-balance');
+    const fmt = v => '₱' + Math.abs(v).toLocaleString('en', {maximumFractionDigits:0});
+    balEl.textContent = (roiBalance >= 0 ? '+' : '−') + fmt(roiBalance);
+    balEl.className = 'roi-balance ' + (roiBalance >= 0 ? 'positive' : 'negative');
+
+    document.getElementById('roi-avg-daily').textContent  = avgDaily  ? '₱' + avgDaily.toLocaleString('en',{maximumFractionDigits:0}) : '—';
+    document.getElementById('roi-payback').textContent    = paybackMonths ? paybackMonths + ' months' : '—';
+    document.getElementById('roi-payback-note').textContent = paybackDays ? `(${paybackDays} days from commissioning)` : 'from system start';
+    document.getElementById('roi-days').textContent       = n;
+    document.getElementById('roi-cumulative').textContent = totalSaving ? '₱' + totalSaving.toLocaleString('en',{maximumFractionDigits:0}) : '—';
+
+    // Progress bar
+    const pctLabel = pct.toFixed(1) + '%';
+    document.getElementById('roi-pct-label').textContent    = pctLabel;
+    document.getElementById('roi-capex-label').textContent  = (capex/1000000).toFixed(1) + 'M';
+    const bar = document.getElementById('roi-progress-bar');
+    bar.style.width = pct + '%';
+    bar.className = 'progress-bar-inner' + (pct >= 100 ? ' good' : pct >= 50 ? '' : '');
+
+    // Additional stats
+    document.getElementById('roi-annual').textContent        = annualSaving ? '₱' + annualSaving.toLocaleString('en',{maximumFractionDigits:0})+'/yr' : '—';
+    document.getElementById('roi-simple-payback').textContent= paybackMonths ? paybackMonths + ' months' : '—';
+    document.getElementById('roi-remaining').textContent     = remainingToRecover ? '₱' + remainingToRecover.toLocaleString('en',{maximumFractionDigits:0}) : 'Recovered ✓';
+    document.getElementById('roi-lifetime').textContent      = lifetimeSaving > 0 ? '₱' + lifetimeSaving.toLocaleString('en',{maximumFractionDigits:0}) : '—';
+    document.getElementById('roi-progress-desc').textContent =
+      `${pct.toFixed(1)}% of ₱${(capex/1000000).toFixed(0)}M recovered (${n} days of data)`;
+
+    // ROI running balance chart
+    renderROIChart(capex, cumData, avgDaily);
+  }
+
+  function renderROIChart(capex, cumData, avgDaily) {
+    const ctx = document.getElementById('roi-chart').getContext('2d');
+    if (roiChart) { roiChart.destroy(); roiChart = null; }
+
+    // Actual data points: -capex + cumulative saving each day
+    const labels  = cumData.map(d => d.iso.slice(5));
+    const actual  = cumData.map(d => +((-capex + d.cumulative).toFixed(0)));
+
+    // Projection: extend forward until payback (up to 2 years from last point)
+    const projLabels = [];
+    const projData   = [];
+    if (avgDaily > 0 && cumData.length) {
+      const lastCum   = cumData[cumData.length - 1].cumulative;
+      let remaining   = capex - lastCum;
+      const lastDate  = new Date(cumData[cumData.length - 1].iso + 'T00:00:00');
+      let daysAhead   = 0;
+      while (remaining > 0 && daysAhead < 730) {
+        daysAhead++;
+        remaining -= avgDaily;
+        const d = new Date(lastDate);
+        d.setDate(d.getDate() + daysAhead);
+        projLabels.push(d.toISOString().slice(5, 10));
+      // (will be replaced below)
+      }
+      // Project linearly from last actual data point
+      projData.length = 0;
+      for (let i = 1; i <= daysAhead; i++) {
+        projData.push(Math.round(-capex + lastCum + avgDaily * i));
+      }
+    }
+
+    const allLabels = [...labels, ...projLabels];
+    const nullPad   = new Array(labels.length).fill(null);
+    // Connect last actual to first projected
+    const projPadded = labels.length > 0
+      ? [...nullPad.slice(0, labels.length - 1), actual[actual.length - 1], ...projData]
+      : projData;
+
+    roiChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: allLabels,
+        datasets: [
+          {
+            label: 'ROI balance (actual)',
+            data: [...actual, ...new Array(projLabels.length).fill(null)],
+            borderColor: '#0a5cd3',
+            backgroundColor: '#0a5cd320',
+            borderWidth: 2.5,
+            pointRadius: 3,
+            fill: true,
+            tension: 0.2,
+          },
+          {
+            label: 'Projected recovery',
+            data: projPadded,
+            borderColor: '#16a34a',
+            borderDash: [6, 4],
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: false,
+            tension: 0,
+          },
+          {
+            label: 'Payback line (₱0)',
+            data: allLabels.map(() => 0),
+            borderColor: '#d97706',
+            borderWidth: 1.5,
+            borderDash: [3, 3],
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+          tooltip: {
+            callbacks: {
+              label: ctx => ctx.dataset.label + ': ₱' + ctx.parsed.y.toLocaleString('en',{maximumFractionDigits:0})
+            }
+          }
+        },
+        scales: {
+          y: {
+            title: { display: true, text: 'PHP' },
+            grid: { color: '#e8edf3' },
+            ticks: { callback: v => '₱' + (v/1000000).toFixed(1) + 'M' }
+          },
+          x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } }
+        }
+      }
+    });
+  }
+
+  function renderRecommendations(day, viewIso, fin) {
+    const allDates = dayList();
+    const duRate   = state.settings.duRate ?? 14;
+    const price    = state.settings.dieselPrice;
+
+    // ── Avoidable waste: flag solar-hours runs with start SOC ≥ 55%
+    let wasteCost = 0;
+    let wasteRuns = 0;
+    const wasteDetails = [];
+    for (const iso of allDates) {
+      const d = state.days[iso];
+      if (!d || !d.events) continue;
+      const dPrice = d.dieselPrice ?? price;
+      (d.events || []).forEach(e => {
+        const sm = hhmmToMin(e.startTime), em = hhmmToMin(e.stopTime);
+        const dur = (sm != null && em != null && em > sm) ? (em - sm) / 60 : null;
+        if (sm != null && sm >= 510 && sm <= 900 && typeof e.startSoc === 'number' && e.startSoc >= 55 && dur) {
+          const cost = dur * SPEC.gensetLPerHourMidpoint * dPrice;
+          wasteCost += cost;
+          wasteRuns++;
+          wasteDetails.push(`${iso} ${e.startTime} (+${dur.toFixed(1)}h, ${e.startSoc}% SOC) = ₱${cost.toFixed(0)}`);
+        }
+      });
+    }
+    document.getElementById('rec-waste').innerHTML =
+      `₱ ${wasteCost.toLocaleString('en',{maximumFractionDigits:0})} <span class="u">${wasteRuns} run${wasteRuns!==1?'s':''}</span>`;
+    document.getElementById('rec-waste-sub').textContent = 'Avoidable mid-solar genset cost, across all logged days';
+    document.getElementById('rec-waste-detail').innerHTML = wasteDetails.length
+      ? wasteDetails.map(w => `<div style="padding:2px 0;">▸ ${escapeHtml(w)}</div>`).join('')
+      : '<div style="color:var(--good)">✓ No avoidable runs detected in logged days.</div>';
+
+    // ── Monthly diesel projection (based on 30-day rolling avg genset hours)
+    const recent7 = allDates.slice(-7);
+    const avgHrs  = recent7.reduce((a, iso) => a + (state.days[iso]?.gensetHours || 0), 0) / Math.max(recent7.length, 1);
+    const monthlyL= avgHrs * 30.4 * SPEC.gensetLPerHourMidpoint;
+    const monthlyCost = monthlyL * price;
+    const budget  = SPEC.dieselBudgetPerMonth;
+    const budgetPct = Math.min(150, monthlyCost / budget * 100);
+    document.getElementById('rec-monthly').innerHTML =
+      `₱ ${monthlyCost.toLocaleString('en',{maximumFractionDigits:0})} <span class="u">/mo</span>`;
+    document.getElementById('rec-monthly-sub').textContent =
+      `${avgHrs.toFixed(1)} hr/day avg × 30.4 days × ${SPEC.gensetLPerHourMidpoint} L/hr × ₱${price.toFixed(2)}/L`;
+    document.getElementById('rec-monthly-bar').style.width = budgetPct + '%';
+    document.getElementById('rec-monthly-bar').className =
+      'progress-bar-inner ' + (budgetPct >= 100 ? 'bad' : budgetPct >= 75 ? 'warn' : '');
+    document.getElementById('rec-monthly-bar-label').textContent =
+      `₱${(budget/1000).toFixed(0)}K/mo budget — ${budgetPct.toFixed(0)}% utilized`;
+
+    // ── Carbon savings (cumulative: PV kWh × 0.87 kg CO₂/kWh)
+    let totalPv = 0, totalLoad = 0;
+    for (const iso of allDates) {
+      const d = state.days[iso];
+      if (d) { totalPv += d.pv || 0; totalLoad += d.load || 0; }
+    }
+    const totalCO2 = totalPv * SPEC.co2KgPerKwh;
+    const treesEquiv = (totalCO2 / 21).toFixed(0);   // ~21 kg CO₂/tree/yr
+    document.getElementById('rec-carbon').innerHTML =
+      `${totalCO2 >= 1000 ? (totalCO2/1000).toFixed(1) + '<span class="u"> tCO₂</span>' : totalCO2.toFixed(0) + '<span class="u"> kg</span>'}`;
+    document.getElementById('rec-carbon-sub').textContent =
+      `Across ${allDates.length} days — ${totalPv.toFixed(0)} kWh solar vs diesel baseline`;
+    document.getElementById('rec-carbon-detail').innerHTML =
+      `≈ ${treesEquiv} trees worth of annual absorption &nbsp;·&nbsp; ` +
+      `${(totalCO2 / Math.max(allDates.length, 1)).toFixed(1)} kg/day average`;
+
+    // ── Solar self-sufficiency (today's viewed day)
+    if (fin && fin.pvShare != null) {
+      const pv = fin.pvShare;
+      document.getElementById('rec-selfsuf').textContent = pv.toFixed(1) + '%';
+      const bar = document.getElementById('rec-selfsuf-bar');
+      bar.style.width = Math.min(pv, 100) + '%';
+      bar.className   = 'progress-bar-inner' + (pv >= 70 ? '' : pv >= 50 ? ' warn' : ' bad');
+      document.getElementById('rec-selfsuf-sub').textContent =
+        `PV share of total energy (${(day.pv||0).toFixed(0)} PV + ${(day.gensetKwh||0).toFixed(0)} genset = ${((day.pv||0)+(day.gensetKwh||0)).toFixed(0)} kWh)`;
+      document.getElementById('rec-selfsuf-note').textContent =
+        pv >= 70 ? 'Target met (≥70%) — great solar day'
+        : pv >= 50 ? 'Below 70% target — partially cloudy or excess genset'
+        : 'Well below target — heavy diesel dependency today';
+    } else {
+      document.getElementById('rec-selfsuf').textContent = '—';
+      document.getElementById('rec-selfsuf-bar').style.width = '0%';
+      document.getElementById('rec-selfsuf-sub').textContent = 'Awaiting data for this day';
+      document.getElementById('rec-selfsuf-note').textContent = '';
+    }
+  }
+
+  // ============================================================
+  //  GENSET EVENTS
+  // ============================================================
+  function renderEvents(day) {
+    const tbody = document.getElementById('events-tbody');
+    const events = (day && day.events) || [];
+    if (!events.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="color: var(--text-muted); text-align: center; padding: 14px;">No genset events logged for this day. Click "Add genset event" to log one.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = events.map((e, i) => `
+      <tr>
+        <td><input data-evt="${i}" data-field="startTime" type="time" value="${e.startTime || ''}" /></td>
+        <td><input data-evt="${i}" data-field="startSoc"  type="number" min="0" max="100" value="${e.startSoc ?? ''}" /></td>
+        <td><input data-evt="${i}" data-field="stopTime"  type="time" value="${e.stopTime || ''}" /></td>
+        <td><input data-evt="${i}" data-field="stopSoc"   type="number" min="0" max="100" value="${e.stopSoc ?? ''}" /></td>
+        <td><input data-evt="${i}" data-field="reason"    type="text" placeholder="e.g. low SOC + high evening load" value="${e.reason || ''}" /></td>
+        <td><button class="remove-row" data-remove="${i}" title="Remove">×</button></td>
+      </tr>
+    `).join('');
+    tbody.querySelectorAll('[data-evt]').forEach(input => input.addEventListener('change', onEventChange));
+    tbody.querySelectorAll('[data-remove]').forEach(btn => btn.addEventListener('click', onEventRemove));
+  }
+  function onEventChange(e) {
+    const iso = document.getElementById('viewing-date').value;
+    if (!state.days[iso]) state.days[iso] = blankDay(iso);
+    if (!state.days[iso].events) state.days[iso].events = [];
+    const i = +e.target.dataset.evt;
+    const field = e.target.dataset.field;
+    let v = e.target.value;
+    if (field === 'startSoc' || field === 'stopSoc') v = v === '' ? null : +v;
+    state.days[iso].events[i][field] = v;
+    saveState();
+  }
+  function onEventRemove(e) {
+    const iso = document.getElementById('viewing-date').value;
+    const i = +e.target.dataset.remove;
+    state.days[iso].events.splice(i, 1);
+    saveState();
+    renderEvents(state.days[iso]);
+  }
+  document.getElementById('add-event').addEventListener('click', () => {
+    const iso = document.getElementById('viewing-date').value;
+    if (!state.days[iso]) state.days[iso] = blankDay(iso);
+    if (!state.days[iso].events) state.days[iso].events = [];
+    state.days[iso].events.push({ startTime: '', startSoc: null, stopTime: '', stopSoc: null, reason: '' });
+    saveState();
+    renderEvents(state.days[iso]);
+  });
+
+  function blankDay(iso) {
+    return { date: iso, pv: null, load: null, peakPv: null, peakLoad: null, minSoc: null, maxSoc: null, sunsetSoc: null, rooms: null, gensetHours: null, alarms: '', notes: '', events: [], source: 'manual' };
+  }
+
+  // ============================================================
+  //  SIGNALS & RECOMMENDED ACTIONS
+  //  Rule-based checks surfaced directly on the dashboard.
+  // ============================================================
+  function hhmmToMin(s) {
+    if (!s || typeof s !== 'string' || s.indexOf(':') < 0) return null;
+    const p = s.split(':');
+    return (+p[0]) * 60 + (+p[1]);
+  }
+  function renderSignals(day) {
+    const body = document.getElementById('signals-body');
+    const summary = document.getElementById('signals-summary');
+    const hasData = day && (day.pv != null || day.load != null || (day.events && day.events.length));
+    if (!hasData) {
+      summary.textContent = '';
+      body.innerHTML = '<div class="placeholder-block">No data for this day yet. Signals appear once a day is logged.</div>';
+      return;
+    }
+    const price = state.settings.dieselPrice || 86.5;
+    const signals = [];
+
+    // 1. Genset energy share
+    if (typeof day.gensetKwh === 'number' && day.gensetKwh > 0 && day.pv > 0) {
+      const share = day.gensetKwh / (day.pv + day.gensetKwh) * 100;
+      if (share >= 25) {
+        signals.push({ sev: 'bad',
+          title: `Genset supplied ${share.toFixed(0)}% of the day's energy`,
+          detail: 'Diesel carried too much of the load. Each genset kWh costs roughly 9x solar. On a clear day at ~10 rooms the hotel should run close to genset-free.',
+          action: 'Action: treat anything above ~10% genset share as a day to review.' });
+      }
+    }
+
+    // 2. Per-run checks
+    (day.events || []).forEach(e => {
+      const sm = hhmmToMin(e.startTime), em = hhmmToMin(e.stopTime);
+      const dur = (sm != null && em != null && em > sm) ? (em - sm) / 60 : null;
+      if (sm != null && sm >= 510 && sm <= 900 && typeof e.startSoc === 'number' && e.startSoc >= 55) {
+        const litres = dur ? dur * SPEC.gensetLPerHourMidpoint : null;
+        const cost = litres ? litres * price : null;
+        signals.push({ sev: 'bad',
+          title: `Avoidable daytime genset run at ${e.startTime}`,
+          detail: `Started at ${e.startSoc}% SOC during solar hours. The array alone would have charged the bank` + (litres ? `, so roughly ${litres.toFixed(0)} L of diesel (about ₱${cost.toFixed(0)}) went to energy the sun was about to provide free` : '') + '.',
+          action: 'Action: do not run the genset mid-morning - let solar do the daytime charging.' });
+      } else if (typeof e.startSoc === 'number' && e.startSoc >= 45) {
+        signals.push({ sev: 'warn',
+          title: `Run at ${e.startTime} started at ${e.startSoc}% - above the 28-35% band`,
+          detail: 'Starting before the agreed band means a longer run than needed to clear the low point.',
+          action: 'Action: hold the start until SOC is in the 28-35% window.' });
+      }
+      if (typeof e.stopSoc === 'number' && e.stopSoc >= 88) {
+        signals.push({ sev: 'warn',
+          title: `Run at ${e.startTime} charged to ${e.stopSoc}% - past the ~80% stop target`,
+          detail: `The last ${(e.stopSoc - 80).toFixed(0)} points cost extra runtime; solar can finish the top-up for free.`,
+          action: 'Action: stop the genset around 80% and let solar carry it the rest of the way.' });
+      }
+    });
+
+    // 3. Curtailment risk
+    if (typeof day.maxSoc === 'number' && day.maxSoc >= 98 && (day.gensetHours || 0) > 0) {
+      const morningRun = (day.events || []).some(e => { const m = hhmmToMin(e.startTime); return m != null && m < 780; });
+      if (morningRun) {
+        signals.push({ sev: 'warn',
+          title: 'Afternoon solar was likely curtailed',
+          detail: `The bank reached ${day.maxSoc.toFixed(0)}% well before afternoon, so the array had nowhere to send midday production. An estimated 80-90 kWh of free solar can be lost this way.`,
+          action: 'Action: keep the morning genset run small so the battery has headroom for midday solar.' });
+      }
+    }
+
+    if (!signals.length) {
+      signals.push({ sev: 'good', title: 'No issues flagged for this day',
+        detail: 'Genset timing and battery cycling look within target.', action: '' });
+    }
+
+    const bad = signals.filter(s => s.sev === 'bad').length;
+    const warn = signals.filter(s => s.sev === 'warn').length;
+    summary.textContent = (bad || warn) ? `${bad} critical, ${warn} to watch.` : 'All clear.';
+    body.innerHTML = signals.map(s => `
+      <div class="signal ${s.sev}">
+        <div class="dot"></div>
+        <div class="s-text">
+          <div class="s-title">${escapeHtml(s.title)}</div>
+          <div class="s-detail">${escapeHtml(s.detail)}</div>
+          ${s.action ? `<div class="s-action">${escapeHtml(s.action)}</div>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  // ============================================================
+  //  DATA ENTRY FORM
+  // ============================================================
+  function loadFormFromDay(iso) {
+    const d = state.days[iso] || blankDay(iso);
+    document.getElementById('f-pv').value       = d.pv ?? '';
+    document.getElementById('f-load').value     = d.load ?? '';
+    document.getElementById('f-peakpv').value   = d.peakPv ?? '';
+    document.getElementById('f-peakload').value = d.peakLoad ?? '';
+    document.getElementById('f-minsoc').value   = d.minSoc ?? '';
+    document.getElementById('f-maxsoc').value   = d.maxSoc ?? '';
+    document.getElementById('f-sunset').value   = d.sunsetSoc ?? '';
+    document.getElementById('f-rooms').value    = d.rooms ?? '';
+    document.getElementById('f-gen-hours').value= d.gensetHours ?? '';
+    document.getElementById('f-alarms').value   = d.alarms || '';
+    document.getElementById('f-notes').value    = d.notes || '';
+  }
+  function clearForm() {
+    ['f-pv','f-load','f-peakpv','f-peakload','f-minsoc','f-maxsoc','f-sunset','f-rooms','f-gen-hours','f-alarms','f-notes']
+      .forEach(id => document.getElementById(id).value = '');
+  }
+  function readFormToDay(iso) {
+    const existing = state.days[iso] || blankDay(iso);
+    const num = id => { const v = document.getElementById(id).value; return v === '' ? null : +v; };
+    return Object.assign(existing, {
+      date: iso,
+      pv:          num('f-pv'),
+      load:        num('f-load'),
+      peakPv:      num('f-peakpv'),
+      peakLoad:    num('f-peakload'),
+      minSoc:      num('f-minsoc'),
+      maxSoc:      num('f-maxsoc'),
+      sunsetSoc:   num('f-sunset'),
+      rooms:       num('f-rooms'),
+      gensetHours: num('f-gen-hours'),
+      alarms:      document.getElementById('f-alarms').value,
+      notes:       document.getElementById('f-notes').value,
+      source:      existing.source || 'manual',
+    });
+  }
+  document.getElementById('save-day').addEventListener('click', () => {
+    const iso = document.getElementById('viewing-date').value;
+    state.days[iso] = readFormToDay(iso);
+    saveState();
+    render();
+  });
+  document.getElementById('clear-form').addEventListener('click', clearForm);
+
+  // ============================================================
+  //  COMMENTARY (askClaude)
+  // ============================================================
+  document.getElementById('generate-commentary').addEventListener('click', async () => {
+    const viewIso = document.getElementById('viewing-date').value;
+    const day = state.days[viewIso];
+    const status = document.getElementById('commentary-status');
+    if (!day || (day.pv == null && day.load == null)) {
+      status.textContent = 'Enter yesterday\'s totals first.';
+      return;
+    }
+    const btn = document.getElementById('generate-commentary');
+    btn.disabled = true;
+    status.textContent = 'Generating…';
+    const body = document.getElementById('commentary-body');
+    body.innerHTML = '<div class="commentary-placeholder">Analyzing…</div>';
+
+    const rooms = parseInt(document.getElementById('rooms-today').value) || 0;
+    const derived = computeDerivedFor(viewIso);
+    const r7  = rollingAvg('pv', viewIso, 7);
+    const r30 = rollingAvg('pv', viewIso, 30);
+    const baseline = r30 ?? r7 ?? SPEC.annualAvgKwhDay;
+    const perRoom = perRoomBaseline();
+
+    const prompt = `You are a professional electrical engineer specializing in off-grid hybrid solar systems. You are advising Hue Hotel Siargao (off-grid hybrid: 99.76 kWp AE Solar PV, 3 × Deye 50 kW hybrid inverters totaling 150 kW AC, 368.64 kWh LiFePO4 bank with 20% SOC floor and ~245-265 kWh usable AC-side, manual genset operation by staff starting at 28-35% SOC and stopping at ~80%, observed genset fuel burn 30-35 L/hr, current diesel price ${state.settings.dieselPrice.toFixed(2)} PHP/L). The hotel has ~33 rooms total with current average occupancy of ~10 rooms.
+
+Yesterday (${viewIso}):
+- PV produced: ${day.pv ?? 'n/a'} kWh
+- Hotel consumed: ${day.load ?? 'n/a'} kWh
+- Peak PV power: ${day.peakPv ?? 'n/a'} kW
+- Peak hotel load: ${day.peakLoad ?? 'n/a'} kW
+- Min SOC: ${day.minSoc ?? 'n/a'}%
+- Max SOC: ${day.maxSoc ?? 'n/a'}%
+- SOC at sunset: ${day.sunsetSoc ?? 'n/a'}%
+- Rooms occupied: ${day.rooms ?? 'n/a'}
+- Genset hours: ${day.gensetHours ?? 'n/a'} hr
+- Estimated diesel burned: ${derived?.gensetLiters?.toFixed(0) ?? 'n/a'} L
+- Estimated genset cost: ₱${derived?.gensetCost?.toFixed(0) ?? 'n/a'}
+- Alarms: ${day.alarms || 'none reported'}
+- Operator notes: ${day.notes || 'none'}
+
+Baselines from accumulated data:
+- 7-day rolling avg PV: ${r7?.toFixed(0) ?? 'insufficient history'} kWh
+- 30-day rolling avg PV: ${r30?.toFixed(0) ?? 'insufficient history'} kWh
+- Annual-average estimate (Siargao): ${SPEC.annualAvgKwhDay} kWh
+- Per-occupied-room avg consumption: ${perRoom.toFixed(1)} kWh/room/day
+
+Today (${todayISO()}):
+- Expected occupancy: ${rooms} rooms
+- Projected consumption: ${(rooms * perRoom).toFixed(0)} kWh
+
+Write a 3-4 paragraph engineer's daily commentary in plain English. Cover, in order:
+1) Production assessment — was yesterday strong, normal, or below baseline? What's the likely driver (weather, anomaly worth investigating)?
+2) Battery cycling health — was the depth of discharge appropriate, did the bank reach float, was minimum SOC safe?
+3) Genset economics — if the genset ran, was it worth it? What did each kWh cost? Could it have been avoided?
+4) Tonight's recommendation — given today's occupancy and the battery's likely starting state at sunset, will the bank cover the night alone, or should staff plan a genset window? Be specific.
+
+Use the engineer's perspective. Speak to the hotel engineer directly. No bullet points; flowing paragraphs. Keep it under 300 words.`;
+
+    try {
+      const result = await window.cowork.askClaude(prompt);
+      const text = (typeof result === 'string') ? result : (result?.text || JSON.stringify(result));
+      const html = text.split(/\n\s*\n/).map(p => `<p>${escapeHtml(p)}</p>`).join('');
+      body.innerHTML = html;
+      if (!state.days[viewIso]) state.days[viewIso] = blankDay(viewIso);
+      state.days[viewIso].commentary = text;
+      saveState();
+      status.textContent = `Generated ${new Date().toLocaleTimeString()}`;
+      document.getElementById('copy-commentary').style.display = '';
+    } catch (err) {
+      body.innerHTML = `<div class="commentary-placeholder">Couldn't reach the analysis engine. Error: ${escapeHtml(String(err?.message || err))}</div>`;
+      status.textContent = '';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+  document.getElementById('copy-commentary').addEventListener('click', () => {
+    const iso = document.getElementById('viewing-date').value;
+    const c = state.days[iso] && state.days[iso].commentary;
+    if (c) {
+      navigator.clipboard.writeText(c);
+      document.getElementById('commentary-status').textContent = 'Copied to clipboard.';
+    }
+  });
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ============================================================
+  //  WIRING
+  // ============================================================
+  document.getElementById('rooms-today').addEventListener('change', e => {
+    const val = +e.target.value || 0;
+    // Save ONLY to the current day — never update global roomsToday from a per-day edit
+    const viewIso = document.getElementById('viewing-date').value;
+    if (viewIso) {
+      if (!state.days[viewIso]) state.days[viewIso] = emptyDay(viewIso);
+      state.days[viewIso].rooms = val;
+    } else {
+      state.settings.roomsToday = val;
+    }
+    saveState();
+    if (viewIso) publishRoomsToNetlify(viewIso, val);
+    render();
+  });
+  document.getElementById('diesel-price').addEventListener('change', e => {
+    const val = +e.target.value || 0;
+    state.settings.dieselPrice = val;
+    // Also save to the currently viewed day so diesel price is recorded per-day
+    const viewIso = document.getElementById('viewing-date').value;
+    if (viewIso && state.days[viewIso]) state.days[viewIso].dieselPrice = val;
+    saveState();
+    render();
+  });
+  document.getElementById('viewing-date').addEventListener('change', () => {
+    loadFormFromDay(document.getElementById('viewing-date').value);
+    render();
+  });
+  document.getElementById('du-rate').addEventListener('change', e => {
+    const val = +e.target.value || 14;
+    state.settings.duRate = val;
+    saveState();
+    render();
+  });
+  document.getElementById('system-capex').addEventListener('change', e => {
+    const val = +e.target.value || 7000000;
+    state.settings.systemCapex = val;
+    saveState();
+    render();
+  });
+
+  // ============================================================
+  //  WEEKLY & MONTHLY REPORTS
+  // ============================================================
+
+  function getThisMonday(isoDate) {
+    const d = new Date(isoDate + 'T00:00:00');
+    const dow = d.getDay();
+    const offset = (dow === 0) ? -6 : (1 - dow);
+    d.setDate(d.getDate() + offset);
+    return yyyymmdd(d);
+  }
+
+  function weekRangeLabel(startISO, endISO) {
+    const fmt = iso => {
+      const d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
+    };
+    const yr = endISO.slice(0, 4);
+    return `${fmt(startISO)} – ${fmt(endISO)}, ${yr}`;
+  }
+
+  function aggregateRange(startISO, endISO) {
+    const days = dayList().filter(iso => iso >= startISO && iso <= endISO);
+    if (!days.length) return null;
+    const price = state.settings.dieselPrice;
+    const agg = {
+      days, count: days.length,
+      totalPv: 0, totalLoad: 0, totalGensetHours: 0,
+      totalGensetCost: 0, totalSaving: 0, totalActualCost: 0,
+      totalCO2: 0, wasteRuns: 0, wasteCost: 0,
+      pvShares: [], blendedCosts: [],
+      bestDay: null, worstDay: null, minSocOverall: Infinity
+    };
+    for (const iso of days) {
+      const d = state.days[iso];
+      if (!d) continue;
+      agg.totalPv += d.pv || 0;
+      agg.totalLoad += d.load || 0;
+      agg.totalGensetHours += d.gensetHours || 0;
+      agg.totalCO2 += (d.pv || 0) * SPEC.co2KgPerKwh;
+      if (typeof d.minSoc === 'number') agg.minSocOverall = Math.min(agg.minSocOverall, d.minSoc);
+      const fin = computeFinancialFor(iso);
+      if (fin) {
+        agg.totalGensetCost += fin.gensetCost;
+        agg.totalSaving += fin.saving;
+        agg.totalActualCost += fin.actualCost;
+        if (fin.pvShare != null) agg.pvShares.push(fin.pvShare);
+        if (fin.blendedPerKwh != null) agg.blendedCosts.push(fin.blendedPerKwh);
+      }
+      (d.events || []).forEach(e => {
+        const sm = hhmmToMin(e.startTime), em = hhmmToMin(e.stopTime);
+        const dur = (sm != null && em != null && em > sm) ? (em - sm) / 60 : null;
+        if (sm != null && sm >= 510 && sm <= 900 && typeof e.startSoc === 'number' && e.startSoc >= 55 && dur) {
+          agg.wasteCost += dur * SPEC.gensetLPerHourMidpoint * (d.dieselPrice ?? price);
+          agg.wasteRuns++;
+        }
+      });
+    }
+    const pvDays = days.map(iso => ({ iso, pv: state.days[iso]?.pv || 0 })).filter(x => x.pv > 0);
+    if (pvDays.length) {
+      agg.bestDay  = pvDays.reduce((a, b) => a.pv > b.pv ? a : b);
+      agg.worstDay = pvDays.reduce((a, b) => a.pv < b.pv ? a : b);
+    }
+    agg.avgPvShare   = agg.pvShares.length   ? agg.pvShares.reduce((a,b)=>a+b,0)/agg.pvShares.length : null;
+    agg.avgBlended   = agg.blendedCosts.length ? agg.blendedCosts.reduce((a,b)=>a+b,0)/agg.blendedCosts.length : null;
+    agg.avgGensetHrs = agg.totalGensetHours / agg.count;
+    if (!isFinite(agg.minSocOverall)) agg.minSocOverall = null;
+    return agg;
+  }
+
+  // ── Report formatting helpers
+  function rphp(v, dec=0) {
+    if (v == null || !isFinite(v)) return '—';
+    return '₱' + v.toLocaleString('en', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+  }
+  function rpct(v, dec=1) {
+    if (v == null || !isFinite(v)) return '—';
+    return v.toFixed(dec) + '%';
+  }
+  function rkwh(v, dec=0) {
+    if (v == null || !isFinite(v)) return '—';
+    return v.toLocaleString('en', {minimumFractionDigits:dec, maximumFractionDigits:dec}) + ' kWh';
+  }
+  function rMom(curr, prev, higherIsBetter=true, label='vs prev') {
+    if (prev == null || curr == null || !isFinite(prev) || prev === 0) return '';
+    const d = curr - prev;
+    const p = Math.abs(d / Math.abs(prev) * 100).toFixed(1);
+    const isGood = higherIsBetter ? d > 0 : d < 0;
+    return `<div class="wow-change ${isGood?'up':'down'}">${d>0?'▲':'▼'} ${p}% ${label}</div>`;
+  }
+  function rDot(val, good, warn, invert=false) {
+    let cls;
+    if (invert) cls = val === 0 ? 'green' : val <= warn ? 'yellow' : 'red';
+    else        cls = val >= good ? 'green' : val >= warn ? 'yellow' : 'red';
+    return `<span class="status-dot ${cls}"></span>`;
+  }
+  function rStatus(val, good, warn, invert=false) {
+    if (invert) return val === 0 ? 'Good' : val <= warn ? 'Watch' : 'Action';
+    return val >= good ? 'Good' : val >= warn ? 'Watch' : 'Action';
+  }
+
+  // ── Weekly HTML builder
+  function buildWeeklyHTML(agg, prevAgg, startISO, endISO) {
+    if (!agg) return '<div class="report-empty">No data available for this week. Data will appear once days in this period are logged.</div>';
+    const duRate = state.settings.duRate ?? 14;
+    const capex  = state.settings.systemCapex || 7000000;
+    const cumSav = cumulativeSavings();
+    const lastCum = cumSav.length ? cumSav[cumSav.length-1].cumulative : 0;
+    const roiBalance = lastCum - capex;
+    const savPerDay  = agg.totalSaving / agg.count;
+    const paybackYrs = (capex - Math.max(lastCum,0)) / Math.max(savPerDay*365, 1);
+    const bestLine  = agg.bestDay  ? `${agg.bestDay.iso} · ${agg.bestDay.pv.toFixed(0)} kWh` : '—';
+    const worstLine = agg.worstDay ? `${agg.worstDay.iso} · ${agg.worstDay.pv.toFixed(0)} kWh` : '—';
+
+    const scorecardRows = [
+      { label:'Solar Self-Sufficiency',    val:agg.avgPvShare,   good:70, warn:50, display:rpct(agg.avgPvShare) },
+      { label:'Blended Cost vs DU Rate',   val:agg.avgBlended!=null?(duRate-agg.avgBlended)/duRate*100:null, good:0, warn:-20, display:agg.avgBlended?`₱${agg.avgBlended.toFixed(2)}/kWh vs ₱${duRate} DU`:'—' },
+      { label:'Avoidable Genset Runs',     val:agg.wasteRuns, good:0, warn:2, invert:true, display:`${agg.wasteRuns} run${agg.wasteRuns!==1?'s':''} · ${rphp(agg.wasteCost)}` },
+      { label:'Min Battery SOC This Week', val:agg.minSocOverall, good:30, warn:20, display:agg.minSocOverall!=null?agg.minSocOverall.toFixed(1)+'%':'—' },
+    ];
+
+    let verdictText = '';
+    if (agg.count < 3) {
+      verdictText = `Only ${agg.count} day${agg.count!==1?'s':''} of data captured for this week — build up the log for a fuller picture.`;
+    } else {
+      const s = agg.avgPvShare ?? 0;
+      const selfLine = s>=70 ? `Solar self-sufficiency averaged ${rpct(s)} — the ≥70% target was met.`
+        : s>=50 ? `Solar self-sufficiency averaged ${rpct(s)} — below the 70% target; mid-morning genset discipline needs attention.`
+        : `Solar self-sufficiency averaged ${rpct(s)} — significantly below target. Genset discipline is the priority this week.`;
+      const wasteLine = agg.wasteRuns===0 ? `Zero avoidable genset runs detected — excellent operational discipline.`
+        : `${agg.wasteRuns} avoidable run${agg.wasteRuns!==1?'s':''} flagged, costing ${rphp(agg.wasteCost)} in preventable diesel.`;
+      const roiLine = savPerDay > 0
+        ? `At ${rphp(savPerDay)}/day savings, full payback is implied in approximately ${paybackYrs>0?paybackYrs.toFixed(1)+' years':'less than a year'} from today.`
+        : '';
+      verdictText = [selfLine, wasteLine, roiLine].filter(Boolean).join(' ');
+    }
+
+    const actions = [];
+    if (agg.wasteRuns > 0) actions.push({icon:'⚠️', text:`${agg.wasteRuns} avoidable run${agg.wasteRuns!==1?'s':''} this week — enforce SOC ≤35% rule before starting genset during solar hours.`});
+    if (agg.avgPvShare!=null && agg.avgPvShare<70) actions.push({icon:'☀️', text:`Self-sufficiency at ${rpct(agg.avgPvShare)} — target ≥70%. Skip mid-morning starts when solar is already charging.`});
+    if (agg.minSocOverall!=null && agg.minSocOverall<25) actions.push({icon:'🔋', text:`Battery hit ${agg.minSocOverall.toFixed(1)}% minimum — review evening genset trigger points to avoid deep discharge.`});
+    if (agg.avgBlended!=null && agg.avgBlended>duRate) actions.push({icon:'💰', text:`Blended cost (${rphp(agg.avgBlended,2)}/kWh) exceeded DU rate (₱${duRate}/kWh) — excess genset running up costs.`});
+    if (!actions.length) actions.push({icon:'✅', text:'No critical issues flagged this week. Maintain current operating discipline.'});
+
+    return `
+      <div class="report-subheading">📊 Week at a Glance</div>
+      <div class="report-grid">
+        <div class="report-block">
+          <div style="font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Solar &amp; Energy</div>
+          <div class="report-kpi-grid">
+            <div class="report-kpi"><div class="rk-val">${rkwh(agg.totalPv)}</div><div class="rk-label">Solar produced</div>${rMom(agg.totalPv,prevAgg?.totalPv,true,'vs prev wk')}</div>
+            <div class="report-kpi"><div class="rk-val">${rpct(agg.avgPvShare)}</div><div class="rk-label">Avg self-suf.</div>${rMom(agg.avgPvShare,prevAgg?.avgPvShare,true,'vs prev wk')}</div>
+            <div class="report-kpi"><div class="rk-val">${agg.totalGensetHours.toFixed(1)} hr</div><div class="rk-label">Genset runtime</div>${rMom(agg.totalGensetHours,prevAgg?.totalGensetHours,false,'vs prev wk')}</div>
+          </div>
+        </div>
+        <div class="report-block">
+          <div style="font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Cost &amp; Savings</div>
+          <div class="report-kpi-grid">
+            <div class="report-kpi"><div class="rk-val">${rphp(agg.totalGensetCost)}</div><div class="rk-label">Diesel cost</div>${rMom(agg.totalGensetCost,prevAgg?.totalGensetCost,false,'vs prev wk')}</div>
+            <div class="report-kpi"><div class="rk-val">${rphp(agg.totalSaving)}</div><div class="rk-label">Saved vs diesel-only</div>${rMom(agg.totalSaving,prevAgg?.totalSaving,true,'vs prev wk')}</div>
+            <div class="report-kpi"><div class="rk-val">${agg.avgBlended!=null?'₱'+agg.avgBlended.toFixed(2):'—'}</div><div class="rk-label">Avg blended/kWh</div><div class="rk-sub">vs ₱${duRate} DU</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-subheading">🏆 Highlights</div>
+      <div class="report-grid">
+        <div class="report-block">
+          <div style="font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Best day — highest solar</div>
+          <div style="font-size:15px;font-weight:600;color:var(--good);">${bestLine}</div>
+          <div style="font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 6px;">Worst day — lowest solar</div>
+          <div style="font-size:15px;font-weight:600;color:var(--bad);">${worstLine}</div>
+        </div>
+        <div class="report-block">
+          <div style="font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Avoidable diesel waste</div>
+          <div style="font-size:15px;font-weight:600;color:${agg.wasteRuns>0?'#f59e0b':'var(--good)'};">${rphp(agg.wasteCost)} · ${agg.wasteRuns} run${agg.wasteRuns!==1?'s':''}</div>
+          <div style="font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 6px;">CO₂ avoided this week</div>
+          <div style="font-size:15px;font-weight:600;color:var(--accent);">${agg.totalCO2>=1000?(agg.totalCO2/1000).toFixed(2)+' tCO₂':agg.totalCO2.toFixed(1)+' kg CO₂'}</div>
+        </div>
+      </div>
+
+      <div class="report-subheading">💰 ROI Pulse</div>
+      <div class="report-block" style="margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div class="report-kpi"><div class="rk-val">${rphp(agg.totalSaving)}</div><div class="rk-label">Saved this week</div><div class="rk-sub">vs diesel-only</div></div>
+          <div class="report-kpi"><div class="rk-val" style="color:${roiBalance>=0?'var(--good)':'var(--bad)'};">${rphp(Math.abs(roiBalance))}</div><div class="rk-label">${roiBalance>=0?'Recovered':'Still to recover'}</div><div class="rk-sub">of ₱${(capex/1000000).toFixed(1)}M</div></div>
+          <div class="report-kpi"><div class="rk-val">${savPerDay>0?(paybackYrs>0?paybackYrs.toFixed(1)+' yr':'Paid back!'):'—'}</div><div class="rk-label">Implied payback</div><div class="rk-sub">at this week's rate</div></div>
+        </div>
+      </div>
+
+      <div class="report-subheading">📋 Performance Scorecard</div>
+      <div class="report-block" style="margin-bottom:14px;">
+        <table class="scorecard-table">
+          <thead><tr><th>Metric</th><th>This week</th><th>Status</th></tr></thead>
+          <tbody>
+            ${scorecardRows.map(r=>`<tr><td>${r.label}</td><td>${r.display}</td><td>${rDot(r.val,r.good,r.warn,r.invert)} ${rStatus(r.val,r.good,r.warn,r.invert)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="report-subheading">🧑‍🔧 Engineer's Weekly Verdict</div>
+      <div class="verdict-card">
+        <h3>${weekRangeLabel(startISO,endISO)} · ${agg.count} day${agg.count!==1?'s':''} logged</h3>
+        <p>${verdictText}</p>
+      </div>
+
+      <div class="report-subheading">✅ Action Items for Next Week</div>
+      <div class="action-items-block">
+        ${actions.map(a=>`<div class="action-item"><span class="ai-icon">${a.icon}</span><span>${a.text}</span></div>`).join('')}
+      </div>
+    `;
+  }
+
+  // ── Monthly HTML builder
+  function buildMonthlyHTML(agg, prevAgg, year, month) {
+    if (!agg) return '<div class="report-empty">No data available for this month. Data will appear once days in this period are logged.</div>';
+    const duRate  = state.settings.duRate ?? 14;
+    const lcoe    = computeLCOE();
+    const capex   = state.settings.systemCapex || 7000000;
+    const cumSav  = cumulativeSavings();
+    const lastCum = cumSav.length ? cumSav[cumSav.length-1].cumulative : 0;
+    const roiBalance = lastCum - capex;
+    const savPerDay  = agg.totalSaving / agg.count;
+    const annualSav  = savPerDay * 365;
+    const paybackYrs = (capex - Math.max(lastCum,0)) / Math.max(savPerDay*365, 1);
+    const monthName  = new Date(`${year}-${String(month).padStart(2,'0')}-01T00:00:00`).toLocaleDateString('en-PH', {month:'long', year:'numeric'});
+    const pvVsDesign = agg.totalPv / agg.count / SPEC.annualAvgKwhDay * 100;
+    const actualAvgPv = agg.totalPv / agg.count;
+
+    // Occupancy data
+    const daysWithRooms = agg.days.filter(iso => state.days[iso]?.rooms);
+    const totalRoomNights = daysWithRooms.reduce((a,iso)=>a+(state.days[iso].rooms||0),0);
+    const savPerRoomNight = totalRoomNights>0 ? agg.totalSaving/totalRoomNights : null;
+    const costPerRoomNight = totalRoomNights>0 ? agg.totalActualCost/totalRoomNights : null;
+
+    const scorecardRows = [
+      {label:'Avg Solar Self-Sufficiency', val:agg.avgPvShare, good:70, warn:50, display:rpct(agg.avgPvShare)},
+      {label:'Blended Cost vs DU Rate',    val:agg.avgBlended!=null?((duRate-agg.avgBlended)/duRate*100):null, good:0, warn:-10, display:agg.avgBlended?`₱${agg.avgBlended.toFixed(2)}/kWh vs ₱${duRate} DU`:'—'},
+      {label:'Avoidable Diesel Waste',     val:agg.wasteRuns, good:0, warn:3, invert:true, display:`${agg.wasteRuns} runs · ${rphp(agg.wasteCost)}`},
+      {label:'PV Output vs Design',        val:pvVsDesign, good:90, warn:70, display:`${actualAvgPv.toFixed(0)} kWh/day · ${pvVsDesign.toFixed(0)}% of design`},
+      {label:'ROI Recovery Progress',      val:lastCum/capex*100, good:5, warn:1, display:`${(lastCum/capex*100).toFixed(2)}% of ₱${(capex/1000000).toFixed(1)}M recovered`},
+    ];
+
+    const selfSuf = agg.avgPvShare ?? 0;
+    const verdictLines = [
+      selfSuf>=70
+        ? `${monthName} achieved ${rpct(selfSuf)} average solar self-sufficiency — the ≥70% target was met.`
+        : `${monthName} averaged ${rpct(selfSuf)} solar self-sufficiency, below the 70% target. Reducing mid-solar genset starts remains the top priority.`,
+      `Total savings vs diesel-only: ${rphp(agg.totalSaving)}, averaging ${rphp(savPerDay)}/day. Annualized, this implies ${rphp(annualSav)}/year with a full payback in approximately ${paybackYrs>0?paybackYrs.toFixed(1)+' years':'less than a year'}.`,
+      agg.wasteRuns>0
+        ? `${agg.wasteRuns} avoidable run${agg.wasteRuns!==1?'s':''} were flagged this month at a cost of ${rphp(agg.wasteCost)}. Eliminating these is the single highest-leverage operational improvement available.`
+        : `Zero avoidable genset runs detected this month — operational discipline was excellent.`
+    ];
+
+    return `
+      <div class="report-subheading">📊 Month at a Glance — ${monthName}</div>
+      <div class="report-grid">
+        <div class="report-block">
+          <div style="font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Solar &amp; Energy</div>
+          <div class="report-kpi-grid">
+            <div class="report-kpi"><div class="rk-val">${rkwh(agg.totalPv)}</div><div class="rk-label">Total solar</div>${rMom(agg.totalPv,prevAgg?.totalPv,true,'vs prev mo')}</div>
+            <div class="report-kpi"><div class="rk-val">${rpct(agg.avgPvShare)}</div><div class="rk-label">Avg self-suf.</div>${rMom(agg.avgPvShare,prevAgg?.avgPvShare,true,'vs prev mo')}</div>
+            <div class="report-kpi"><div class="rk-val">${agg.totalGensetHours.toFixed(1)} hr</div><div class="rk-label">Total genset</div>${rMom(agg.totalGensetHours,prevAgg?.totalGensetHours,false,'vs prev mo')}</div>
+          </div>
+        </div>
+        <div class="report-block">
+          <div style="font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Cost &amp; Savings</div>
+          <div class="report-kpi-grid">
+            <div class="report-kpi"><div class="rk-val">${rphp(agg.totalGensetCost)}</div><div class="rk-label">Total diesel</div>${rMom(agg.totalGensetCost,prevAgg?.totalGensetCost,false,'vs prev mo')}</div>
+            <div class="report-kpi"><div class="rk-val">${rphp(agg.totalSaving)}</div><div class="rk-label">Total saved</div>${rMom(agg.totalSaving,prevAgg?.totalSaving,true,'vs prev mo')}</div>
+            <div class="report-kpi"><div class="rk-val">${agg.avgBlended!=null?'₱'+agg.avgBlended.toFixed(2):'—'}</div><div class="rk-label">Avg blended/kWh</div><div class="rk-sub">vs ₱${duRate} DU</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-subheading">📈 LCOE &amp; Production Health</div>
+      <div class="report-block" style="margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div class="report-kpi"><div class="rk-val">₱${lcoe.toFixed(2)}</div><div class="rk-label">LCOE</div><div class="rk-sub">vs ₱${duRate} DU rate</div></div>
+          <div class="report-kpi"><div class="rk-val">${actualAvgPv.toFixed(0)} kWh</div><div class="rk-label">Actual avg/day</div><div class="rk-sub">Design: ${SPEC.annualAvgKwhDay} kWh (${pvVsDesign.toFixed(0)}%)</div></div>
+          <div class="report-kpi"><div class="rk-val">${agg.count}</div><div class="rk-label">Days logged</div><div class="rk-sub">of ~30 in month</div></div>
+        </div>
+      </div>
+
+      ${daysWithRooms.length>0?`
+      <div class="report-subheading">🏨 Occupancy Efficiency</div>
+      <div class="report-block" style="margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+          <div class="report-kpi"><div class="rk-val">${savPerRoomNight!=null?rphp(savPerRoomNight):'—'}</div><div class="rk-label">Savings per room-night</div><div class="rk-sub">${daysWithRooms.length} days with occupancy data</div></div>
+          <div class="report-kpi"><div class="rk-val">${costPerRoomNight!=null?rphp(costPerRoomNight):'—'}</div><div class="rk-label">Energy cost per room-night</div><div class="rk-sub">total actual cost ÷ room-nights</div></div>
+        </div>
+      </div>`:''}
+
+      <div class="report-subheading">💰 ROI Milestone Update</div>
+      <div class="report-block" style="margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div class="report-kpi"><div class="rk-val">${rphp(agg.totalSaving)}</div><div class="rk-label">Recovered this month</div><div class="rk-sub">cumulative: ${rphp(Math.max(lastCum,0))}</div></div>
+          <div class="report-kpi"><div class="rk-val" style="color:${roiBalance>=0?'var(--good)':'var(--bad)'};">${rphp(Math.abs(roiBalance))}</div><div class="rk-label">${roiBalance>=0?'✅ Fully recovered!':'Still to recover'}</div><div class="rk-sub">of ₱${(capex/1000000).toFixed(1)}M</div></div>
+          <div class="report-kpi"><div class="rk-val">${paybackYrs>0?paybackYrs.toFixed(1)+' yr':'Paid back!'}</div><div class="rk-label">Payback estimate</div><div class="rk-sub">at ${rphp(annualSav)}/yr projected</div></div>
+        </div>
+        <div style="margin-top:12px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:4px;">
+            <span>₱0</span><span>${(Math.min(lastCum,capex)/capex*100).toFixed(2)}% recovered</span><span>₱${(capex/1000000).toFixed(1)}M</span>
+          </div>
+          <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${Math.min(lastCum/capex*100,100).toFixed(2)}%"></div></div>
+        </div>
+      </div>
+
+      <div class="report-subheading">☁️ Carbon Savings</div>
+      <div class="report-block" style="margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div class="report-kpi"><div class="rk-val">${agg.totalCO2>=1000?(agg.totalCO2/1000).toFixed(2)+' t':(agg.totalCO2.toFixed(1)+' kg')}</div><div class="rk-label">CO₂ avoided</div><div class="rk-sub">@ 0.87 kg/kWh vs diesel</div></div>
+          <div class="report-kpi"><div class="rk-val">${(agg.totalCO2/21).toFixed(0)}</div><div class="rk-label">Tree-years equiv.</div><div class="rk-sub">~21 kg CO₂/tree/yr</div></div>
+          <div class="report-kpi"><div class="rk-val">${(agg.totalCO2/agg.count).toFixed(1)} kg</div><div class="rk-label">Avg CO₂/day</div><div class="rk-sub">across ${agg.count} logged days</div></div>
+        </div>
+      </div>
+
+      <div class="report-subheading">📋 Financial Health Scorecard</div>
+      <div class="report-block" style="margin-bottom:14px;">
+        <table class="scorecard-table">
+          <thead><tr><th>Metric</th><th>This month</th><th>Status</th></tr></thead>
+          <tbody>
+            ${scorecardRows.map(r=>`<tr><td>${r.label}</td><td>${r.display}</td><td>${rDot(r.val,r.good,r.warn,r.invert)} ${rStatus(r.val,r.good,r.warn,r.invert)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="report-subheading">🧑‍🔧 Engineer's Monthly Verdict</div>
+      <div class="verdict-card">
+        <h3>${monthName} · ${agg.count} day${agg.count!==1?'s':''} logged</h3>
+        ${verdictLines.map(l=>`<p>${l}</p>`).join('')}
+      </div>
+
+      <div class="report-subheading">🔭 Outlook for Next Month</div>
+      <div class="action-items-block">
+        <div class="action-item"><span class="ai-icon">📈</span><span>Projected savings: <strong>${rphp(annualSav/12)}/month</strong> at current ${rphp(savPerDay)}/day run rate.</span></div>
+        <div class="action-item"><span class="ai-icon">🎯</span><span>Target ≥70% solar self-sufficiency daily. Priority: eliminate mid-morning genset runs during solar hours.</span></div>
+        <div class="action-item"><span class="ai-icon">🔋</span><span>Keep evening genset trigger ≤35% SOC; stop charge at 80–85% so morning solar can finish.</span></div>
+        ${agg.wasteRuns>0?`<div class="action-item"><span class="ai-icon">⚠️</span><span>Avoidable waste target: ₱0. This month recorded ${rphp(agg.wasteCost)} — review with site engineer.</span></div>`:''}
+        ${daysWithRooms.length<15?`<div class="action-item"><span class="ai-icon">📝</span><span>Only ${daysWithRooms.length} days had occupancy recorded. Log rooms every day for accurate per-room efficiency tracking.</span></div>`:''}
+      </div>
+    `;
+  }
+
+  // ── Main report renderer (called from render())
+  function renderReports() {
+    const today   = new Date();
+    const todayStr = yyyymmdd(today);
+    const dow = today.getDay();   // 0=Sun 1=Mon
+    const dom = today.getDate();  // 1–31
+
+    // ── WEEKLY REPORT ──────────────────────────────
+    const wSection = document.getElementById('weekly-report-section');
+    const wSummary = document.getElementById('weekly-report-summary');
+    const wBody    = document.getElementById('weekly-report-body');
+
+    // This week's Monday
+    const thisMonday = getThisMonday(todayStr);
+    const thisMon = new Date(thisMonday + 'T00:00:00');
+
+    // Previous week: Mon–Sun
+    const prevMon = new Date(thisMon); prevMon.setDate(prevMon.getDate() - 7);
+    const prevSun = new Date(thisMon); prevSun.setDate(prevSun.getDate() - 1);
+    const prevWkStart = yyyymmdd(prevMon);
+    const prevWkEnd   = yyyymmdd(prevSun);
+
+    // 2 weeks ago (for WoW comparison)
+    const pp2Mon = new Date(prevMon); pp2Mon.setDate(pp2Mon.getDate() - 7);
+    const pp2Sun = new Date(prevSun); pp2Sun.setDate(pp2Sun.getDate() - 7);
+    const pp2Start = yyyymmdd(pp2Mon);
+    const pp2End   = yyyymmdd(pp2Sun);
+
+    const wAgg    = aggregateRange(prevWkStart, prevWkEnd);
+    const wPrvAgg = aggregateRange(pp2Start, pp2End);
+
+    wSummary.textContent = `📋 Weekly Report — ${weekRangeLabel(prevWkStart, prevWkEnd)}`;
+    wBody.innerHTML = buildWeeklyHTML(wAgg, wPrvAgg, prevWkStart, prevWkEnd);
+
+    // Auto-expand on Mondays only
+    if (today.getDay() === 1) wSection.setAttribute('open', '');
+
+    // ── MONTHLY REPORT ─────────────────────────────
+    const mSection = document.getElementById('monthly-report-section');
+    const mSummary = document.getElementById('monthly-report-summary');
+    const mBody    = document.getElementById('monthly-report-body');
+
+    // Previous calendar month
+    const prevMoDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const prevMoYear  = prevMoDate.getFullYear();
+    const prevMoMonth = prevMoDate.getMonth() + 1;
+    const prevMoStart = `${prevMoYear}-${String(prevMoMonth).padStart(2,'0')}-01`;
+    const lastDayPrevMo = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+    const prevMoEnd   = `${prevMoYear}-${String(prevMoMonth).padStart(2,'0')}-${String(lastDayPrevMo).padStart(2,'0')}`;
+
+    // 2 months ago (for MoM comparison)
+    const pp2MoDate  = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+    const pp2MoYear  = pp2MoDate.getFullYear();
+    const pp2MoMonth = pp2MoDate.getMonth() + 1;
+    const pp2MoStart = `${pp2MoYear}-${String(pp2MoMonth).padStart(2,'0')}-01`;
+    const lastDayPP2 = new Date(today.getFullYear(), today.getMonth() - 1, 0).getDate();
+    const pp2MoEnd   = `${pp2MoYear}-${String(pp2MoMonth).padStart(2,'0')}-${String(lastDayPP2).padStart(2,'0')}`;
+
+    const prevMoName = prevMoDate.toLocaleDateString('en-PH', {month:'long', year:'numeric'});
+    const mAgg    = aggregateRange(prevMoStart, prevMoEnd);
+    const mPrvAgg = aggregateRange(pp2MoStart, pp2MoEnd);
+
+    mSummary.textContent = `📅 Monthly Report — ${prevMoName}`;
+    mBody.innerHTML = buildMonthlyHTML(mAgg, mPrvAgg, prevMoYear, prevMoMonth);
+
+    // Auto-expand on 1st of month only
+    if (today.getDate() === 1) mSection.setAttribute('open', '');
+  }
+
+  // Init
+  document.getElementById('rooms-today').value    = state.settings.roomsToday;
+  document.getElementById('diesel-price').value   = state.settings.dieselPrice;
+  document.getElementById('du-rate').value        = state.settings.duRate ?? 14;
+  document.getElementById('system-capex').value   = state.settings.systemCapex ?? 7000000;
+  document.getElementById('viewing-date').value   = yesterdayISO();
+  loadFormFromDay(yesterdayISO());
+  render();
+
+  // ============================================================
+  //  LIVE DATA: fetch solar_data.json on every load
+  //  The morning capture task updates this file; the dashboard
+  //  reads it so new days appear automatically.
+  // ============================================================
+  fetch('/solar_data.json?cb=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(json){
+      var remoteDays = json.days || {};
+      var changed = false;
+      for (var iso in remoteDays) {
+        // Remote auto-captured data fills any day not manually overridden
+        if (!state.days[iso] || state.days[iso].source === 'auto') {
+          state.days[iso] = remoteDays[iso];
+          changed = true;
+        }
+      }
+      if (changed) {
+        // If currently viewing a date with no data, jump to the latest date that has data
+        var curIso = document.getElementById('viewing-date').value;
+        if (!state.days[curIso]) {
+          var latestWithData = Object.keys(state.days).sort().pop();
+          if (latestWithData) {
+            document.getElementById('viewing-date').value = latestWithData;
+            loadFormFromDay(latestWithData);
+          }
+        }
+        render();
+      }
+    })
+    .catch(function(){});  // offline / local dev – use baked data
+
+  // ============================================================
+  //  DRAG-AND-DROP SECTION REORDERING
+  // ============================================================
+  (function(){
+    var ORDER_KEY = 'hueSolarDashboard.sectionOrder';
+
+    function savedOrder(){
+      try{ return JSON.parse(localStorage.getItem(ORDER_KEY)||'null'); }catch(e){ return null; }
+    }
+    function saveOrder(order){
+      localStorage.setItem(ORDER_KEY, JSON.stringify(order));
+    }
+    function currentOrder(){
+      var c = document.getElementById('drag-container');
+      if(!c) return [];
+      return Array.from(c.querySelectorAll(':scope > .drag-wrap'))
+                  .map(function(el){ return el.dataset.sectionId; })
+                  .filter(Boolean);
+    }
+    function applyOrder(order){
+      var c = document.getElementById('drag-container');
+      if(!c||!order) return;
+      order.forEach(function(id){
+        var el = c.querySelector('.drag-wrap[data-section-id="'+id+'"]');
+        if(el) c.appendChild(el);
+      });
+    }
+
+    // Restore saved layout on page load
+    var saved = savedOrder();
+    if(saved && saved.length) applyOrder(saved);
+
+    var container = document.getElementById('drag-container');
+    if(!container) return;
+
+    var dragging = null, lastOver = null;
+
+    function clearStates(){
+      container.querySelectorAll('.drop-above,.drop-below').forEach(function(el){
+        el.classList.remove('drop-above','drop-below');
+      });
+    }
+
+    container.addEventListener('dragstart', function(e){
+      dragging = e.target.closest('.drag-wrap');
+      if(!dragging) return;
+      dragging.classList.add('is-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragging.dataset.sectionId||'');
+    });
+
+    container.addEventListener('dragend', function(){
+      if(dragging){ dragging.classList.remove('is-dragging'); dragging = null; }
+      clearStates();
+      lastOver = null;
+      saveOrder(currentOrder());
+    });
+
+    container.addEventListener('dragover', function(e){
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      var target = e.target.closest('.drag-wrap');
+      if(!target || target === dragging) return;
+      if(target === lastOver) return;
+      lastOver = target;
+      clearStates();
+      var r = target.getBoundingClientRect();
+      if(e.clientY < r.top + r.height/2){ target.classList.add('drop-above'); }
+      else { target.classList.add('drop-below'); }
+    });
+
+    container.addEventListener('dragleave', function(e){
+      if(!container.contains(e.relatedTarget)){ clearStates(); lastOver = null; }
+    });
+
+    container.addEventListener('drop', function(e){
+      e.preventDefault();
+      if(!dragging) return;
+      var target = e.target.closest('.drag-wrap');
+      if(!target || target === dragging) return;
+      var r = target.getBoundingClientRect();
+      if(e.clientY < r.top + r.height/2){ container.insertBefore(dragging, target); }
+      else { target.after ? target.after(dragging) : target.parentNode.insertBefore(dragging, target.nextSibling); }
+      clearStates(); lastOver = null;
+      saveOrder(currentOrder());
+    });
+
+  })();
+
+</script>
