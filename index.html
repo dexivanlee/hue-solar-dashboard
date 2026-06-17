@@ -1118,7 +1118,7 @@
     // Publish rooms for one day to solar_data.json so any browser sees it
     try {
       var [existingJson, htmlBytes] = await Promise.all([
-        fetch('/solar_data.json?cb=' + Date.now()).then(function(r){ return r.json(); }),
+        fetch('./solar_data.json?cb=' + Date.now()).then(function(r){ return r.json(); }),
         fetch('/index.html?cb='      + Date.now()).then(function(r){ return r.arrayBuffer(); })
       ]);
       if (!existingJson.days[iso]) return; // day not in JSON — skip (manual-only day)
@@ -2639,7 +2639,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
   //  The morning capture task updates this file; the dashboard
   //  reads it so new days appear automatically.
   // ============================================================
-  fetch('/solar_data.json?cb=' + Date.now())
+  fetch('./solar_data.json?cb=' + Date.now())
     .then(function(r){ return r.json(); })
     .then(function(json){
       var remoteDays = json.days || {};
