@@ -814,6 +814,39 @@
           "reason": ""
         }
       ]
+    },
+    "2026-06-16": {
+      "date": "2026-06-16",
+      "source": "auto",
+      "pv": 552.2,
+      "load": 778,
+      "gensetKwh": 300.2,
+      "gensetHours": 4.42,
+      "peakPv": 90.46,
+      "peakLoad": 65.65,
+      "minSoc": 37.5,
+      "maxSoc": 93,
+      "sunsetSoc": 53.3,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 552.2 kWh -- the highest daily PV output recorded this month -- with the genset contributing only 300.2 kWh, or about 35 pct of total supply. Against a load of 778 kWh this is the strongest solar day yet, continuing the downward trend in genset reliance that began on June 14.\n\nBattery ranged from 37.5 pct to 93 pct, a depth of discharge of 55.5 percentage points. The 37.5 pct minimum sits just above the manual-start band and the system managed the full day with only 2 genset runs. Sunset SOC of 53.3 pct is decent, though lower than June 15's 81.8 pct, likely reflecting higher late-afternoon demand.\n\nAt 43 L/hr over 4.42 hours the genset burned roughly 190 L of diesel, costing approximately PHP 16,440 -- the lowest fuel day of the week by a wide margin. The evening run (18:30-21:20) is the main remaining cost driver; pushing sunset SOC above 70 pct via a brief pre-sunset charge on good solar days like this one could shorten or eliminate that run and cut nightly fuel spend further.",
+      "events": [
+        {
+          "startTime": "04:00",
+          "startSoc": 39,
+          "stopTime": "05:35",
+          "stopSoc": 69,
+          "reason": ""
+        },
+        {
+          "startTime": "18:30",
+          "startSoc": 41,
+          "stopTime": "21:20",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
