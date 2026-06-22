@@ -688,7 +688,7 @@
 
 <div class="drag-wrap" data-section-id="entry-section" draggable="true">
 <!-- Data entry form -->
-<details class="section" id="entry-section" open>
+<details class="section" id="entry-section">
   <summary>Enter yesterday's totals from DeyeCloud</summary>
   <div class="section-body">
     <div class="desc" style="margin-bottom: 10px; color: var(--text-muted); font-size: 12.5px;">
@@ -2191,7 +2191,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
     state.settings.dieselPrice = val;
     // Also save to the currently viewed day so diesel price is recorded per-day
     const viewIso = document.getElementById('viewing-date').value;
-    if (viewIso && state.days[viewIso]) state.days[viewIso].dieselPrice = val;
+    if (viewIso) { if (!state.days[viewIso]) state.days[viewIso] = blankDay(viewIso); state.days[viewIso].dieselPrice = val; }
     saveState();
     render();
   });
