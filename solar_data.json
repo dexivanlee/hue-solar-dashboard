@@ -847,6 +847,164 @@
           "reason": ""
         }
       ]
+    },
+    "2026-06-17": {
+      "date": "2026-06-17",
+      "source": "auto",
+      "pv": 395.2,
+      "load": 730,
+      "gensetKwh": 308.6,
+      "gensetHours": 4.5,
+      "peakPv": 95.71,
+      "peakLoad": 61.8,
+      "minSoc": 29.2,
+      "maxSoc": 92.3,
+      "sunsetSoc": 85.5,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841. PARTIAL DAY DATA: 236/289 records returned; totals may be understated.",
+      "commentary": "June 17 returned partial data - 236 of 289 records - so totals are likely undercounts. Captured solar 395 kWh and genset 309 kWh, a 44 percent genset share. Peak PV reached 95.7 kW indicating good sun while monitoring was working.\n\nBattery min was 29.2 percent at the bottom of the 28-35 percent manual-start band, clear of the 20 percent floor; depth of discharge 63 points. Sunset SOC of 85.5 percent was unusually high, explained by the daytime genset run pushing the bank to 92 percent.\n\nThe 13:35 to 16:55 daytime run is the avoidable cost - starting at 29 percent during good solar and charging to 92 percent burned roughly 145 L of diesel during a window the array should have handled. Same rule as May: no daytime genset starts while solar is producing well.",
+      "events": [
+        {
+          "startTime": "04:00",
+          "startSoc": 43,
+          "stopTime": "05:10",
+          "stopSoc": 65,
+          "reason": ""
+        },
+        {
+          "startTime": "13:35",
+          "startSoc": 29,
+          "stopTime": "16:55",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-18": {
+      "date": "2026-06-18",
+      "source": "auto",
+      "pv": 576.3,
+      "load": 857,
+      "gensetKwh": 390.2,
+      "gensetHours": 5.67,
+      "peakPv": 85.7,
+      "peakLoad": 92.92,
+      "minSoc": 29.3,
+      "maxSoc": 94.3,
+      "sunsetSoc": 52.7,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "June 18 was the strongest solar day of the week at 576 kWh, but genset still added 390 kWh - a 40 percent share - driven by an elevated load of 857 kWh. That load figure is unusually high and worth checking against occupancy or equipment.\n\nBattery cycled 29 to 94 percent, depth of discharge 65 points. The 29 percent minimum sat at the bottom of the manual-start band, well above the 20 percent floor. Sunset SOC 53 percent gave modest overnight buffer.\n\nTwo runs totaling 5.67 hours cost an estimated PHP 21,000. The 05:00 morning run was justified by the overnight low; the 18:50 evening run was needed for the night. Both runs charged past 90 percent - stopping at 80-85 percent would save 30-60 minutes per run, per fault F6.",
+      "events": [
+        {
+          "startTime": "05:00",
+          "startSoc": 29,
+          "stopTime": "07:30",
+          "stopSoc": 85,
+          "reason": ""
+        },
+        {
+          "startTime": "18:50",
+          "startSoc": 33,
+          "stopTime": "22:00",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-19": {
+      "date": "2026-06-19",
+      "source": "auto",
+      "pv": 475.4,
+      "load": 720,
+      "gensetKwh": 197.9,
+      "gensetHours": 2.92,
+      "peakPv": 88.27,
+      "peakLoad": 62.41,
+      "minSoc": 33.8,
+      "maxSoc": 92.8,
+      "sunsetSoc": 57.3,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "June 19 was the most efficient day of the captured period. Solar 475 kWh and genset only 198 kWh - a 29 percent share - with just one genset run. Load was 720 kWh, the lowest of the week, helping the favorable ratio.\n\nBattery min of 33.8 percent sat above the manual-start band; depth of discharge 59 points. Sunset SOC of 57 percent gave healthy overnight buffer. The bank reached 92.8 percent max - solar carried daytime charging cleanly.\n\nThe single 16:30 to 19:25 run lifted SOC from 35 to 92 percent at an estimated PHP 10,800. This is the operating pattern to replicate every day: one evening run triggered at a real low point, solar doing the daytime work. The remaining tweak is stopping at 80-85 percent per fault F6.",
+      "events": [
+        {
+          "startTime": "16:30",
+          "startSoc": 35,
+          "stopTime": "19:25",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-20": {
+      "date": "2026-06-20",
+      "source": "auto",
+      "pv": 509.8,
+      "load": 794,
+      "gensetKwh": 421.7,
+      "gensetHours": 6.5,
+      "peakPv": 89.52,
+      "peakLoad": 81.02,
+      "minSoc": 24.8,
+      "maxSoc": 91,
+      "sunsetSoc": 37,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841. CRITICAL: Min SOC 24.8 percent - similar to May 27 fault F4.",
+      "commentary": "June 20 brought the most dangerous battery event since May 27. Solar produced a respectable 510 kWh but battery SOC fell to 24.8 percent - only 4.8 points above the 20 percent hard floor and well below the 28-35 percent manual-start band. Genset contributed 422 kWh, a 45 percent share, across 6.5 hours and roughly PHP 24,200 in diesel.\n\nDepth of discharge was 66 points. The pre-dawn run from 01:35 to 04:15 pushed SOC from 38 to 90 percent - useful but oddly timed, likely contributing to afternoon curtailment. Sunset SOC of 37 percent was already weak going into the evening.\n\nThe critical issue: the evening genset starting at 26 percent SOC at 17:55 - below the agreed band. Enforce the May 27 fault F4 rule: start the evening genset no later than 28 percent SOC, and if the bank is falling fast after 15:00, start sooner rather than waiting for an alarm.",
+      "events": [
+        {
+          "startTime": "01:35",
+          "startSoc": 38,
+          "stopTime": "04:15",
+          "stopSoc": 90,
+          "reason": ""
+        },
+        {
+          "startTime": "17:55",
+          "startSoc": 26,
+          "stopTime": "21:45",
+          "stopSoc": 90,
+          "reason": "Started below 28% band - near-critical event"
+        }
+      ]
+    },
+    "2026-06-21": {
+      "date": "2026-06-21",
+      "source": "auto",
+      "pv": 490.4,
+      "load": 803,
+      "gensetKwh": 412.1,
+      "gensetHours": 6.08,
+      "peakPv": 97.25,
+      "peakLoad": 81.06,
+      "minSoc": 29.3,
+      "maxSoc": 91.5,
+      "sunsetSoc": 45.8,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "June 21 continued the heavy-genset pattern of June 20. Solar 490 kWh, genset 412 kWh - a 46 percent share - across 6.08 hours for an estimated PHP 22,600 in diesel. Load remained elevated at 803 kWh.\n\nBattery min of 29.3 percent sat at the bottom of the manual-start band; depth of discharge 62 points. The bank reached 91.5 percent max and sunset SOC was 45.8 percent, both reasonable.\n\nTwo runs: 05:10 to 08:00 lifting SOC from 31 to 91 percent (long morning), and 18:30 to 21:45 from 31 to 92 percent (evening). Both ran past 90 percent, continuing the fault F6 pattern. With load near 800 kWh several days running, the spec sheet load assumptions need revisiting - this is structural, not operational.",
+      "events": [
+        {
+          "startTime": "05:10",
+          "startSoc": 31,
+          "stopTime": "08:00",
+          "stopSoc": 91,
+          "reason": ""
+        },
+        {
+          "startTime": "18:30",
+          "startSoc": 31,
+          "stopTime": "21:45",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
