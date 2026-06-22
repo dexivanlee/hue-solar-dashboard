@@ -2172,7 +2172,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
   // ============================================================
   //  WIRING
   // ============================================================
-  document.getElementById('rooms-today').addEventListener('change', e => {
+  document.getElementById('rooms-today').addEventListener('input', e => {
     const val = +e.target.value || 0;
     // Save ONLY to the current day — never update global roomsToday from a per-day edit
     const viewIso = document.getElementById('viewing-date').value;
@@ -2565,6 +2565,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
 
     // ── WEEKLY REPORT ──────────────────────────────
     const wSection = document.getElementById('weekly-report-section');
+    if (wSection) wSection.removeAttribute('open');
     const wSummary = document.getElementById('weekly-report-summary');
     const wBody    = document.getElementById('weekly-report-body');
 
