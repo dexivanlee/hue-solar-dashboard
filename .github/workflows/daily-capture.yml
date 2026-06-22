@@ -1,0 +1,39 @@
+name: Daily Solar Capture
+
+on:
+  schedule:
+    # 02:15 UTC = 10:15 AM Philippine time daily
+    - cron: '15 2 * * *'
+  workflow_dispatch:  # allow manual trigger from the Actions tab
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run DeyeCloud capture
+        env:
+          DEYE_TOKEN: ${{ secrets.DEYE_TOKEN }}
+        run: python scripts/capture_daily.py
+
+      - name: Commit and push updated solar_data.json
+        run: |
+          if [ -n "$(git status --porcelain solar_data.json)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git add solar_data.json
+            git commit -m "auto: daily solar capture $(date -u +%F)"
+            git push
+            echo "Pushed updated solar_data.json"
+          else
+            echo "No changes to commit - dashboard already up to date"
+          fi
