@@ -2648,7 +2648,9 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
       for (var iso in remoteDays) {
         // Remote auto-captured data fills any day not manually overridden
         if (!state.days[iso] || state.days[iso].source === 'auto') {
+          var _preservedRooms = state.days[iso] ? state.days[iso].rooms : null;
           state.days[iso] = remoteDays[iso];
+          if (_preservedRooms != null) state.days[iso].rooms = _preservedRooms;
           changed = true;
         }
       }
