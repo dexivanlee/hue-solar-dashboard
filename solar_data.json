@@ -1005,6 +1005,39 @@
           "reason": ""
         }
       ]
+    },
+    "2026-06-22": {
+      "date": "2026-06-22",
+      "source": "auto",
+      "pv": 486.9,
+      "load": 696,
+      "gensetKwh": 241.8,
+      "gensetHours": 3.58,
+      "peakPv": 87.65,
+      "peakLoad": 65.65,
+      "minSoc": 30.5,
+      "maxSoc": 93,
+      "sunsetSoc": 90.5,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 486.9 kWh while the diesel genset contributed 241.8 kWh, together supplying 728.7 kWh total. The genset covered roughly 33% of all energy consumed, a high share for mid-June in Siargao - likely driven by afternoon cloud cover and sustained evening demand stretching into midnight.\n\nThe battery cycled from a high of 93% down to a minimum of 30.5%, a depth of discharge of 62.5 percentage points. The low of 30.5% sits at the very top of the 28-35% manual-start band, meaning the afternoon genset run was triggered at the right threshold. The second run beginning at 22:55 kept the bank from falling further overnight.\n\nAt 3.58 genset hours, diesel consumption was approximately 154 L costing roughly PHP 13,321 at PHP 86.50/L. The late-night run (22:55 to midnight) is the key cost driver. Moving interruptible loads such as laundry or water heating into midday solar hours could trim one to two hours of after-dark runtime and reduce diesel spend by PHP 3,700 to PHP 7,400 on similar days.",
+      "events": [
+        {
+          "startTime": "15:25",
+          "startSoc": 36,
+          "stopTime": "17:55",
+          "stopSoc": 93,
+          "reason": ""
+        },
+        {
+          "startTime": "22:55",
+          "startSoc": 45,
+          "stopTime": "24:00",
+          "stopSoc": 65,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
