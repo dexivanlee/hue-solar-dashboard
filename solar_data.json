@@ -1038,6 +1038,39 @@
           "reason": ""
         }
       ]
+    },
+    "2026-06-23": {
+      "date": "2026-06-23",
+      "source": "auto",
+      "pv": 418.4,
+      "load": 670,
+      "gensetKwh": 282.7,
+      "gensetHours": 4.17,
+      "peakPv": 81.51,
+      "peakLoad": 55.57,
+      "minSoc": 29.7,
+      "maxSoc": 91.3,
+      "sunsetSoc": 50.8,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 418.4 kWh on June 23 while the diesel genset contributed 282.7 kWh, covering roughly 40% of total energy consumed. A peak PV output of 81.51 kW suggests adequate midday irradiance despite the onset of rainy season in Siargao, though cumulative solar yield is trending lower than dry-season norms.\n\nThe battery cycled through a 61.6-point depth of discharge (29.7% to 91.3%), indicating heavy utilisation. The minimum SOC of 29.7% landed just inside the 28-35% manual-start trigger band, which is exactly why the evening genset run kicked in; the battery never breached the 20% hard floor, so the protection margin held.\n\nTwo genset runs totalled 4.17 hours, burning roughly 179 L of diesel at an estimated cost of PHP 15,490. The second run (16:35-19:45) was the larger draw, recharging from 31% to 91% after a full day of load. To reduce this, shift high-consumption loads such as laundry or water heating to 09:00-14:00 when solar output is near its peak and the battery is already charging.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 65,
+          "stopTime": "01:00",
+          "stopSoc": 84,
+          "reason": ""
+        },
+        {
+          "startTime": "16:35",
+          "startSoc": 31,
+          "stopTime": "19:45",
+          "stopSoc": 91,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
