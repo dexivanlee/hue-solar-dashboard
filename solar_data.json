@@ -1071,6 +1071,39 @@
           "reason": ""
         }
       ]
+    },
+    "2026-06-24": {
+      "date": "2026-06-24",
+      "source": "auto",
+      "pv": 456,
+      "load": 701,
+      "gensetKwh": 349.2,
+      "gensetHours": 5.17,
+      "peakPv": 84.61,
+      "peakLoad": 64.67,
+      "minSoc": 33.2,
+      "maxSoc": 92.5,
+      "sunsetSoc": 45.2,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar generation reached 456 kWh on June 24, a solid output for mid-rainy season with peak array output hitting 84.61 kW. The diesel genset contributed 349.2 kWh, representing roughly 43% of total energy supply for the day. Load consumption logged 701 kWh, well within combined generation capacity.\n\nThe battery cycled from a high of 92.5% down to a low of 33.2%, a depth of discharge of 59.3 percentage points. The minimum SOC of 33.2% sits just inside the 28-35% manual-start band, meaning the genset triggered appropriately before reaching the 20% protection floor. Two separate genset runs - overnight and in the evening - prevented further depletion.\n\nThe genset ran 5.17 hours, burning roughly 222 liters of diesel at approximately PHP 86.50 per liter for a fuel cost near PHP 19,200. This is a high fuel spend driven by two full charge cycles from mid-SOC. To cut costs, consider raising the auto-start threshold to 38% and the stop threshold to 95% so each run extracts maximum charge per start.",
+      "events": [
+        {
+          "startTime": "02:35",
+          "startSoc": 41,
+          "stopTime": "04:35",
+          "stopSoc": 80,
+          "reason": ""
+        },
+        {
+          "startTime": "18:30",
+          "startSoc": 34,
+          "stopTime": "21:40",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
