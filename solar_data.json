@@ -1149,7 +1149,7 @@
       "date": "2026-06-26",
       "source": "auto",
       "pv": 254.4,
-      "load": 769.0,
+      "load": 769,
       "gensetKwh": 648.6,
       "gensetHours": 9.5,
       "peakPv": 59.13,
@@ -1196,13 +1196,13 @@
       "date": "2026-06-27",
       "source": "auto",
       "pv": 167.1,
-      "load": 696.0,
+      "load": 696,
       "gensetKwh": 567.1,
       "gensetHours": 8.58,
       "peakPv": 53.7,
       "peakLoad": 64.98,
       "minSoc": 28.8,
-      "maxSoc": 95.0,
+      "maxSoc": 95,
       "sunsetSoc": 34.2,
       "rooms": null,
       "alarms": "None surfaced by DeyeCloud.",
@@ -1228,6 +1228,39 @@
           "startSoc": 29,
           "stopTime": "20:30",
           "stopSoc": 91,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-06-28": {
+      "date": "2026-06-28",
+      "source": "auto",
+      "pv": 540.4,
+      "load": 899,
+      "gensetKwh": 426.4,
+      "gensetHours": 6.17,
+      "peakPv": 92.92,
+      "peakLoad": 71.14,
+      "minSoc": 27.5,
+      "maxSoc": 91.8,
+      "sunsetSoc": 28,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "On June 28, solar generated 540.4 kWh against a total load of 899 kWh, a solid performance for the wet season. The diesel genset contributed 426.4 kWh, or roughly 44% of total supply, across two separate run cycles totaling 6.17 hours -- one overnight (01:00-03:55) and one in the evening (17:30-20:45).\n\nThe battery cycled between 27.5% and 91.8%, a depth of discharge of 64.3 percentage points. The 27.5% minimum dipped just below the 28% manual-start lower bound, meaning the evening genset triggered right at the floor of the target band. Sunset SOC was only 28%, leaving minimal buffer heading into the night demand period.\n\nAt 43 L per hour and PHP 86.50 per liter, the 6.17-hour runtime cost approximately PHP 22,950 in diesel. To reduce this, shift high-draw loads (laundry, water heating) into the solar peak window of 10:00-14:00 when PV approached its 92.92 kW peak, which would preserve battery SOC longer into the evening and push back genset start time.",
+      "events": [
+        {
+          "startTime": "01:00",
+          "startSoc": 32,
+          "stopTime": "03:55",
+          "stopSoc": 91,
+          "reason": ""
+        },
+        {
+          "startTime": "17:30",
+          "startSoc": 28,
+          "stopTime": "20:45",
+          "stopSoc": 92,
           "reason": ""
         }
       ]
