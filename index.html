@@ -1171,7 +1171,7 @@
   //  DATE HELPERS
   // ============================================================
   function yyyymmdd(d) {
-    return d.toISOString().slice(0, 10);
+    const _p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+_p(d.getMonth()+1)+'-'+_p(d.getDate());
   }
   function yesterdayISO() {
     const d = new Date();
@@ -1732,7 +1732,7 @@
         remaining -= avgDaily;
         const d = new Date(lastDate);
         d.setDate(d.getDate() + daysAhead);
-        projLabels.push(d.toISOString().slice(5, 10));
+        projLabels.push((String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')));
       // (will be replaced below)
       }
       // Project linearly from last actual data point
