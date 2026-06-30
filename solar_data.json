@@ -1264,6 +1264,46 @@
           "reason": ""
         }
       ]
+    },
+    "2026-06-29": {
+      "date": "2026-06-29",
+      "source": "auto",
+      "pv": 65.6,
+      "load": 606,
+      "gensetKwh": 589.7,
+      "gensetHours": 8.58,
+      "peakPv": 20.19,
+      "peakLoad": 62.34,
+      "minSoc": 32.7,
+      "maxSoc": 92.3,
+      "sunsetSoc": 53.5,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "June 29 was a very poor solar day with PV generation of only 65.6 kWh against a total consumption of roughly 655 kWh - the diesel genset supplied about 90% of all energy. Peak PV reached only 20.19 kW, pointing to heavy cloud cover consistent with Siargao wet-season conditions. Solar is contributing minimally at this point in the rainy season.\n\nThe battery cycled through a depth of 59.6 percentage points, from a low of 32.7% up to a high of 92.3%. All three genset starts triggered in the 34-35% SOC range, sitting at the top of the 28-35% manual-start band and well above the 20% floor - appropriate triggering behaviour. The battery was recharged to around 91-92% on each cycle, which is efficient per run.\n\nThree genset runs totaling 8.58 hours burned roughly 369 liters of diesel at approximately PHP 31,918 for the day - a very high operating cost driven almost entirely by cloud cover. The most impactful single change would be to consolidate the three runs into two by extending the midday window until the afternoon dip is absorbed, reducing daily start cycles and engine wear without increasing fuel burn.",
+      "events": [
+        {
+          "startTime": "01:00",
+          "startSoc": 35,
+          "stopTime": "03:45",
+          "stopSoc": 91,
+          "reason": ""
+        },
+        {
+          "startTime": "08:45",
+          "startSoc": 35,
+          "stopTime": "11:40",
+          "stopSoc": 92,
+          "reason": ""
+        },
+        {
+          "startTime": "16:35",
+          "startSoc": 34,
+          "stopTime": "19:30",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
