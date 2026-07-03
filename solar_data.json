@@ -1391,6 +1391,32 @@
           "reason": ""
         }
       ]
+    },
+    "2026-07-02": {
+      "date": "2026-07-02",
+      "source": "auto",
+      "pv": 531.6,
+      "load": 723,
+      "gensetKwh": 237.6,
+      "gensetHours": 3.17,
+      "peakPv": 79.38,
+      "peakLoad": 72.39,
+      "minSoc": 20.5,
+      "maxSoc": 90.5,
+      "sunsetSoc": 21.8,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar production on July 2 was strong for the season, with the array generating 531.6 kWh against a load of about 723 kWh. The diesel genset contributed 237.6 kWh, or roughly 31 percent of total generation (pv plus genset), meaning the sun still carried close to 70 percent of the day's energy needs.\n\nBattery cycling was deep this day, with a depth of discharge of 70.0 percentage points (max SoC 90.5%, min SoC 20.5%). The pack dipped to just 20.5%, essentially touching the 20% floor and well below the 28-35% manual-start band, indicating the genset was called in later than ideal and the battery was allowed to run closer to its protective limit than ops would like.\n\nThe genset ran 3.17 hours starting at 18:55 with SoC already at 21%, burning about 136.3 liters of diesel at an estimated cost of roughly PHP 11,790 for the day. Starting the genset earlier, as soon as SoC crosses into the 28-35% band rather than waiting until it nears 20%, would shorten genset runtime, ease strain on the battery, and likely trim fuel spend over the week.",
+      "events": [
+        {
+          "startTime": "18:55",
+          "startSoc": 21,
+          "stopTime": "22:05",
+          "stopSoc": 91,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
