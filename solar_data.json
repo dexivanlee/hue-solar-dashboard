@@ -1417,6 +1417,39 @@
           "reason": ""
         }
       ]
+    },
+    "2026-07-03": {
+      "date": "2026-07-03",
+      "source": "auto",
+      "pv": 515,
+      "load": 704,
+      "gensetKwh": 249,
+      "gensetHours": 5.33,
+      "peakPv": 93.53,
+      "peakLoad": 70.63,
+      "minSoc": 30.3,
+      "maxSoc": 99,
+      "sunsetSoc": 58,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar production on July 3 came in at 515 kWh, with the genset contributing 249 kWh -- about 32.6 percent of total generation. Peak PV output reached 93.53 kW around midday, showing the array can perform well when conditions cooperate, but the genset still had to cover both a morning window (08:35-11:20) and an evening window (19:05-21:40), pointing to softer solar coverage on the shoulders of the day rather than a strong, uniformly sunny day for the season.\n\nBattery cycling was deep, with a depth of discharge of 68.7 percentage points (SOC ranged from 30.3 percent up to 99 percent). The minimum SOC of 30.3 percent stayed above the 20 percent hard floor, giving about 10 points of headroom, but it landed right inside the 28-35 percent manual-start band, meaning the genset dispatch that day was consistent with the planned manual-start trigger rather than an emergency low-battery event.\n\nThe two genset runs totaled 5.33 hours, burning roughly 229 liters of diesel (5.33 hrs x 43 L/hr) at an estimated cost of about PHP 19,825 (229 L x PHP 86.50/L). The morning run is the one worth examining: it started at 08:35 while SOC was already at 33 percent, ahead of the sun reaching its later 93.53 kW peak. Delaying the manual genset start slightly later in the morning, or confirming the load profile does not need full support that early, could trim one of the two daily runs and meaningfully cut diesel spend.",
+      "events": [
+        {
+          "startTime": "08:35",
+          "startSoc": 33,
+          "stopTime": "11:20",
+          "stopSoc": 93,
+          "reason": ""
+        },
+        {
+          "startTime": "19:05",
+          "startSoc": 36,
+          "stopTime": "21:40",
+          "stopSoc": 92,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
