@@ -1455,12 +1455,12 @@
       "date": "2026-07-04",
       "source": "auto",
       "pv": 535.5,
-      "load": 853.0,
-      "gensetKwh": 397.0,
+      "load": 853,
+      "gensetKwh": 397,
       "gensetHours": 5.58,
       "peakPv": 98.03,
       "peakLoad": 118.63,
-      "minSoc": 31.0,
+      "minSoc": 31,
       "maxSoc": 92.7,
       "sunsetSoc": 92.2,
       "rooms": null,
@@ -1487,6 +1487,46 @@
           "startSoc": 32,
           "stopTime": "24:05",
           "stopSoc": 77,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-07-05": {
+      "date": "2026-07-05",
+      "source": "auto",
+      "pv": 580.4,
+      "load": 815,
+      "gensetKwh": 296.2,
+      "gensetHours": 4.17,
+      "peakPv": 87.7,
+      "peakLoad": 92.01,
+      "minSoc": 32.2,
+      "maxSoc": 92,
+      "sunsetSoc": 87,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar production on July 5 came in solid at 580.4 kWh, with a strong midday peak of 87.7 kW showing the array was performing well. Even so, the diesel genset had to carry 296.2 kWh of the days energy, which works out to about 33.8 percent of total generation - a meaningful chunk given how good the solar peak looked, pointing to either high overall load (peak of 92.0 kW) or gaps in coverage outside peak sun hours.\n\nBattery cycling was deep, swinging from a low of 32.2 percent SOC up to 92 percent, a depth of discharge near 59.8 points. The 32.2 percent minimum stayed clear of the 20 percent hard floor by about 12 points, but it sat right at the edge of the 28-35 percent manual-start band, meaning the genset was likely brought on manually as SOC drifted down rather than being forced by an automatic low-SOC trip.\n\nThe genset ran three separate times for 4.17 hours total, burning roughly 179 liters of diesel at PHP 86.50 per liter for a fuel cost near PHP 15,500 for the day. The longest run, 22:05 to 24:05, covered overnight load with zero solar available - shifting some of that overnight draw to the battery, or trimming overnight loads, would let that stretch run shorter or be skipped, cutting into the single biggest cost driver of the day.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 77,
+          "stopTime": "00:45",
+          "stopSoc": 92,
+          "reason": ""
+        },
+        {
+          "startTime": "16:30",
+          "startSoc": 64,
+          "stopTime": "17:55",
+          "stopSoc": 92,
+          "reason": ""
+        },
+        {
+          "startTime": "22:05",
+          "startSoc": 33,
+          "stopTime": "24:05",
+          "stopSoc": 79,
           "reason": ""
         }
       ]
