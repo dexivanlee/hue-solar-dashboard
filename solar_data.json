@@ -1575,7 +1575,7 @@
       "date": "2026-07-07",
       "source": "auto",
       "pv": 516.1,
-      "load": 783.0,
+      "load": 783,
       "gensetKwh": 390.9,
       "gensetHours": 5.17,
       "peakPv": 97.44,
@@ -1607,6 +1607,149 @@
           "startSoc": 42,
           "stopTime": "24:00",
           "stopSoc": 88,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-07-08": {
+      "date": "2026-07-08",
+      "source": "auto",
+      "pv": 494.6,
+      "load": 726,
+      "gensetKwh": 251.3,
+      "gensetHours": 5.33,
+      "peakPv": 88.53,
+      "peakLoad": 99.8,
+      "minSoc": 32.3,
+      "maxSoc": 99,
+      "sunsetSoc": 51.3,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar output on July 8 was moderate at 494.6 kWh, with a strong peak of 88.53 kW reflecting good midday sun. Even so, the genset supplied 251.3 kWh, about 33.7 percent of the days total generation - a similar diesel share to recent days, driven by a high peak load of 99.8 kW that likely outran what the array and battery alone could cover at times.\n\nBattery cycling was very deep, running from a minimum of 32.3 percent SOC up to 99 percent, a depth of discharge of about 66.7 points. The 32.3 percent floor cleared the 20 percent hard limit by roughly 12 points but sat right at the top edge of the 28-35 percent manual-start band, so the low point of the day is consistent with a manual genset start rather than an automatic low-SOC trip.\n\nThe genset logged nine separate runs totaling 5.33 hours, or about 229 liters of diesel at PHP 86.50 per liter - close to PHP 19,800 for the day. Several of those runs were very short bursts around midday (11:10-11:45 and 15:25-15:30) while SOC was already 80-98 percent, which looks like short-cycling rather than genuine need; tightening the genset start and stop thresholds so it does not fire during periods of high SOC and strong solar would cut wear and shave meaningful fuel cost.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 89,
+          "stopTime": "00:30",
+          "stopSoc": 93,
+          "reason": ""
+        },
+        {
+          "startTime": "09:30",
+          "startSoc": 41,
+          "stopTime": "11:05",
+          "stopSoc": 76,
+          "reason": ""
+        },
+        {
+          "startTime": "11:10",
+          "startSoc": 80,
+          "stopTime": "11:20",
+          "stopSoc": 82,
+          "reason": ""
+        },
+        {
+          "startTime": "11:30",
+          "startSoc": 88,
+          "stopTime": "11:35",
+          "stopSoc": 88,
+          "reason": ""
+        },
+        {
+          "startTime": "11:40",
+          "startSoc": 92,
+          "stopTime": "11:45",
+          "stopSoc": 92,
+          "reason": ""
+        },
+        {
+          "startTime": "11:55",
+          "startSoc": 96,
+          "stopTime": "12:05",
+          "stopSoc": 98,
+          "reason": ""
+        },
+        {
+          "startTime": "15:25",
+          "startSoc": 76,
+          "stopTime": "15:30",
+          "stopSoc": 76,
+          "reason": ""
+        },
+        {
+          "startTime": "18:45",
+          "startSoc": 33,
+          "stopTime": "20:20",
+          "stopSoc": 68,
+          "reason": ""
+        },
+        {
+          "startTime": "20:25",
+          "startSoc": 70,
+          "stopTime": "21:30",
+          "stopSoc": 91,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-07-09": {
+      "date": "2026-07-09",
+      "source": "auto",
+      "pv": 180.4,
+      "load": 573,
+      "gensetKwh": 414.2,
+      "gensetHours": 6.33,
+      "peakPv": 65.28,
+      "peakLoad": 76.03,
+      "minSoc": 37.2,
+      "maxSoc": 83.3,
+      "sunsetSoc": 51.8,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841. Data feed covered 249 of 289 expected intervals (cuts off around 20:45).",
+      "commentary": "July 9 was a weak solar day: only 180.4 kWh of pv production with a peak of just 65.28 kW, well below the mid-80s kW peaks seen on better days. With that little sun to work with, the genset had to cover 414.2 kWh, about 69.7 percent of total generation - by far the heaviest diesel dependence of the days reviewed here, consistent with a cloudy or rainy day.\n\nBattery cycling was shallower than recent days, moving from 37.2 percent SOC up to 83.3 percent, a depth of discharge of about 46.1 points. The 37.2 percent minimum stayed above both the 20 percent hard floor and the 28-35 percent manual-start band, meaning the battery never actually dropped low enough to trigger a start on SOC alone - the genset ran mainly to make up for the shortfall in solar, not because the battery was running out.\n\nThe genset ran six times for 6.33 hours total, burning about 272 liters of diesel at PHP 86.50 per liter, close to PHP 23,550 for the day - the most expensive of the days captured. Note also that the data feed for this day only covered 249 of the expected 289 five-minute intervals, cutting off around 20:45; that gap is worth checking on DeyeCloud, and going forward, consolidating the six separate genset starts into fewer, longer runs would reduce start-cycle wear on an already heavy-use day.",
+      "events": [
+        {
+          "startTime": "04:00",
+          "startSoc": 38,
+          "stopTime": "05:55",
+          "stopSoc": 81,
+          "reason": ""
+        },
+        {
+          "startTime": "10:30",
+          "startSoc": 46,
+          "stopTime": "10:50",
+          "stopSoc": 50,
+          "reason": ""
+        },
+        {
+          "startTime": "10:55",
+          "startSoc": 50,
+          "stopTime": "11:00",
+          "stopSoc": 50,
+          "reason": ""
+        },
+        {
+          "startTime": "11:05",
+          "startSoc": 51,
+          "stopTime": "12:20",
+          "stopSoc": 63,
+          "reason": ""
+        },
+        {
+          "startTime": "14:50",
+          "startSoc": 65,
+          "stopTime": "15:40",
+          "stopSoc": 77,
+          "reason": ""
+        },
+        {
+          "startTime": "18:50",
+          "startSoc": 38,
+          "stopTime": "20:45",
+          "stopSoc": 79,
           "reason": ""
         }
       ]
