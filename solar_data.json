@@ -1800,6 +1800,53 @@
           "reason": ""
         }
       ]
+    },
+    "2026-07-11": {
+      "date": "2026-07-11",
+      "source": "auto",
+      "pv": 412.5,
+      "load": 811.0,
+      "gensetKwh": 551.6,
+      "gensetHours": 6.25,
+      "peakPv": 73.24,
+      "peakLoad": 85.77,
+      "minSoc": 35.7,
+      "maxSoc": 97.7,
+      "sunsetSoc": 66.2,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
+      "commentary": "Solar produced 412 kWh and the diesel genset added 552 kWh, putting genset at 57 percent of system energy against a load of 811 kWh.\n\nBattery min of 35.7 percent sat within the 28-35 percent manual-start band - timing was on target. Depth of discharge was 62 points; max SOC reached 98 percent.\n\nGenset ran 6.25 hours across 4 windows for an estimated PHP 23,247 in diesel (269 L). Genset share above 45 percent indicates weak solar or elevated load - worth investigating which.",
+      "events": [
+        {
+          "startTime": "03:40",
+          "startSoc": 40,
+          "stopTime": "04:55",
+          "stopSoc": 74,
+          "reason": ""
+        },
+        {
+          "startTime": "13:15",
+          "startSoc": 41,
+          "stopTime": "15:15",
+          "stopSoc": 98,
+          "reason": ""
+        },
+        {
+          "startTime": "17:25",
+          "startSoc": 64,
+          "stopTime": "18:25",
+          "stopSoc": 91,
+          "reason": ""
+        },
+        {
+          "startTime": "22:00",
+          "startSoc": 36,
+          "stopTime": "24:00",
+          "stopSoc": 93,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
