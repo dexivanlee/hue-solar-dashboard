@@ -1758,14 +1758,14 @@
       "date": "2026-07-10",
       "source": "auto",
       "pv": 310.1,
-      "load": 646.0,
+      "load": 646,
       "gensetKwh": 453.7,
       "gensetHours": 7.17,
       "peakPv": 79.65,
       "peakLoad": 80.14,
       "minSoc": 28.8,
       "maxSoc": 99.3,
-      "sunsetSoc": 63.0,
+      "sunsetSoc": 63,
       "rooms": null,
       "alarms": "None surfaced by DeyeCloud.",
       "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
@@ -1805,7 +1805,7 @@
       "date": "2026-07-11",
       "source": "auto",
       "pv": 412.5,
-      "load": 811.0,
+      "load": 811,
       "gensetKwh": 551.6,
       "gensetHours": 6.25,
       "peakPv": 73.24,
@@ -1852,14 +1852,14 @@
       "date": "2026-07-12",
       "source": "auto",
       "pv": 474.7,
-      "load": 760.0,
-      "gensetKwh": 310.0,
-      "gensetHours": 4.0,
+      "load": 760,
+      "gensetKwh": 310,
+      "gensetHours": 4,
       "peakPv": 83.89,
       "peakLoad": 81.24,
       "minSoc": 29.3,
       "maxSoc": 99.2,
-      "sunsetSoc": 98.0,
+      "sunsetSoc": 98,
       "rooms": null,
       "alarms": "None surfaced by DeyeCloud.",
       "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
@@ -1891,6 +1891,53 @@
           "startSoc": 31,
           "stopTime": "22:30",
           "stopSoc": 96,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-07-13": {
+      "date": "2026-07-13",
+      "source": "auto",
+      "pv": 531,
+      "load": 904,
+      "gensetKwh": 400.1,
+      "gensetHours": 4.25,
+      "peakPv": 90.54,
+      "peakLoad": 91.34,
+      "minSoc": 32.5,
+      "maxSoc": 97.7,
+      "sunsetSoc": 82.2,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar output was moderate but not exceptional for July in Siargao: 531 kWh of PV production against 400.1 kWh from the diesel genset, meaning the genset carried about 43 percent of total energy delivered that day. Peak PV briefly touched 90.5 kW near midday, so the array clearly had capacity, but average output stayed well below that peak, pointing to intermittent cloud cover cutting into potential yield.\n\nBattery cycling was fairly deep, running from 97.7 percent down to 32.5 percent for a depth of discharge around 65 points. The floor sits at 20 percent, so the bank never got close to a hard cutoff, but the 32.5 percent minimum landed squarely inside the 28 to 35 percent manual-start band, which is exactly when the operator would be expected to bring the genset online.\n\nThe genset logged 4.25 hours of runtime, which at roughly 43 L per hr works out to about 183 liters of diesel, or close to PHP 15,800 at PHP 86.50 per liter. The log shows two very short 5-minute blips around 19:50 and 20:00 before the real evening run started at 20:10 - those short cycles add wear and startup fuel for no real output, so it is worth checking whether those were false starts or load-test blips, and consolidating into a single clean start would save some diesel and engine hours.",
+      "events": [
+        {
+          "startTime": "05:00",
+          "startSoc": 40,
+          "stopTime": "07:00",
+          "stopSoc": 97,
+          "reason": ""
+        },
+        {
+          "startTime": "19:50",
+          "startSoc": 33,
+          "stopTime": "19:55",
+          "stopSoc": 33,
+          "reason": ""
+        },
+        {
+          "startTime": "20:00",
+          "startSoc": 33,
+          "stopTime": "20:05",
+          "stopSoc": 33,
+          "reason": ""
+        },
+        {
+          "startTime": "20:10",
+          "startSoc": 35,
+          "stopTime": "22:15",
+          "stopSoc": 94,
           "reason": ""
         }
       ]
