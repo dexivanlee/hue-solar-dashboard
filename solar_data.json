@@ -2101,7 +2101,7 @@
       "date": "2026-07-17",
       "source": "auto",
       "pv": 561.5,
-      "load": 969.0,
+      "load": 969,
       "gensetKwh": 500.3,
       "gensetHours": 6.42,
       "peakPv": 80.97,
@@ -2141,13 +2141,13 @@
       "date": "2026-07-18",
       "source": "auto",
       "pv": 393.2,
-      "load": 779.0,
+      "load": 779,
       "gensetKwh": 568.9,
       "gensetHours": 8.75,
       "peakPv": 84.4,
       "peakLoad": 80.83,
       "minSoc": 30.7,
-      "maxSoc": 99.0,
+      "maxSoc": 99,
       "sunsetSoc": 68.5,
       "rooms": null,
       "alarms": "None surfaced by DeyeCloud.",
@@ -2187,6 +2187,46 @@
           "startSoc": 32,
           "stopTime": "24:05",
           "stopSoc": 92,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-07-19": {
+      "date": "2026-07-19",
+      "source": "auto",
+      "pv": 20,
+      "load": 798,
+      "gensetKwh": 294.2,
+      "gensetHours": 3.92,
+      "peakPv": 23.92,
+      "peakLoad": 83.63,
+      "minSoc": 28.8,
+      "maxSoc": 98.8,
+      "sunsetSoc": null,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "An extremely weak solar day: only 20 kWh of PV against a load of 798 kWh, with a brief peak of 23.9 kW suggesting the sun barely appeared. The diesel genset supplied about 94 percent of the combined PV plus genset energy (294.2 kWh of 314.2 kWh), making this effectively a genset-powered day. If skies were not fully stormy, a PV output this low is worth a quick check of the array and inverters.\n\nBattery cycling was deep at roughly 70 points of depth of discharge, swinging from 98.8 down to 28.8 percent. The minimum SOC of 28.8 stayed comfortably above the 20 percent floor and sat right at the bottom of the 28-35 manual-start band, so genset starts were triggered about where the operating procedure intends.\n\nThe genset ran 3.92 hours, burning roughly 169 liters at 43 L per hour, or about PHP 14,600 in diesel. The midday 12:40 run stopped at only 72 percent SOC; on a near-zero solar day like this, extending that run to a fuller charge would have reduced the risk of a low-SOC evening and a third start. One concrete change: on days when morning PV is clearly failing, let the midday genset run continue to at least 90 percent SOC.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 92,
+          "stopTime": "00:15",
+          "stopSoc": 96,
+          "reason": ""
+        },
+        {
+          "startTime": "07:00",
+          "startSoc": 32,
+          "stopTime": "08:50",
+          "stopSoc": 99,
+          "reason": ""
+        },
+        {
+          "startTime": "12:40",
+          "startSoc": 30,
+          "stopTime": "14:30",
+          "stopSoc": 72,
           "reason": ""
         }
       ]
