@@ -2230,6 +2230,60 @@
           "reason": ""
         }
       ]
+    },
+    "2026-07-20": {
+      "date": "2026-07-20",
+      "source": "auto",
+      "pv": 309.3,
+      "load": 800,
+      "gensetKwh": 490.9,
+      "gensetHours": 7,
+      "peakPv": 100.34,
+      "peakLoad": 90.24,
+      "minSoc": 24.5,
+      "maxSoc": 97.8,
+      "sunsetSoc": 70.3,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar production came in soft at 309.3 kWh for a July dry-season day, when clear skies should push output well higher; peak PV did reach about 100 kW at midday, so the array is healthy but clouds or heavy afternoon draw clipped the harvest. The diesel genset carried the bulk of supply, contributing roughly 61 percent of combined generation (490.9 of 800 kWh). On a good solar day that diesel share should be a fraction of this.\n\nBattery cycling was deep and hard on the bank: depth of discharge reached about 73 points, from a full 97.8 down to a minimum of 24.5 percent. That low sat below the 28-35 percent manual-start band and only about 4.5 points above the 20 percent hard floor, meaning the bank was pulled close to the danger zone before the genset caught it. Repeated deep cycles like this shorten battery life.\n\nSeven genset hours burned roughly 301 L of diesel, about PHP 26,000 for the day, and the genset cycled on five separate times, several from a low state of charge. One concrete change: trigger the genset earlier, at the 30-32 percent band, rather than letting SOC sag to 24-25 percent, to protect the battery and avoid the long deep-recovery run each morning.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 72,
+          "stopTime": "01:00",
+          "stopSoc": 94,
+          "reason": ""
+        },
+        {
+          "startTime": "08:15",
+          "startSoc": 25,
+          "stopTime": "09:40",
+          "stopSoc": 57,
+          "reason": ""
+        },
+        {
+          "startTime": "13:30",
+          "startSoc": 30,
+          "stopTime": "14:20",
+          "stopSoc": 48,
+          "reason": ""
+        },
+        {
+          "startTime": "15:45",
+          "startSoc": 28,
+          "stopTime": "18:45",
+          "stopSoc": 98,
+          "reason": ""
+        },
+        {
+          "startTime": "23:20",
+          "startSoc": 32,
+          "stopTime": "24:05",
+          "stopSoc": 48,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
