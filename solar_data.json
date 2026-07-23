@@ -2378,6 +2378,46 @@
           "reason": ""
         }
       ]
+    },
+    "2026-07-23": {
+      "date": "2026-07-23",
+      "source": "auto",
+      "pv": 280.7,
+      "load": 770,
+      "gensetKwh": 550,
+      "gensetHours": 8,
+      "peakPv": 74.29,
+      "peakLoad": 89.52,
+      "minSoc": 24.8,
+      "maxSoc": 98.2,
+      "sunsetSoc": 83,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 280.7 kWh on 2026-07-23, a modest yield for the July wet season when southwest monsoon cloud cover routinely caps output, with peak PV reaching only 74.3 kW. The diesel genset carried the majority of the day, contributing 66 percent of combined generation (550 kWh of 831 kWh total). Solar was weak relative to what clear-sky days at this site can produce, so the plant leaned heavily on fuel.\n\nThe battery cycled deeply, swinging from a low of 24.8 percent to a high of 98.2 percent, a depth of discharge of 73.4 points. Minimum SOC sat just 4.8 points above the 20 percent hard floor and dipped below the 28 to 35 percent manual-start band, meaning the pack was drawn down harder than the guardrails intend. Repeated deep cycles like this accelerate battery wear and leave little reserve margin.\n\nThe genset ran 8.0 hours across three starts, burning roughly 344 L at 43 L per hour, about PHP 29,756 at PHP 86.50 per L. That is near PHP 54 per genset kWh, far above solar cost. The 06:45 to 09:30 morning run overlapped the solar ramp-up; delaying or shortening it to let PV carry the morning would trim the most expensive fuel with the least risk to reserve.",
+      "events": [
+        {
+          "startTime": "06:45",
+          "startSoc": 27,
+          "stopTime": "09:30",
+          "stopSoc": 90,
+          "reason": ""
+        },
+        {
+          "startTime": "14:20",
+          "startSoc": 32,
+          "stopTime": "16:55",
+          "stopSoc": 92,
+          "reason": ""
+        },
+        {
+          "startTime": "20:00",
+          "startSoc": 36,
+          "stopTime": "22:40",
+          "stopSoc": 98,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
