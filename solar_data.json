@@ -2418,6 +2418,24 @@
           "reason": ""
         }
       ]
+    },
+    "2026-07-24": {
+      "date": "2026-07-24",
+      "source": "auto",
+      "pv": 0.0,
+      "load": 47.0,
+      "gensetKwh": 0.0,
+      "gensetHours": 0,
+      "peakPv": 0.0,
+      "peakLoad": 28.53,
+      "minSoc": 69.2,
+      "maxSoc": 84.5,
+      "sunsetSoc": null,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
+      "commentary": "Solar produced 0 kWh and the diesel genset added 0 kWh, putting genset at 0 percent of system energy against a load of 47 kWh.\n\nBattery stayed comfortably above the manual-start band; min SOC 69.2 percent, max 84 percent, depth of discharge 15 points.\n\nGenset ran 0.00 hours across 0 windows for an estimated PHP 0 in diesel (0 L).",
+      "events": []
     }
   },
   "faults": [
