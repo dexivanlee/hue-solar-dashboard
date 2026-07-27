@@ -2422,11 +2422,11 @@
     "2026-07-24": {
       "date": "2026-07-24",
       "source": "auto",
-      "pv": 0.0,
-      "load": 47.0,
-      "gensetKwh": 0.0,
+      "pv": 0,
+      "load": 47,
+      "gensetKwh": 0,
       "gensetHours": 0,
-      "peakPv": 0.0,
+      "peakPv": 0,
       "peakLoad": 28.53,
       "minSoc": 69.2,
       "maxSoc": 84.5,
@@ -2436,6 +2436,46 @@
       "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
       "commentary": "Solar produced 0 kWh and the diesel genset added 0 kWh, putting genset at 0 percent of system energy against a load of 47 kWh.\n\nBattery stayed comfortably above the manual-start band; min SOC 69.2 percent, max 84 percent, depth of discharge 15 points.\n\nGenset ran 0.00 hours across 0 windows for an estimated PHP 0 in diesel (0 L).",
       "events": []
+    },
+    "2026-07-26": {
+      "date": "2026-07-26",
+      "source": "auto",
+      "pv": 158.6,
+      "load": 904,
+      "gensetKwh": 292.1,
+      "gensetHours": 4.83,
+      "peakPv": 67.84,
+      "peakLoad": 119.24,
+      "minSoc": 32,
+      "maxSoc": 91.2,
+      "sunsetSoc": null,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar produced just 158.6 kWh on 2026-07-26, a poor harvest even for the July wet season, with peak PV of only 67.8 kW pointing to heavy monsoon cloud through the middle of the day. The diesel genset supplied the bulk of the energy, contributing 65 percent of combined generation (292.1 kWh of 450.7 kWh total). On top of weak sun, demand was high, with load reaching 904 kWh and a 119.2 kW peak, so the plant had little choice but to run fuel.\n\nThe battery cycled from 32.0 percent up to 91.2 percent, a depth of discharge of 59.2 points. Minimum SOC held 12 points above the 20 percent floor and sat right at the low end of the 28 to 35 percent manual-start band, so the pack was managed more conservatively than the deep 24.8 percent draw seen on 2026-07-23. That is a healthier cycle that preserves battery life and reserve margin.\n\nThe genset ran 4.83 hours across three starts, burning roughly 208 L at 43 L per hour, about PHP 17,965 at PHP 86.50 per L, or near PHP 61 per genset kWh. The three runs were fragmented, two of them very short (00:00 to 01:45 and a 35-minute 04:00 start) before a longer 05:20 to 07:50 charge. Consolidating the overnight top-ups into one fuller charge run would cut start-stop wear and burn fuel more efficiently for the same energy.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 50,
+          "stopTime": "01:45",
+          "stopSoc": 88,
+          "reason": ""
+        },
+        {
+          "startTime": "04:00",
+          "startSoc": 43,
+          "stopTime": "04:35",
+          "stopSoc": 55,
+          "reason": ""
+        },
+        {
+          "startTime": "05:20",
+          "startSoc": 33,
+          "stopTime": "07:50",
+          "stopSoc": 91,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
