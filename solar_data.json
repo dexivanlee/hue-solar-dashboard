@@ -2441,12 +2441,12 @@
       "date": "2026-07-26",
       "source": "auto",
       "pv": 158.6,
-      "load": 904.0,
+      "load": 904,
       "gensetKwh": 292.1,
       "gensetHours": 4.83,
       "peakPv": 67.84,
       "peakLoad": 119.24,
-      "minSoc": 32.0,
+      "minSoc": 32,
       "maxSoc": 91.2,
       "sunsetSoc": null,
       "rooms": null,
@@ -2473,6 +2473,81 @@
           "startSoc": 33,
           "stopTime": "07:50",
           "stopSoc": 91,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-07-27": {
+      "date": "2026-07-27",
+      "source": "auto",
+      "pv": 393.7,
+      "load": 843,
+      "gensetKwh": 539.7,
+      "gensetHours": 6.92,
+      "peakPv": 96.02,
+      "peakLoad": 111.27,
+      "minSoc": 31.3,
+      "maxSoc": 98.7,
+      "sunsetSoc": 59.3,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841. Full-day capture (289 samples).",
+      "commentary": "Solar delivered 393.7 kWh on 2026-07-27, a solid step up from the prior week and a good harvest for the July wet season, with peak PV reaching 96.0 kW to indicate long stretches of near-clear sky. The diesel genset still supplied the larger share at 58 percent of combined generation (539.7 kWh of 933.4 kWh total), but the gap narrowed as solar carried more of the daytime load. Demand was steady at 843 kWh with a 111.3 kW peak.\n\nThe battery cycled from 31.3 percent up to 98.7 percent, a depth of discharge of 67.4 points. Minimum SOC held 11.3 points above the 20 percent hard floor and sat inside the 28 to 35 percent manual-start band, so the pack was worked hard but stayed within the intended guardrails. A full recharge to 98.7 percent shows the system had ample charging headroom on the day.\n\nThe genset ran 6.92 hours in total but across eight separate starts, three of which were 5-minute blips between 01:00 and 01:55 that never moved SOC. That is classic short-cycle hunting near the auto-start threshold and wastes fuel on start transients. Fuel burn was roughly 298 L at 43 L per hour, about PHP 25,740 at PHP 86.50 per L, or near PHP 48 per genset kWh. Widening the start-stop hysteresis around the 32 to 40 percent band would eliminate those pointless overnight blips and lower both fuel and starter wear.",
+      "events": [
+        {
+          "startTime": "01:00",
+          "startSoc": 36,
+          "stopTime": "01:05",
+          "stopSoc": 36,
+          "reason": ""
+        },
+        {
+          "startTime": "01:25",
+          "startSoc": 38,
+          "stopTime": "01:30",
+          "stopSoc": 38,
+          "reason": ""
+        },
+        {
+          "startTime": "01:50",
+          "startSoc": 40,
+          "stopTime": "01:55",
+          "stopSoc": 40,
+          "reason": ""
+        },
+        {
+          "startTime": "02:05",
+          "startSoc": 41,
+          "stopTime": "04:10",
+          "stopSoc": 89,
+          "reason": ""
+        },
+        {
+          "startTime": "09:30",
+          "startSoc": 32,
+          "stopTime": "10:55",
+          "stopSoc": 69,
+          "reason": ""
+        },
+        {
+          "startTime": "11:00",
+          "startSoc": 74,
+          "stopTime": "11:35",
+          "stopSoc": 89,
+          "reason": ""
+        },
+        {
+          "startTime": "15:00",
+          "startSoc": 50,
+          "stopTime": "16:20",
+          "stopSoc": 88,
+          "reason": ""
+        },
+        {
+          "startTime": "18:00",
+          "startSoc": 52,
+          "stopTime": "19:15",
+          "stopSoc": 87,
           "reason": ""
         }
       ]
