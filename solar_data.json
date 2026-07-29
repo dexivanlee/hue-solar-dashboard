@@ -2437,46 +2437,6 @@
       "commentary": "Solar produced 0 kWh and the diesel genset added 0 kWh, putting genset at 0 percent of system energy against a load of 47 kWh.\n\nBattery stayed comfortably above the manual-start band; min SOC 69.2 percent, max 84 percent, depth of discharge 15 points.\n\nGenset ran 0.00 hours across 0 windows for an estimated PHP 0 in diesel (0 L).",
       "events": []
     },
-    "2026-07-26": {
-      "date": "2026-07-26",
-      "source": "auto",
-      "pv": 158.6,
-      "load": 904,
-      "gensetKwh": 292.1,
-      "gensetHours": 4.83,
-      "peakPv": 67.84,
-      "peakLoad": 119.24,
-      "minSoc": 32,
-      "maxSoc": 91.2,
-      "sunsetSoc": null,
-      "rooms": null,
-      "alarms": "None surfaced by DeyeCloud.",
-      "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
-      "commentary": "Solar produced 159 kWh and the diesel genset added 292 kWh, putting genset at 65 percent of system energy against a load of 904 kWh.\n\nBattery min of 32.0 percent sat within the 28-35 percent manual-start band - timing was on target. Depth of discharge was 59 points; max SOC reached 91 percent.\n\nGenset ran 4.83 hours across 3 windows for an estimated PHP 17,978 in diesel (208 L). Genset share above 45 percent indicates weak solar or elevated load - worth investigating which.",
-      "events": [
-        {
-          "startTime": "00:00",
-          "startSoc": 50,
-          "stopTime": "01:45",
-          "stopSoc": 88,
-          "reason": ""
-        },
-        {
-          "startTime": "04:00",
-          "startSoc": 42,
-          "stopTime": "04:35",
-          "stopSoc": 55,
-          "reason": ""
-        },
-        {
-          "startTime": "05:20",
-          "startSoc": 33,
-          "stopTime": "07:50",
-          "stopSoc": 91,
-          "reason": ""
-        }
-      ]
-    },
     "2026-07-27": {
       "date": "2026-07-27",
       "source": "auto",
@@ -2548,6 +2508,60 @@
           "startSoc": 52,
           "stopTime": "19:15",
           "stopSoc": 87,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-07-28": {
+      "date": "2026-07-28",
+      "source": "auto",
+      "pv": 128.4,
+      "load": 712,
+      "gensetKwh": 750,
+      "gensetHours": 8.33,
+      "peakPv": 48.31,
+      "peakLoad": 87.14,
+      "minSoc": 32,
+      "maxSoc": 90.3,
+      "sunsetSoc": 37.3,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841. Full-day capture (289 samples).",
+      "commentary": "Solar managed only 128.4 kWh on 2026-07-28, one of the weakest days of the month, with peak PV of just 48.3 kW signalling thick monsoon overcast from dawn to dusk. With the array unable to carry the site, the diesel genset dominated, supplying 85 percent of combined generation (750 kWh of 878.4 kWh total). Load was ordinary at 712 kWh, so the fuel burn was driven entirely by the absent sun, not by unusual demand.\n\nThe battery cycled from 32.0 percent up to 90.3 percent, a depth of discharge of 58.3 points. Minimum SOC held 12 points above the 20 percent hard floor and stayed inside the 28 to 35 percent manual-start band, so despite the heavy genset reliance the pack was cycled within its intended guardrails rather than being pushed deep. Sunset SOC of 37.3 percent left a thin but workable evening reserve.\n\nThe genset ran 8.33 hours across five evenly spaced charge cycles, burning roughly 358 L at 43 L per hour, about PHP 30,984 at PHP 86.50 per L, or near PHP 41 per genset kWh. On a near-zero-solar day like this the fixed fuel cost is largely unavoidable, but the five separate 1.5 to 2 hour starts could be consolidated into fewer, higher-load-factor runs, which burns diesel more efficiently per kWh and reduces start-stop wear on the set.",
+      "events": [
+        {
+          "startTime": "01:30",
+          "startSoc": 39,
+          "stopTime": "03:10",
+          "stopSoc": 86,
+          "reason": ""
+        },
+        {
+          "startTime": "07:50",
+          "startSoc": 35,
+          "stopTime": "09:40",
+          "stopSoc": 88,
+          "reason": ""
+        },
+        {
+          "startTime": "13:15",
+          "startSoc": 36,
+          "stopTime": "15:05",
+          "stopSoc": 88,
+          "reason": ""
+        },
+        {
+          "startTime": "17:55",
+          "startSoc": 33,
+          "stopTime": "19:50",
+          "stopSoc": 87,
+          "reason": ""
+        },
+        {
+          "startTime": "23:00",
+          "startSoc": 47,
+          "stopTime": "24:05",
+          "stopSoc": 77,
           "reason": ""
         }
       ]
