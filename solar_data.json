@@ -2772,6 +2772,46 @@
           "reason": ""
         }
       ]
+    },
+    "2026-08-03": {
+      "date": "2026-08-03",
+      "source": "auto",
+      "pv": 503.1,
+      "load": 701,
+      "gensetKwh": 227,
+      "gensetHours": 5.67,
+      "peakPv": 98.31,
+      "peakLoad": 75.89,
+      "minSoc": 36.7,
+      "maxSoc": 90,
+      "sunsetSoc": 45.7,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar production reached 503.1 kWh, a strong yield for the wet-season window, with a clear daytime peak of 98.3 kW. The diesel genset still added 227 kWh, so diesel covered about 31 percent of the day's total generation - a meaningful share driven mostly by pre-dawn and evening charging rather than any midday solar shortfall.\n\nThe battery cycled through a depth of discharge of about 53 points, swinging from a low of 36.7 percent up to 90 percent. That minimum sat a comfortable 16.7 points above the 20 percent protective floor and stayed above the 28-35 percent manual-start band, so the pack was never stressed and no emergency start was warranted on SOC grounds.\n\nThe genset ran about 5.67 hours, burning roughly 244 liters at 43 L/hr, or close to PHP 21,100 at 86.50 per liter - near PHP 93 per genset kWh, which is expensive power. The pre-dawn 05:00-07:00 run fired at 37 percent SOC, above the manual-start band; shifting that charge later into daylight or tightening the auto-start threshold would let solar carry more of the morning and trim roughly an hour of diesel.",
+      "events": [
+        {
+          "startTime": "05:00",
+          "startSoc": 37,
+          "stopTime": "07:00",
+          "stopSoc": 64,
+          "reason": ""
+        },
+        {
+          "startTime": "16:00",
+          "startSoc": 38,
+          "stopTime": "16:05",
+          "stopSoc": 38,
+          "reason": ""
+        },
+        {
+          "startTime": "17:55",
+          "startSoc": 46,
+          "stopTime": "21:30",
+          "stopSoc": 90,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
