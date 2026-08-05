@@ -2812,6 +2812,53 @@
           "reason": ""
         }
       ]
+    },
+    "2026-08-04": {
+      "date": "2026-08-04",
+      "source": "auto",
+      "pv": 542.4,
+      "load": 743,
+      "gensetKwh": 312.1,
+      "gensetHours": 7.92,
+      "peakPv": 90.02,
+      "peakLoad": 88.99,
+      "minSoc": 35.8,
+      "maxSoc": 98.7,
+      "sunsetSoc": 36,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar production was strong for the season at 542.4 kWh, with peak PV of 90.0 kW pushing close to the array ceiling on what looks like a bright day. Even so, the diesel genset carried a heavy share of the load, contributing 312.1 kWh, or about 37 percent of the combined 854 kWh of generation. That is a high diesel dependence for a day with this much sun, which points to a load and storage timing problem rather than a shortfall in solar harvest.\n\nBattery cycling was deep. SOC swung from a maximum of 98.7 percent down to a minimum of 35.8 percent, a depth of discharge of roughly 63 points. The minimum held comfortably above the 20 percent hard floor and sat just above the top of the 28 to 35 percent manual-start band, so the pack was never abused, but the genset was clearly started before the battery was allowed to work down into that band. The pre-dawn 03:30 to 07:00 run in particular charged the pack from 41 to 86 percent on diesel while solar was still hours away.\n\nAt 7.92 genset hours and roughly 43 L per hour, the day burned about 341 L of diesel, near PHP 29,500 at 86.50 per litre. The single most valuable change is to hold off the pre-dawn genset start: letting the battery ride down toward the 28 to 35 percent band before sunrise, then leaning on the morning PV ramp to recharge, would likely eliminate most of that 3.5 hour early run and cut daily diesel cost by roughly a third.",
+      "events": [
+        {
+          "startTime": "03:30",
+          "startSoc": 41,
+          "stopTime": "07:00",
+          "stopSoc": 86,
+          "reason": ""
+        },
+        {
+          "startTime": "17:55",
+          "startSoc": 36,
+          "stopTime": "18:00",
+          "stopSoc": 36,
+          "reason": ""
+        },
+        {
+          "startTime": "18:20",
+          "startSoc": 37,
+          "stopTime": "19:05",
+          "stopSoc": 45,
+          "reason": ""
+        },
+        {
+          "startTime": "19:25",
+          "startSoc": 45,
+          "stopTime": "23:00",
+          "stopSoc": 89,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
