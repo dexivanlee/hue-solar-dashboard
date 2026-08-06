@@ -2859,6 +2859,39 @@
           "reason": ""
         }
       ]
+    },
+    "2026-08-05": {
+      "date": "2026-08-05",
+      "source": "auto",
+      "pv": 568.8,
+      "load": 735,
+      "gensetKwh": 315.3,
+      "gensetHours": 7.92,
+      "peakPv": 81.76,
+      "peakLoad": 80.87,
+      "minSoc": 30.3,
+      "maxSoc": 99,
+      "sunsetSoc": 63.3,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar production of 568.8 kWh was strong for the August wet season on Siargao, with peak PV of 81.76 kW near the array ceiling. Even so, the diesel genset supplied 315.3 kWh, about 36 percent of the total energy (315.3 divided by 884.1). That is a high diesel share for a good-sun day, driven by two long genset runs bracketing the day rather than by weak solar.\n\nThe battery cycled deeply, with a depth of discharge of 68.7 points (max 99.0 down to min 30.3). Minimum SOC of 30.3 percent stayed above the 20 percent hard floor and landed inside the 28 to 35 percent manual-start band, so both genset starts were triggered right where the operators intend and not in an emergency low-battery condition.\n\nThe genset ran 7.92 hours, burning roughly 341 liters at 43 L/hr for about PHP 29,500 at 86.50 per liter, which works out to near PHP 93 per delivered kWh, far above the cost of stored solar. The pre-dawn 04:55 to 07:55 run is the cheapest to eliminate: nudging the evening charge target a little higher so the bank clears the night above the manual-start band would remove that morning start and recover most of that fuel spend.",
+      "events": [
+        {
+          "startTime": "04:55",
+          "startSoc": 31,
+          "stopTime": "07:55",
+          "stopSoc": 78,
+          "reason": ""
+        },
+        {
+          "startTime": "19:10",
+          "startSoc": 34,
+          "stopTime": "24:05",
+          "stopSoc": 95,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
