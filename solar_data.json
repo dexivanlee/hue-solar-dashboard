@@ -2897,14 +2897,14 @@
       "date": "2026-08-06",
       "source": "auto",
       "pv": 581.7,
-      "load": 820.0,
+      "load": 820,
       "gensetKwh": 229.1,
       "gensetHours": 5.92,
       "peakPv": 84.42,
       "peakLoad": 89.27,
       "minSoc": 35.2,
-      "maxSoc": 99.0,
-      "sunsetSoc": 54.0,
+      "maxSoc": 99,
+      "sunsetSoc": 54,
       "rooms": null,
       "alarms": "None surfaced by DeyeCloud.",
       "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
@@ -2936,6 +2936,67 @@
           "startSoc": 36,
           "stopTime": "24:05",
           "stopSoc": 70,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-08-07": {
+      "date": "2026-08-07",
+      "source": "auto",
+      "pv": 553.4,
+      "load": 720,
+      "gensetKwh": 238.6,
+      "gensetHours": 7.42,
+      "peakPv": 82.61,
+      "peakLoad": 83.82,
+      "minSoc": 32,
+      "maxSoc": 94,
+      "sunsetSoc": 48.7,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 553.4 kWh with a peak of 82.6 kW, a solid haul for the wet-season month of August when cloud cover normally caps output. Even so, the diesel genset still supplied 238.6 kWh, which is about 30 percent of the combined 792 kWh generated for the day. That is a meaningful diesel share on a day with this much sun, suggesting evening and overnight load is outrunning what the array and battery can carry on their own.\n\nThe battery cycled through a depth of discharge of about 62 points, running from a high of 94 percent down to a low of 32 percent. That minimum sits safely above the 20 percent hard floor and lands right inside the 28 to 35 percent manual-start band, so the pack was worked hard but never abused. Sunset SOC of 48.7 percent left only a thin buffer heading into the night, which is why the genset was called on repeatedly after dark.\n\nThe genset ran 7.42 hours across six separate starts, burning roughly 319 liters at 43 liters per hour, or about PHP 27,600 in diesel at 86.50 per liter. Two of those starts fired in the middle of the day near 11:50 and 13:00 while solar was still producing, which is the most wasteful pattern to carry. The single concrete change: block daytime genset starts unless SOC is genuinely critical and let the array recharge the battery instead, which would save well over an hour of fuel a day.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 70,
+          "stopTime": "01:55",
+          "stopSoc": 93,
+          "reason": ""
+        },
+        {
+          "startTime": "11:50",
+          "startSoc": 54,
+          "stopTime": "12:55",
+          "stopSoc": 78,
+          "reason": ""
+        },
+        {
+          "startTime": "13:00",
+          "startSoc": 82,
+          "stopTime": "13:25",
+          "stopSoc": 91,
+          "reason": ""
+        },
+        {
+          "startTime": "18:20",
+          "startSoc": 37,
+          "stopTime": "18:55",
+          "stopSoc": 44,
+          "reason": ""
+        },
+        {
+          "startTime": "19:35",
+          "startSoc": 45,
+          "stopTime": "19:45",
+          "stopSoc": 46,
+          "reason": ""
+        },
+        {
+          "startTime": "20:50",
+          "startSoc": 33,
+          "stopTime": "24:05",
+          "stopSoc": 73,
           "reason": ""
         }
       ]
