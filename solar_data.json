@@ -3005,14 +3005,14 @@
       "date": "2026-08-08",
       "source": "auto",
       "pv": 534.7,
-      "load": 777.0,
+      "load": 777,
       "gensetKwh": 257.9,
       "gensetHours": 6.67,
       "peakPv": 84.17,
       "peakLoad": 86.3,
       "minSoc": 35.2,
-      "maxSoc": 99.0,
-      "sunsetSoc": 46.0,
+      "maxSoc": 99,
+      "sunsetSoc": 46,
       "rooms": null,
       "alarms": "None surfaced by DeyeCloud.",
       "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
@@ -3044,6 +3044,39 @@
           "startSoc": 46,
           "stopTime": "24:05",
           "stopSoc": 53,
+          "reason": ""
+        }
+      ]
+    },
+    "2026-08-09": {
+      "date": "2026-08-09",
+      "source": "auto",
+      "pv": 563.1,
+      "load": 675,
+      "gensetKwh": 256.1,
+      "gensetHours": 6.42,
+      "peakPv": 79.85,
+      "peakLoad": 88.67,
+      "minSoc": 31.8,
+      "maxSoc": 99.2,
+      "sunsetSoc": 49.5,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar production reached 563.1 kWh, a strong yield for the wet-season window and comfortably ahead of the diesel contribution. The genset added 256.1 kWh, so diesel supplied about 31 percent of the day's combined generation. That is a healthy solar-led split, though the diesel share is still high enough to keep an eye on.\n\nThe battery swung through a wide cycle, from a peak of 99.2 percent down to a minimum of 31.8 percent, a depth of discharge near 67 points. The low of 31.8 percent held above the 20 percent hard floor and sat right inside the 28 to 35 percent manual-start band, so the overnight draw was managed but left little margin.\n\nThe genset ran about 6.42 hours, burning roughly 276 liters at 43 L/hr for a fuel cost near PHP 23,900, or about PHP 93 per kWh generated. The early 00:00 to 03:00 run is the costliest habit here, recharging the battery at diesel rates overnight; shifting that top-up to daytime solar would strip out the most expensive fuel of the day.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 53,
+          "stopTime": "03:00",
+          "stopSoc": 90,
+          "reason": ""
+        },
+        {
+          "startTime": "19:30",
+          "startSoc": 33,
+          "stopTime": "22:55",
+          "stopSoc": 90,
           "reason": ""
         }
       ]
