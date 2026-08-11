@@ -3080,6 +3080,39 @@
           "reason": ""
         }
       ]
+    },
+    "2026-08-10": {
+      "date": "2026-08-10",
+      "source": "auto",
+      "pv": 534.3,
+      "load": 684,
+      "gensetKwh": 202.7,
+      "gensetHours": 5.08,
+      "peakPv": 80.66,
+      "peakLoad": 82.37,
+      "minSoc": 34.2,
+      "maxSoc": 99.3,
+      "sunsetSoc": 49.7,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841.",
+      "commentary": "Solar delivered 534.3 kWh on 2026-08-10, a strong yield for the August wet season and well ahead of the diesel genset, which added 202.7 kWh. That puts the genset share at 27.5 percent of combined generation, so the array still carried roughly three quarters of the day.\n\nThe battery cycled from a peak of 99.3 percent down to a low of 34.2 percent, a depth of discharge of 65.1 points. That minimum sits comfortably above the 20 percent protective floor and lands right at the top of the 28 to 35 percent manual-start band, so the pack was worked hard but never pushed into risk territory.\n\nGenset ran 5.08 hours, burning about 218 L at PHP 86.50 per L for roughly PHP 18,900 in fuel. The clearest waste was the 00:00 to 00:55 run that topped the battery from 90 to 99 percent, an expensive charge the pack did not need overnight. Holding the manual-start trigger and skipping that midnight top-up would trim close to an hour of runtime.",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 90,
+          "stopTime": "00:55",
+          "stopSoc": 99,
+          "reason": ""
+        },
+        {
+          "startTime": "19:20",
+          "startSoc": 35,
+          "stopTime": "23:30",
+          "stopSoc": 94,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
