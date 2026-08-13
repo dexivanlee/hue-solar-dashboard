@@ -7199,9 +7199,9 @@
       "date": "2026-07-13",
       "source": "auto",
       "pv": 531,
-      "load": 904,
-      "gensetKwh": 400.1,
-      "gensetHours": 4.25,
+      "load": 1023,
+      "gensetKwh": 519.1,
+      "gensetHours": 6.75,
       "peakPv": 90.54,
       "peakLoad": 91.34,
       "minSoc": 32.5,
@@ -7239,6 +7239,14 @@
           "stopTime": "22:15",
           "stopSoc": 94,
           "reason": ""
+        },
+        {
+          "startTime": "14:30",
+          "startSoc": 75,
+          "stopTime": "17:00",
+          "stopSoc": 96,
+          "reason": "Disconnected genset run (estimated) - genset powering hotel off-inverter; solar dedicated to battery. Est load 47.6 kW, ~119 kWh.",
+          "estimated": true
         }
       ],
       "hourly": {
@@ -7346,7 +7354,31 @@
           91.1,
           79.3
         ]
-      }
+      },
+      "gensetKwhMeasured": 400.1,
+      "gensetHoursMeasured": 4.25,
+      "loadMeasured": 904,
+      "estimated": true,
+      "disconnectedGenset": {
+        "totalHours": 2.5,
+        "gensetKwhEst": 119,
+        "consumptionKwhEst": 119,
+        "method": "Genset ran off-inverter to power the hotel while solar was dedicated to battery charging, so both load and generator read ~0. Genset hours = window duration; hotel load estimated by interpolating measured load (>15kW) immediately before and after the meter-blind window; genset output taken equal to that estimated hotel consumption.",
+        "windows": [
+          {
+            "start": "14:30",
+            "end": "17:00",
+            "hours": 2.5,
+            "socStart": 74.5,
+            "socEnd": 96,
+            "loadBefore": 48.4,
+            "loadAfter": 46.8,
+            "estLoadKW": 47.6,
+            "estKwh": 119
+          }
+        ]
+      },
+      "dataNote": "Totals include an ESTIMATED disconnected-genset run (2.5 h, ~119 kWh). Measured-only values retained in gensetKwhMeasured / gensetHoursMeasured / loadMeasured."
     },
     "2026-07-14": {
       "date": "2026-07-14",
@@ -9959,9 +9991,9 @@
       "date": "2026-08-02",
       "source": "auto",
       "pv": 529.8,
-      "load": 685,
-      "gensetKwh": 162.4,
-      "gensetHours": 4.08,
+      "load": 842,
+      "gensetKwh": 319.4,
+      "gensetHours": 8,
       "peakPv": 87.39,
       "peakLoad": 79.83,
       "minSoc": 34.7,
@@ -9978,6 +10010,14 @@
           "stopTime": "23:00",
           "stopSoc": 86,
           "reason": ""
+        },
+        {
+          "startTime": "07:20",
+          "startSoc": 36,
+          "stopTime": "11:15",
+          "stopSoc": 99,
+          "reason": "Disconnected genset run (estimated) - genset powering hotel off-inverter; solar dedicated to battery. Est load 40.1 kW, ~157 kWh.",
+          "estimated": true
         }
       ],
       "hourly": {
@@ -10085,7 +10125,31 @@
           85.5,
           75.3
         ]
-      }
+      },
+      "gensetKwhMeasured": 162.4,
+      "gensetHoursMeasured": 4.08,
+      "loadMeasured": 685,
+      "estimated": true,
+      "disconnectedGenset": {
+        "totalHours": 3.92,
+        "gensetKwhEst": 157,
+        "consumptionKwhEst": 157,
+        "method": "Genset ran off-inverter to power the hotel while solar was dedicated to battery charging, so both load and generator read ~0. Genset hours = window duration; hotel load estimated by interpolating measured load (>15kW) immediately before and after the meter-blind window; genset output taken equal to that estimated hotel consumption.",
+        "windows": [
+          {
+            "start": "07:20",
+            "end": "11:15",
+            "hours": 3.92,
+            "socStart": 35.8,
+            "socEnd": 98.8,
+            "loadBefore": 27.7,
+            "loadAfter": 52.5,
+            "estLoadKW": 40.1,
+            "estKwh": 157
+          }
+        ]
+      },
+      "dataNote": "Totals include an ESTIMATED disconnected-genset run (3.92 h, ~157 kWh). Measured-only values retained in gensetKwhMeasured / gensetHoursMeasured / loadMeasured."
     },
     "2026-08-03": {
       "date": "2026-08-03",
@@ -11002,9 +11066,9 @@
       "date": "2026-08-09",
       "source": "auto",
       "pv": 563.1,
-      "load": 675,
-      "gensetKwh": 256.1,
-      "gensetHours": 6.42,
+      "load": 837,
+      "gensetKwh": 418.4,
+      "gensetHours": 8.92,
       "peakPv": 79.85,
       "peakLoad": 88.67,
       "minSoc": 31.8,
@@ -11028,6 +11092,14 @@
           "stopTime": "22:55",
           "stopSoc": 90,
           "reason": ""
+        },
+        {
+          "startTime": "10:30",
+          "startSoc": 48,
+          "stopTime": "13:00",
+          "stopSoc": 99,
+          "reason": "Disconnected genset run (estimated) - genset powering hotel off-inverter; solar dedicated to battery. Est load 64.9 kW, ~162.3 kWh.",
+          "estimated": true
         }
       ],
       "hourly": {
@@ -11135,15 +11207,39 @@
           89.8,
           null
         ]
-      }
+      },
+      "gensetKwhMeasured": 256.1,
+      "gensetHoursMeasured": 6.42,
+      "loadMeasured": 675,
+      "estimated": true,
+      "disconnectedGenset": {
+        "totalHours": 2.5,
+        "gensetKwhEst": 162.3,
+        "consumptionKwhEst": 162.3,
+        "method": "Genset ran off-inverter to power the hotel while solar was dedicated to battery charging, so both load and generator read ~0. Genset hours = window duration; hotel load estimated by interpolating measured load (>15kW) immediately before and after the meter-blind window; genset output taken equal to that estimated hotel consumption.",
+        "windows": [
+          {
+            "start": "10:30",
+            "end": "13:00",
+            "hours": 2.5,
+            "socStart": 47.8,
+            "socEnd": 99.2,
+            "loadBefore": 70.2,
+            "loadAfter": 59.7,
+            "estLoadKW": 64.9,
+            "estKwh": 162.3
+          }
+        ]
+      },
+      "dataNote": "Totals include an ESTIMATED disconnected-genset run (2.5 h, ~162.3 kWh). Measured-only values retained in gensetKwhMeasured / gensetHoursMeasured / loadMeasured."
     },
     "2026-08-10": {
       "date": "2026-08-10",
       "source": "auto",
       "pv": 534.3,
-      "load": 684,
-      "gensetKwh": 202.7,
-      "gensetHours": 5.08,
+      "load": 818,
+      "gensetKwh": 336.4,
+      "gensetHours": 7.33,
       "peakPv": 80.66,
       "peakLoad": 82.37,
       "minSoc": 34.2,
@@ -11167,6 +11263,14 @@
           "stopTime": "23:30",
           "stopSoc": 94,
           "reason": ""
+        },
+        {
+          "startTime": "10:30",
+          "startSoc": 47,
+          "stopTime": "12:45",
+          "stopSoc": 95,
+          "reason": "Disconnected genset run (estimated) - genset powering hotel off-inverter; solar dedicated to battery. Est load 59.4 kW, ~133.7 kWh.",
+          "estimated": true
         }
       ],
       "hourly": {
@@ -11274,15 +11378,39 @@
           87.3,
           94
         ]
-      }
+      },
+      "gensetKwhMeasured": 202.7,
+      "gensetHoursMeasured": 5.08,
+      "loadMeasured": 684,
+      "estimated": true,
+      "disconnectedGenset": {
+        "totalHours": 2.25,
+        "gensetKwhEst": 133.7,
+        "consumptionKwhEst": 133.7,
+        "method": "Genset ran off-inverter to power the hotel while solar was dedicated to battery charging, so both load and generator read ~0. Genset hours = window duration; hotel load estimated by interpolating measured load (>15kW) immediately before and after the meter-blind window; genset output taken equal to that estimated hotel consumption.",
+        "windows": [
+          {
+            "start": "10:30",
+            "end": "12:45",
+            "hours": 2.25,
+            "socStart": 46.8,
+            "socEnd": 94.8,
+            "loadBefore": 68.6,
+            "loadAfter": 50.2,
+            "estLoadKW": 59.4,
+            "estKwh": 133.7
+          }
+        ]
+      },
+      "dataNote": "Totals include an ESTIMATED disconnected-genset run (2.25 h, ~133.7 kWh). Measured-only values retained in gensetKwhMeasured / gensetHoursMeasured / loadMeasured."
     },
     "2026-08-11": {
       "date": "2026-08-11",
       "source": "auto",
       "pv": 528.4,
-      "load": 685,
-      "gensetKwh": 188.8,
-      "gensetHours": 4.83,
+      "load": 845,
+      "gensetKwh": 348.3,
+      "gensetHours": 8.08,
       "peakPv": 77.59,
       "peakLoad": 81.84,
       "minSoc": 30.2,
@@ -11313,6 +11441,14 @@
           "stopTime": "24:05",
           "stopSoc": 82,
           "reason": ""
+        },
+        {
+          "startTime": "08:15",
+          "startSoc": 37,
+          "stopTime": "11:30",
+          "stopSoc": 99,
+          "reason": "Disconnected genset run (estimated) - genset powering hotel off-inverter; solar dedicated to battery. Est load 49.1 kW, ~159.5 kWh.",
+          "estimated": true
         }
       ],
       "hourly": {
@@ -11420,20 +11556,44 @@
           67.8,
           80.7
         ]
-      }
+      },
+      "gensetKwhMeasured": 188.8,
+      "gensetHoursMeasured": 4.83,
+      "loadMeasured": 685,
+      "estimated": true,
+      "disconnectedGenset": {
+        "totalHours": 3.25,
+        "gensetKwhEst": 159.5,
+        "consumptionKwhEst": 159.5,
+        "method": "Genset ran off-inverter to power the hotel while solar was dedicated to battery charging, so both load and generator read ~0. Genset hours = window duration; hotel load estimated by interpolating measured load (>15kW) immediately before and after the meter-blind window; genset output taken equal to that estimated hotel consumption.",
+        "windows": [
+          {
+            "start": "08:15",
+            "end": "11:30",
+            "hours": 3.25,
+            "socStart": 37.3,
+            "socEnd": 99.2,
+            "loadBefore": 39.6,
+            "loadAfter": 58.5,
+            "estLoadKW": 49.1,
+            "estKwh": 159.5
+          }
+        ]
+      },
+      "dataNote": "Totals include an ESTIMATED disconnected-genset run (3.25 h, ~159.5 kWh). Measured-only values retained in gensetKwhMeasured / gensetHoursMeasured / loadMeasured."
     },
     "2026-08-12": {
       "date": "2026-08-12",
       "source": "auto",
       "pv": 543.6,
-      "gensetKwh": 226.3,
-      "load": 678,
+      "gensetKwh": 293.3,
+      "load": 745,
       "peakPv": 81.2,
       "peakLoad": 93.49,
       "minSoc": 34.7,
       "maxSoc": 99.2,
       "sunsetSoc": 54,
-      "gensetHours": 5.67,
+      "gensetHours": 8.59,
       "hourly": {
         "pv": [
           0,
@@ -11554,12 +11714,44 @@
           "stopTime": "24:05",
           "stopSoc": 91,
           "reason": ""
+        },
+        {
+          "startTime": "09:00",
+          "startSoc": 39,
+          "stopTime": "11:55",
+          "stopSoc": 98,
+          "reason": "Disconnected genset run (estimated) - genset powering hotel off-inverter; solar dedicated to battery. Est load 23 kW, ~67 kWh.",
+          "estimated": true
         }
       ],
       "rooms": null,
       "alarms": "None surfaced by DeyeCloud.",
       "notes": "Auto-captured from DeyeCloud station 61801841.",
-      "commentary": "Solar produced 543.6 kWh, a strong result for the August rainy season, with PV peaking at 81.2 kW near midday. The diesel genset still supplied 226.3 kWh, roughly 29 percent of the combined solar-plus-genset energy and up from the day before. That is a sizable diesel contribution for a day with otherwise good sun.\n\nBattery cycling was deep. State of charge ran from a high of 99.2 percent down to a low of 34.7 percent, a depth of discharge near 65 points. The 34.7 percent minimum stayed well clear of the 20 percent hard floor and sat right at the top of the 28 to 35 percent manual-start band, so the evening genset run began a little earlier than strictly required.\n\nThe genset ran about 5.67 hours across two runs, burning roughly 244 liters at 43 L per hour, near 21,000 pesos of diesel for the day. The main evening run started at 19:40 with SOC at 36 percent and carried past midnight. Letting the battery draw down closer to the 28 percent end of the band before manual start, or trimming the 93.5 kW peak load, would shorten that long evening run and cut fuel spend."
+      "commentary": "Solar produced 543.6 kWh, a strong result for the August rainy season, with PV peaking at 81.2 kW near midday. The diesel genset still supplied 226.3 kWh, roughly 29 percent of the combined solar-plus-genset energy and up from the day before. That is a sizable diesel contribution for a day with otherwise good sun.\n\nBattery cycling was deep. State of charge ran from a high of 99.2 percent down to a low of 34.7 percent, a depth of discharge near 65 points. The 34.7 percent minimum stayed well clear of the 20 percent hard floor and sat right at the top of the 28 to 35 percent manual-start band, so the evening genset run began a little earlier than strictly required.\n\nThe genset ran about 5.67 hours across two runs, burning roughly 244 liters at 43 L per hour, near 21,000 pesos of diesel for the day. The main evening run started at 19:40 with SOC at 36 percent and carried past midnight. Letting the battery draw down closer to the 28 percent end of the band before manual start, or trimming the 93.5 kW peak load, would shorten that long evening run and cut fuel spend.",
+      "gensetKwhMeasured": 226.3,
+      "gensetHoursMeasured": 5.67,
+      "loadMeasured": 678,
+      "estimated": true,
+      "disconnectedGenset": {
+        "totalHours": 2.92,
+        "gensetKwhEst": 67,
+        "consumptionKwhEst": 67,
+        "method": "Genset ran off-inverter to power the hotel while solar was dedicated to battery charging, so both load and generator read ~0. Genset hours = window duration; hotel load estimated by interpolating measured load (>15kW) immediately before and after the meter-blind window; genset output taken equal to that estimated hotel consumption.",
+        "windows": [
+          {
+            "start": "09:00",
+            "end": "11:55",
+            "hours": 2.92,
+            "socStart": 38.8,
+            "socEnd": 98.3,
+            "loadBefore": 16.5,
+            "loadAfter": 29.4,
+            "estLoadKW": 23,
+            "estKwh": 67
+          }
+        ]
+      },
+      "dataNote": "Totals include an ESTIMATED disconnected-genset run (2.92 h, ~67 kWh). Measured-only values retained in gensetKwhMeasured / gensetHoursMeasured / loadMeasured."
     }
   },
   "faults": [
