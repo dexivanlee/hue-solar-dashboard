@@ -11982,6 +11982,74 @@
       },
       "dataNote": "Totals include ESTIMATED disconnected-genset run(s) (5.92 h, ~244.4 kWh). Measured-only values in gensetKwhMeasured / gensetHoursMeasured / loadMeasured.",
       "commentary": "Solar produced 507.6 kWh, about normal for the wet August season. But the genset carried an outsized share of the day: counting the metered evening run plus the estimated off-inverter running, diesel supplied roughly 433 kWh, near 46 percent of total energy. That is unusually diesel-heavy and reflects the genset being run off-inverter while it is faulting at higher loads.\n\nBattery swung from 98.8 percent down to 31 percent, a depth of discharge near 68 points. The 31 percent low sits inside the 28 to 35 percent manual-start band and above the 20 percent floor. Notably SOC held flat around 31 to 32 percent through the early evening while the genset powered the hotel off-inverter, which is why the battery did not draw down further.\n\nThree off-inverter windows were detected and ESTIMATED (not metered): a mid-morning solar-charging run and two evening runs, together about 5.9 hours and 244 kWh of hotel load the inverter never recorded. Total genset running was near 10.7 hours, roughly 459 liters of diesel or about 40,000 pesos. The single most valuable fix is repairing the genset fault so it can run through the inverter again, restoring true metering and letting solar offset more of the evening load."
+    },
+    "2026-08-14": {
+      "date": "2026-08-14",
+      "source": "auto",
+      "pv": 475.4,
+      "load": 638.0,
+      "gensetKwh": 251.1,
+      "gensetHours": 6.67,
+      "peakPv": 81.87,
+      "peakLoad": 78.03,
+      "minSoc": 31.3,
+      "maxSoc": 99.3,
+      "sunsetSoc": 45.0,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
+      "commentary": "Solar produced 475 kWh and the diesel genset added 251 kWh, putting genset at 35 percent of system energy against a load of 638 kWh.\n\nBattery min of 31.3 percent sat within the 28-35 percent manual-start band - timing was on target. Depth of discharge was 68 points; max SOC reached 99 percent.\n\nGenset ran 6.67 hours across 7 windows for an estimated PHP 24,797 in diesel (287 L).",
+      "events": [
+        {
+          "startTime": "00:00",
+          "startSoc": 79,
+          "stopTime": "01:40",
+          "stopSoc": 99,
+          "reason": ""
+        },
+        {
+          "startTime": "09:35",
+          "startSoc": 57,
+          "stopTime": "09:50",
+          "stopSoc": 61,
+          "reason": ""
+        },
+        {
+          "startTime": "09:55",
+          "startSoc": 64,
+          "stopTime": "10:00",
+          "stopSoc": 64,
+          "reason": ""
+        },
+        {
+          "startTime": "10:05",
+          "startSoc": 68,
+          "stopTime": "10:15",
+          "stopSoc": 70,
+          "reason": ""
+        },
+        {
+          "startTime": "19:10",
+          "startSoc": 32,
+          "stopTime": "19:45",
+          "stopSoc": 38,
+          "reason": ""
+        },
+        {
+          "startTime": "19:55",
+          "startSoc": 40,
+          "stopTime": "20:30",
+          "stopSoc": 46,
+          "reason": ""
+        },
+        {
+          "startTime": "20:45",
+          "startSoc": 46,
+          "stopTime": "24:05",
+          "stopSoc": 88,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
