@@ -12543,6 +12543,46 @@
       "dataNote": "Totals include ESTIMATED disconnected-genset run(s) (1.25 h, ~31 kWh). Measured-only values in gensetKwhMeasured / gensetHoursMeasured / loadMeasured.",
       "date": "2026-08-19",
       "commentary": "Solar produced 558.1 kWh, a strong wet-season day for August with PV peaking near 78.2 kW around midday. Even so the diesel genset supplied a large share of the day - about 39 percent of total generation (genset 359.8 kWh of 917.9 kWh combined) - so the site stayed heavily genset-dependent despite good sun.\n\nBattery cycling was deep: SOC swung from a high of 99.2 percent down to 23.0 percent, a depth of discharge of about 76 points. That 23 percent minimum sits only 3 points above the 20 percent hard floor and below the 28-35 percent manual-start band, meaning the pack was pulled past the intended start window before recharging - a sign the genset start ran late relative to the SOC policy.\n\nAt roughly 43 L/hr and PHP 86.50/L, the 7.67 folded genset hours imply about 330 L of diesel, near PHP 28,500 for the day, or roughly PHP 79 per genset kWh. One off-inverter window was detected from 08:00 to 09:15 (variant A, solar-charging): its ~1.25 h and ~31 kWh are ESTIMATED by interpolating measured load before and after the window, not metered, and are folded on top of the 328.8 kWh / 6.42 h actually measured. Concrete change: start the genset earlier, nearer the 28-35 percent band rather than letting SOC fall to 23 percent, to shorten deep-discharge dwell and protect battery life."
+    },
+    "2026-08-20": {
+      "date": "2026-08-20",
+      "source": "auto",
+      "pv": 549.9,
+      "load": 939.0,
+      "gensetKwh": 402.8,
+      "gensetHours": 6.75,
+      "peakPv": 78.32,
+      "peakLoad": 82.85,
+      "minSoc": 33.8,
+      "maxSoc": 98.5,
+      "sunsetSoc": 60.7,
+      "rooms": null,
+      "alarms": "None surfaced by DeyeCloud.",
+      "notes": "Auto-captured from DeyeCloud station 61801841 via GitHub Actions.",
+      "commentary": "Solar produced 550 kWh and the diesel genset added 403 kWh, putting genset at 42 percent of system energy against a load of 939 kWh.\n\nBattery min of 33.8 percent sat within the 28-35 percent manual-start band - timing was on target. Depth of discharge was 65 points; max SOC reached 98 percent.\n\nGenset ran 6.75 hours across 3 windows for an estimated PHP 25,107 in diesel (290 L).",
+      "events": [
+        {
+          "startTime": "03:00",
+          "startSoc": 34,
+          "stopTime": "06:30",
+          "stopSoc": 98,
+          "reason": ""
+        },
+        {
+          "startTime": "17:05",
+          "startSoc": 52,
+          "stopTime": "19:30",
+          "stopSoc": 97,
+          "reason": ""
+        },
+        {
+          "startTime": "23:15",
+          "startSoc": 38,
+          "stopTime": "24:05",
+          "stopSoc": 52,
+          "reason": ""
+        }
+      ]
     }
   },
   "faults": [
