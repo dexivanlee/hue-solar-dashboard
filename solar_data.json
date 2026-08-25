@@ -12587,9 +12587,9 @@
     "2026-08-21": {
       "source": "auto",
       "pv": 445.1,
-      "load": 861,
-      "gensetKwh": 508.3,
-      "gensetHours": 9.92,
+      "load": 796,
+      "gensetKwh": 443.3,
+      "gensetHours": 8.92,
       "peakPv": 80.52,
       "peakLoad": 96.76,
       "minSoc": 30.3,
@@ -12767,68 +12767,17 @@
           "stopTime": "24:05",
           "stopSoc": 58,
           "reason": ""
-        },
-        {
-          "startTime": "10:25",
-          "startSoc": 41,
-          "stopTime": "10:55",
-          "stopSoc": 51,
-          "reason": "Disconnected genset run (estimated, A-solar-charging) - genset powering hotel off-inverter. Est load 71.1695 kW, ~35.6 kWh.",
-          "estimated": true
-        },
-        {
-          "startTime": "12:10",
-          "startSoc": 83,
-          "stopTime": "12:40",
-          "stopSoc": 93,
-          "reason": "Disconnected genset run (estimated, B-profile) - genset powering hotel off-inverter. Est load 58.8 kW, ~29.4 kWh.",
-          "estimated": true
         }
       ],
-      "estimated": true,
-      "gensetKwhMeasured": 443.3,
-      "gensetHoursMeasured": 8.92,
-      "loadMeasured": 796,
-      "disconnectedGenset": {
-        "totalHours": 1,
-        "gensetKwhEst": 65,
-        "consumptionKwhEst": 65,
-        "method": "Genset ran off-inverter to power the hotel (load and generator both read ~0). Variant A (solar charging, SOC rising) estimates hotel load by interpolating measured load >15kW before/after the window; variant B (no production / battery idle) estimates from the average hourly consumption profile at the matching hours. Genset output taken equal to estimated hotel consumption.",
-        "windows": [
-          {
-            "start": "10:25",
-            "end": "10:55",
-            "hours": 0.5,
-            "variant": "A-solar-charging",
-            "socStart": 40.8,
-            "socEnd": 51.2,
-            "avgPvKW": 74.3,
-            "estLoadKW": 71.1695,
-            "estKwh": 35.6
-          },
-          {
-            "start": "12:10",
-            "end": "12:40",
-            "hours": 0.5,
-            "variant": "B-profile",
-            "socStart": 83.2,
-            "socEnd": 92.8,
-            "avgPvKW": 64.1,
-            "estLoadKW": 58.8,
-            "estKwh": 29.4
-          }
-        ]
-      },
-      "dataNote": "Totals include ESTIMATED disconnected-genset run(s) (1 h, ~65 kWh). Measured-only values in gensetKwhMeasured / gensetHoursMeasured / loadMeasured.",
       "date": "2026-08-21",
-      "commentary": "Solar produced 445.1 kWh with PV peaking at 80.5 kW - a fair but not standout wet-season day. The diesel genset carried the larger share: on folded totals it delivered 508.3 kWh against 445.1 kWh of solar, about 53 percent of the energy into the site. Most of that is metered running, with only a small off-inverter contribution.\n\nBattery cycled from 97.5 percent down to 30.3 percent, a depth of discharge near 67 points. The 30.3 percent low sits well above the 20 percent protective floor and inside the 28-35 percent manual-start band, so the pack was cycled hard but safely.\n\nTwo short off-inverter windows were flagged and add an ESTIMATED 1.0 h and ~65 kWh on top of 8.92 metered genset hours: a 10:25-10:55 solar-charging run (variant A, interpolated, ~36 kWh) and a 12:10-12:40 midday run (variant B, from the hourly profile, ~29 kWh). The folded 9.92 h works out to roughly PHP 36,900 of diesel (about 427 L at 43 L/hr and 86.50 per L), of which about PHP 33,200 is firmly metered. Concrete fix: both windows fell in strong midday sun, so getting the genset back on-inverter would let that solar carry the load instead of diesel."
+      "commentary": "Solar produced 445.1 kWh with PV peaking at 80.5 kW - a fair wet-season day. With the genset repaired and running normally on-inverter, its output is now fully metered: 443.3 kWh over 8.92 hours, about 50 percent of the energy into the site. Diesel still carried roughly half the day despite decent sun.\n\nBattery cycled from 97.5 percent down to 30.3 percent, a depth of discharge near 67 points. The 30.3 percent low sits well above the 20 percent protective floor and inside the 28-35 percent manual-start band - a hard but safe cycle.\n\nNo off-inverter estimation is applied now that the genset is fixed; the brief load-reads-zero blips during strong midday solar are metering dropouts, not hidden genset runs. Metered genset time of 8.92 h is roughly PHP 33,200 of diesel (about 384 L at 43 L/hr and 86.50 per L). The genset ran overnight and again in the evening, so shifting more early-evening load onto the battery after a good solar day would shave the most diesel."
     },
     "2026-08-22": {
       "source": "auto",
       "pv": 234.5,
-      "load": 738,
-      "gensetKwh": 628.2,
-      "gensetHours": 11.5,
+      "load": 699,
+      "gensetKwh": 589.5,
+      "gensetHours": 10.83,
       "peakPv": 53.81,
       "peakLoad": 97.34,
       "minSoc": 33.3,
@@ -12971,49 +12920,17 @@
           "stopTime": "22:00",
           "stopSoc": 97,
           "reason": ""
-        },
-        {
-          "startTime": "15:00",
-          "startSoc": 98,
-          "stopTime": "15:40",
-          "stopSoc": 99,
-          "reason": "Disconnected genset run (estimated, B-profile) - genset powering hotel off-inverter. Est load 58.1 kW, ~38.7 kWh.",
-          "estimated": true
         }
       ],
-      "estimated": true,
-      "gensetKwhMeasured": 589.5,
-      "gensetHoursMeasured": 10.83,
-      "loadMeasured": 699,
-      "disconnectedGenset": {
-        "totalHours": 0.67,
-        "gensetKwhEst": 38.7,
-        "consumptionKwhEst": 38.7,
-        "method": "Genset ran off-inverter to power the hotel (load and generator both read ~0). Variant A (solar charging, SOC rising) estimates hotel load by interpolating measured load >15kW before/after the window; variant B (no production / battery idle) estimates from the average hourly consumption profile at the matching hours. Genset output taken equal to estimated hotel consumption.",
-        "windows": [
-          {
-            "start": "15:00",
-            "end": "15:40",
-            "hours": 0.67,
-            "variant": "B-profile",
-            "socStart": 97.5,
-            "socEnd": 99,
-            "avgPvKW": 26.7,
-            "estLoadKW": 58.1,
-            "estKwh": 38.7
-          }
-        ]
-      },
-      "dataNote": "Totals include ESTIMATED disconnected-genset run(s) (0.67 h, ~38.7 kWh). Measured-only values in gensetKwhMeasured / gensetHoursMeasured / loadMeasured.",
       "date": "2026-08-22",
-      "commentary": "This was a poor solar day - only 234.5 kWh with PV peaking at just 53.8 kW, roughly half a normal clear day and consistent with heavy monsoon cloud. The genset dominated: 628.2 kWh folded against 234.5 kWh of solar, about 73 percent of all energy into the site. On a day this dark, heavy diesel reliance is expected.\n\nBattery ran from 99.5 percent down to 33.3 percent, a depth of discharge near 66 points. The 33.3 percent low is comfortably above the 20 percent floor and near the top of the 28-35 percent manual-start band, so with weak solar the genset was started early enough to spare the pack.\n\nOne short off-inverter window was flagged - a 15:00-15:40 afternoon run (variant B, from the profile, ~39 kWh) - adding an ESTIMATED 0.67 h and ~38.7 kWh on top of 10.83 metered genset hours. The folded 11.5 h is roughly PHP 42,800 of diesel (about 495 L at 43 L/hr and 86.50 per L), of which about PHP 40,300 is metered. With solar this weak the main lever is demand rather than the genset: shifting heavy loads out of the darkest hours would trim the diesel bill more than anything else today."
+      "commentary": "This was a poor solar day - only 234.5 kWh with PV peaking at just 53.8 kW, about half a clear day and consistent with heavy monsoon cloud. With the genset fully metered now, it delivered 589.5 kWh over 10.83 hours, about 72 percent of all energy into the site - largely unavoidable diesel reliance on a day this dark.\n\nBattery ran from 99.5 percent down to 33.3 percent, a depth of discharge near 66 points. The 33.3 percent low is comfortably above the 20 percent floor and near the top of the 28-35 percent manual-start band, so the genset was started early enough to protect the pack.\n\nNo off-inverter estimation is applied - the genset is repaired and its output is metered directly. Metered genset time of 10.83 h is roughly PHP 40,300 of diesel (about 466 L at 43 L/hr and 86.50 per L). With solar this weak the lever is demand rather than the genset: moving heavy loads out of the darkest hours would trim the bill more than anything else today."
     },
     "2026-08-23": {
       "source": "auto",
       "pv": 437.6,
-      "load": 906,
-      "gensetKwh": 543.6,
-      "gensetHours": 10.16,
+      "load": 798,
+      "gensetKwh": 435.6,
+      "gensetHours": 8.83,
       "peakPv": 80.27,
       "peakLoad": 94.32,
       "minSoc": 32.3,
@@ -13163,42 +13080,10 @@
           "stopTime": "22:15",
           "stopSoc": 95,
           "reason": ""
-        },
-        {
-          "startTime": "15:10",
-          "startSoc": 78,
-          "stopTime": "16:30",
-          "stopSoc": 91,
-          "reason": "Disconnected genset run (estimated, A-solar-charging) - genset powering hotel off-inverter. Est load 81.0205 kW, ~108 kWh.",
-          "estimated": true
         }
       ],
-      "estimated": true,
-      "gensetKwhMeasured": 435.6,
-      "gensetHoursMeasured": 8.83,
-      "loadMeasured": 798,
-      "disconnectedGenset": {
-        "totalHours": 1.33,
-        "gensetKwhEst": 108,
-        "consumptionKwhEst": 108,
-        "method": "Genset ran off-inverter to power the hotel (load and generator both read ~0). Variant A (solar charging, SOC rising) estimates hotel load by interpolating measured load >15kW before/after the window; variant B (no production / battery idle) estimates from the average hourly consumption profile at the matching hours. Genset output taken equal to estimated hotel consumption.",
-        "windows": [
-          {
-            "start": "15:10",
-            "end": "16:30",
-            "hours": 1.33,
-            "variant": "A-solar-charging",
-            "socStart": 78,
-            "socEnd": 91,
-            "avgPvKW": 33.2,
-            "estLoadKW": 81.0205,
-            "estKwh": 108
-          }
-        ]
-      },
-      "dataNote": "Totals include ESTIMATED disconnected-genset run(s) (1.33 h, ~108 kWh). Measured-only values in gensetKwhMeasured / gensetHoursMeasured / loadMeasured.",
       "date": "2026-08-23",
-      "commentary": "Solar produced 437.6 kWh with PV peaking at 80.3 kW - a fair wet-season day. The genset still carried the majority: 543.6 kWh folded against 437.6 kWh of solar, about 55 percent of the energy into the site, driven partly by off-inverter running rather than metered load.\n\nBattery cycled from 96.2 percent down to 32.3 percent, a depth of discharge near 64 points. The 32.3 percent low sits well above the 20 percent floor and inside the 28-35 percent manual-start band - a hard but safe cycle.\n\nA single long off-inverter window was flagged - a 15:10-16:30 afternoon run (variant A, solar-charging, interpolated at ~81 kW, ~108 kWh) - adding an ESTIMATED 1.33 h and ~108 kWh on top of 8.83 metered genset hours. The folded 10.16 h is roughly PHP 37,800 of diesel (about 437 L at 43 L/hr and 86.50 per L), of which about PHP 32,800 is metered. Because this window landed in strong afternoon sun while the battery was charging, repairing the genset to run on-inverter would let that solar cover the load directly and cut the estimated diesel entirely."
+      "commentary": "Solar produced 437.6 kWh with PV peaking at 80.3 kW - a fair wet-season day. The repaired genset is now metered directly and delivered 435.6 kWh over 8.83 hours, about 50 percent of the energy into the site.\n\nBattery cycled from 96.2 percent down to 32.3 percent, a depth of discharge near 64 points. The 32.3 percent low sits well above the 20 percent floor and inside the 28-35 percent manual-start band - a hard but safe cycle.\n\nNo off-inverter estimation is applied now that the genset is fixed; the afternoon load-reads-zero blip during strong sun is a metering dropout, not a hidden genset run. Metered genset time of 8.83 h is roughly PHP 32,800 of diesel (about 380 L at 43 L/hr and 86.50 per L). With the battery only reaching about 96 percent, pushing a little more solar into it midday would let the genset start later in the evening."
     },
     "2026-08-24": {
       "source": "auto",
