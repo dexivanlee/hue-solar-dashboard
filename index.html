@@ -496,10 +496,10 @@
   </label>
   <label>
     System capex (&#8369;)
-    <input type="number" id="system-capex" min="0" step="100000" value="7000000" style="width:130px;" />
+    <input type="number" id="system-capex" min="0" step="100000" value="10790000" style="width:130px;" />
   </label>
   <div class="spacer"></div>
-  <div class="hint">Defaults pre-set: 10-room occupancy, &#8369;86.50/L diesel, &#8369;14/kWh DU reference, &#8369;7M solar capex. Diesel price, DU rate, and capex persist locally. Room occupancy is shared across all browsers.</div>
+  <div class="hint">Defaults pre-set: 10-room occupancy, &#8369;86.50/L diesel, &#8369;14/kWh DU reference, &#8369;10.79M solar capex. Diesel price, DU rate, and capex persist locally. Room occupancy is shared across all browsers.</div>
 </div>
 
 <!-- KPI tiles -->
@@ -591,7 +591,7 @@
   <div class="lcoe-block">
     <h2>LCOE &mdash; Solar cost of electricity</h2>
     <h3>What your solar array charges per kWh over its lifetime</h3>
-    <div class="desc">Based on &#8369;<span id="lcoe-capex-label">7,000,000</span> capex &middot; 25-yr life &middot; 0.5%/yr degradation &middot; &#8369;70K/yr O&amp;M.</div>
+    <div class="desc">Based on &#8369;<span id="lcoe-capex-label">10,790,000</span> capex &middot; 25-yr life &middot; 0.5%/yr degradation &middot; &#8369;70K/yr O&amp;M.</div>
     <div class="lcoe-number" id="lcoe-value">&#8212; <span class="u">&#8369;/kWh</span></div>
     <div class="lcoe-vs">
       <div class="v">
@@ -878,7 +878,7 @@
     <div class="lcoe-roi-grid">
       <div class="roi-block">
         <h2>ROI &mdash; Investment recovery</h2>
-        <h3>How much of the &#8369;7M has been recovered</h3>
+        <h3>How much of the &#8369;10.79M has been recovered</h3>
         <div class="roi-balance negative" id="roi-balance">&#8212;</div>
         <div class="roi-stats">
           <div class="rs">
@@ -887,7 +887,7 @@
             <div class="rs-note">vs diesel-only baseline</div>
           </div>
           <div class="rs">
-            <div class="rs-label">Projected payback</div>
+            <div class="rs-label">Est. time to recover remaining</div>
             <div class="rs-val" id="roi-payback">&#8212;</div>
             <div class="rs-note" id="roi-payback-note">from system start</div>
           </div>
@@ -906,13 +906,13 @@
 
       <div class="roi-block">
         <h2>Recovery progress</h2>
-        <h3>&#8369;7M investment vs. cumulative savings</h3>
+        <h3>&#8369;10.79M investment vs. cumulative savings</h3>
         <div class="desc" id="roi-progress-desc">Percentage of capex recovered so far.</div>
         <div style="margin: 12px 0 4px;">
           <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-bottom:4px;">
             <span>&#8369;0 recovered</span>
             <span id="roi-pct-label">0%</span>
-            <span>&#8369;<span id="roi-capex-label">7,000,000</span></span>
+            <span>&#8369;<span id="roi-capex-label">10,790,000</span></span>
           </div>
           <div class="progress-bar-outer">
             <div class="progress-bar-inner" id="roi-progress-bar" style="width:0%"></div>
@@ -945,8 +945,8 @@
     <!-- ROI running balance chart -->
     <div class="roi-chart-card">
       <h2>ROI running balance &mdash; investment recovery curve</h2>
-      <h3>Cumulative savings vs. the &#8369;7M investment over time</h3>
-      <div class="desc">Starts at &minus;&#8369;7M on Day 1. Climbs each day by the saving vs. diesel-only operation. Crosses zero = fully paid back.</div>
+      <h3>Cumulative savings vs. the &#8369;10.79M investment over time</h3>
+      <div class="desc">Starts at &minus;&#8369;10.79M on Day 1. Climbs each day by the saving vs. diesel-only operation. Crosses zero = fully paid back.</div>
       <div class="roi-chart-wrap"><canvas id="roi-chart"></canvas></div>
     </div>
 
@@ -1006,7 +1006,7 @@
     rollingDays: 30,
     // Financial intelligence
     systemLifetimeYears: 25,        // standard solar system design life
-    annualOMCost: 70000,            // PHP/yr O&M estimate (≈1% of 7M)
+    annualOMCost: 107900,            // PHP/yr O&M estimate (≈1% of 10.79M)
     degradationRatePerYear: 0.005,  // 0.5%/yr panel degradation
     gensetKwhPerLiter: 1.9,         // observed: ~1.9 kWh delivered per litre diesel
     co2KgPerKwh: 0.87,              // kg CO₂ per kWh from diesel genset (vs 0.64 grid)
@@ -1150,11 +1150,12 @@
   function loadState() {
     let s = {
       days: {},      // keyed by YYYY-MM-DD
-      settings: { roomsToday: 10, dieselPrice: 86.50, duRate: 14, systemCapex: 7000000 },
+      settings: { roomsToday: 10, dieselPrice: 86.50, duRate: 14, systemCapex: 10790000 },
     };
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) s = JSON.parse(raw);
+      if (s.settings && s.settings.systemCapex === 7000000) s.settings.systemCapex = 10790000; // capex updated to 10.79M
     } catch (e) { /* ignore */ }
     // Merge baked-in days for any date not manually overridden
     for (const iso in BAKED_DATA) {
@@ -1234,7 +1235,7 @@
    * Total kWh = annualAvgKwhDay × 365 × Σ(degradation^y) for y=0..life-1
    */
   function computeLCOE() {
-    const capex = state.settings.systemCapex || 7000000;
+    const capex = state.settings.systemCapex || 10790000;
     let totalKwh = 0;
     for (let y = 0; y < SPEC.systemLifetimeYears; y++) {
       totalKwh += SPEC.annualAvgKwhDay * 365 * Math.pow(1 - SPEC.degradationRatePerYear, y);
@@ -1317,7 +1318,7 @@
     document.getElementById('rooms-today').value   = (day?.rooms != null) ? day.rooms  : '';
     document.getElementById('diesel-price').value  = (day?.dieselPrice != null) ? day.dieselPrice : state.settings.dieselPrice;
     document.getElementById('du-rate').value        = state.settings.duRate ?? 14;
-    document.getElementById('system-capex').value   = state.settings.systemCapex ?? 7000000;
+    document.getElementById('system-capex').value   = state.settings.systemCapex ?? 10790000;
 
     setVal('kpi-perroom', derived?.perRoomKwh, 1);
     document.getElementById('kpi-perroom-sub').textContent = day && derived?.perRoomKwh
@@ -1536,12 +1537,12 @@
   function renderFinancials(day, viewIso) {
     const lcoe     = computeLCOE();
     const duRate   = state.settings.duRate ?? 14;
-    const capex    = state.settings.systemCapex ?? 7000000;
+    const capex    = state.settings.systemCapex ?? 10790000;
     const fin      = day ? computeFinancialFor(viewIso) : null;
     const gensetCostPerKwh = fin ? fin.gensetCost / (day.gensetKwh || 1) : null;
 
     // ── LCOE label
-    document.getElementById('lcoe-capex-label').textContent = (capex/1000000).toFixed(1) + 'M';
+    document.getElementById('lcoe-capex-label').textContent = (capex/1000000).toFixed(2) + 'M';
     document.getElementById('lcoe-value').innerHTML = lcoe.toFixed(2) + ' <span class="u">&#8369;/kWh</span>';
     document.getElementById('lcoe-vs-diesel').textContent = fin
       ? '~' + (fin.gensetCost / (day.gensetKwh || SPEC.gensetLPerHourMidpoint * SPEC.gensetKwhPerLiter)).toFixed(0) + ' ₱/kWh'
@@ -1674,7 +1675,7 @@
     const pct          = Math.min(100, totalSaving / capex * 100);
 
     // Projected payback from day 1: capex / avgDaily
-    const paybackDays  = avgDaily > 0 ? Math.ceil(capex / avgDaily) : null;
+    const remDays = avgDaily > 0 ? Math.ceil(remainingToRecover / avgDaily) : null; const remMonths = remDays != null ? remDays / 30.4 : null; const remYears = remDays != null ? remDays / 365 : null; const paybackDays = avgDaily > 0 ? n + remDays : null;
     const paybackMonths= paybackDays ? (paybackDays / 30.4).toFixed(1) : null;
     const annualSaving = avgDaily * 365;
     const lifetimeSaving = annualSaving * SPEC.systemLifetimeYears - capex;
@@ -1686,15 +1687,15 @@
     balEl.className = 'roi-balance ' + (roiBalance >= 0 ? 'positive' : 'negative');
 
     document.getElementById('roi-avg-daily').textContent  = avgDaily  ? '₱' + avgDaily.toLocaleString('en',{maximumFractionDigits:0}) : '—';
-    document.getElementById('roi-payback').textContent    = paybackMonths ? paybackMonths + ' months' : '—';
-    document.getElementById('roi-payback-note').textContent = paybackDays ? `(${paybackDays} days from commissioning)` : 'from system start';
+    document.getElementById('roi-payback').textContent = remainingToRecover <= 0 ? 'Recovered' : (remDays != null ? '~' + remMonths.toFixed(1) + ' months (' + remYears.toFixed(1) + ' yrs)' : '\u2014');
+    document.getElementById('roi-payback-note').textContent = remainingToRecover <= 0 ? 'capex fully recovered' : (remDays != null ? '\u20B1' + remainingToRecover.toLocaleString('en',{maximumFractionDigits:0}) + ' left at \u20B1' + avgDaily.toLocaleString('en',{maximumFractionDigits:0}) + '/day avg (' + remDays.toLocaleString('en') + ' days)' : 'awaiting data');
     document.getElementById('roi-days').textContent       = n;
     document.getElementById('roi-cumulative').textContent = totalSaving ? '₱' + totalSaving.toLocaleString('en',{maximumFractionDigits:0}) : '—';
 
     // Progress bar
     const pctLabel = pct.toFixed(1) + '%';
     document.getElementById('roi-pct-label').textContent    = pctLabel;
-    document.getElementById('roi-capex-label').textContent  = (capex/1000000).toFixed(1) + 'M';
+    document.getElementById('roi-capex-label').textContent  = (capex/1000000).toFixed(2) + 'M';
     const bar = document.getElementById('roi-progress-bar');
     bar.style.width = pct + '%';
     bar.className = 'progress-bar-inner' + (pct >= 100 ? ' good' : pct >= 50 ? '' : '');
@@ -1705,7 +1706,7 @@
     document.getElementById('roi-remaining').textContent     = remainingToRecover ? '₱' + remainingToRecover.toLocaleString('en',{maximumFractionDigits:0}) : 'Recovered ✓';
     document.getElementById('roi-lifetime').textContent      = lifetimeSaving > 0 ? '₱' + lifetimeSaving.toLocaleString('en',{maximumFractionDigits:0}) : '—';
     document.getElementById('roi-progress-desc').textContent =
-      `${pct.toFixed(1)}% of ₱${(capex/1000000).toFixed(0)}M recovered (${n} days of data)`;
+      `${pct.toFixed(1)}% of ₱${(capex/1000000).toFixed(2)}M recovered (${n} days of data)`;
 
     // ROI running balance chart
     renderROIChart(capex, cumData, avgDaily);
@@ -2206,7 +2207,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
     render();
   });
   document.getElementById('system-capex').addEventListener('change', e => {
-    const val = +e.target.value || 7000000;
+    const val = +e.target.value || 10790000;
     state.settings.systemCapex = val;
     saveState();
     render();
@@ -2317,7 +2318,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
   function buildWeeklyHTML(agg, prevAgg, startISO, endISO) {
     if (!agg) return '<div class="report-empty">No data available for this week. Data will appear once days in this period are logged.</div>';
     const duRate = state.settings.duRate ?? 14;
-    const capex  = state.settings.systemCapex || 7000000;
+    const capex  = state.settings.systemCapex || 10790000;
     const cumSav = cumulativeSavings();
     const lastCum = cumSav.length ? cumSav[cumSav.length-1].cumulative : 0;
     const roiBalance = lastCum - capex;
@@ -2397,7 +2398,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
       <div class="report-block" style="margin-bottom:14px;">
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
           <div class="report-kpi"><div class="rk-val">${rphp(agg.totalSaving)}</div><div class="rk-label">Saved this week</div><div class="rk-sub">vs diesel-only</div></div>
-          <div class="report-kpi"><div class="rk-val" style="color:${roiBalance>=0?'var(--good)':'var(--bad)'};">${rphp(Math.abs(roiBalance))}</div><div class="rk-label">${roiBalance>=0?'Recovered':'Still to recover'}</div><div class="rk-sub">of ₱${(capex/1000000).toFixed(1)}M</div></div>
+          <div class="report-kpi"><div class="rk-val" style="color:${roiBalance>=0?'var(--good)':'var(--bad)'};">${rphp(Math.abs(roiBalance))}</div><div class="rk-label">${roiBalance>=0?'Recovered':'Still to recover'}</div><div class="rk-sub">of ₱${(capex/1000000).toFixed(2)}M</div></div>
           <div class="report-kpi"><div class="rk-val">${savPerDay>0?(paybackYrs>0?paybackYrs.toFixed(1)+' yr':'Paid back!'):'—'}</div><div class="rk-label">Implied payback</div><div class="rk-sub">at this week's rate</div></div>
         </div>
       </div>
@@ -2430,7 +2431,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
     if (!agg) return '<div class="report-empty">No data available for this month. Data will appear once days in this period are logged.</div>';
     const duRate  = state.settings.duRate ?? 14;
     const lcoe    = computeLCOE();
-    const capex   = state.settings.systemCapex || 7000000;
+    const capex   = state.settings.systemCapex || 10790000;
     const cumSav  = cumulativeSavings();
     const lastCum = cumSav.length ? cumSav[cumSav.length-1].cumulative : 0;
     const roiBalance = lastCum - capex;
@@ -2452,7 +2453,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
       {label:'Blended Cost vs DU Rate',    val:agg.avgBlended!=null?((duRate-agg.avgBlended)/duRate*100):null, good:0, warn:-10, display:agg.avgBlended?`₱${agg.avgBlended.toFixed(2)}/kWh vs ₱${duRate} DU`:'—'},
       {label:'Avoidable Diesel Waste',     val:agg.wasteRuns, good:0, warn:3, invert:true, display:`${agg.wasteRuns} runs · ${rphp(agg.wasteCost)}`},
       {label:'PV Output vs Design',        val:pvVsDesign, good:90, warn:70, display:`${actualAvgPv.toFixed(0)} kWh/day · ${pvVsDesign.toFixed(0)}% of design`},
-      {label:'ROI Recovery Progress',      val:lastCum/capex*100, good:5, warn:1, display:`${(lastCum/capex*100).toFixed(2)}% of ₱${(capex/1000000).toFixed(1)}M recovered`},
+      {label:'ROI Recovery Progress',      val:lastCum/capex*100, good:5, warn:1, display:`${(lastCum/capex*100).toFixed(2)}% of ₱${(capex/1000000).toFixed(2)}M recovered`},
     ];
 
     const selfSuf = agg.avgPvShare ?? 0;
@@ -2509,12 +2510,12 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
       <div class="report-block" style="margin-bottom:14px;">
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
           <div class="report-kpi"><div class="rk-val">${rphp(agg.totalSaving)}</div><div class="rk-label">Recovered this month</div><div class="rk-sub">cumulative: ${rphp(Math.max(lastCum,0))}</div></div>
-          <div class="report-kpi"><div class="rk-val" style="color:${roiBalance>=0?'var(--good)':'var(--bad)'};">${rphp(Math.abs(roiBalance))}</div><div class="rk-label">${roiBalance>=0?'✅ Fully recovered!':'Still to recover'}</div><div class="rk-sub">of ₱${(capex/1000000).toFixed(1)}M</div></div>
+          <div class="report-kpi"><div class="rk-val" style="color:${roiBalance>=0?'var(--good)':'var(--bad)'};">${rphp(Math.abs(roiBalance))}</div><div class="rk-label">${roiBalance>=0?'✅ Fully recovered!':'Still to recover'}</div><div class="rk-sub">of ₱${(capex/1000000).toFixed(2)}M</div></div>
           <div class="report-kpi"><div class="rk-val">${paybackYrs>0?paybackYrs.toFixed(1)+' yr':'Paid back!'}</div><div class="rk-label">Payback estimate</div><div class="rk-sub">at ${rphp(annualSav)}/yr projected</div></div>
         </div>
         <div style="margin-top:12px;">
           <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:4px;">
-            <span>₱0</span><span>${(Math.min(lastCum,capex)/capex*100).toFixed(2)}% recovered</span><span>₱${(capex/1000000).toFixed(1)}M</span>
+            <span>₱0</span><span>${(Math.min(lastCum,capex)/capex*100).toFixed(2)}% recovered</span><span>₱${(capex/1000000).toFixed(2)}M</span>
           </div>
           <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${Math.min(lastCum/capex*100,100).toFixed(2)}%"></div></div>
         </div>
@@ -2630,7 +2631,7 @@ Use the engineer's perspective. Speak to the hotel engineer directly. No bullet 
   document.getElementById('rooms-today').value    = state.settings.roomsToday;
   document.getElementById('diesel-price').value   = state.settings.dieselPrice;
   document.getElementById('du-rate').value        = state.settings.duRate ?? 14;
-  document.getElementById('system-capex').value   = state.settings.systemCapex ?? 7000000;
+  document.getElementById('system-capex').value   = state.settings.systemCapex ?? 10790000;
   document.getElementById('viewing-date').value   = yesterdayISO();
   loadFormFromDay(yesterdayISO());
   render();
